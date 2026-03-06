@@ -29,7 +29,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
   );
-
+  
   static const TextStyle bodyText1 = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.normal,

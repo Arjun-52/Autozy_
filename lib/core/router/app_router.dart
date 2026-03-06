@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/auth/otp_screen.dart';
 import '../../features/home/home_screen.dart';
-import '../../features/vehicles/vehicles_screen.dart';
-import '../../features/vehicles/add_vehicle_screen.dart';
-import '../../features/plans/plans_screen.dart';
-import '../../features/booking/book_slot_screen.dart';
-import '../../features/booking/checkout_screen.dart';
-import '../../features/booking/payment_screen.dart';
-import '../../features/booking/order_success_screen.dart';
-import '../../features/inspection/inspection_screen.dart';
-import '../../features/inspection/inspection_done_screen.dart';
-import '../../features/profile/profile_screen.dart';
-import '../../features/profile/edit_profile_screen.dart';
-import '../../features/profile/invoices_screen.dart';
+// import '../../features/vehicles/vehicles_screen.dart';
+// import '../../features/vehicles/add_vehicle_screen.dart';
+// import '../../features/plans/plans_screen.dart';
+// import '../../features/booking/book_slot_screen.dart';
+// import '../../features/booking/checkout_screen.dart';
+// import '../../features/booking/payment_screen.dart';
+// import '../../features/booking/order_success_screen.dart';
+// import '../../features/inspection/inspection_screen.dart';
+// import '../../features/inspection/inspection_done_screen.dart';
+// import '../../features/profile/profile_screen.dart';
+// import '../../features/profile/edit_profile_screen.dart';
+// import '../../features/profile/invoices_screen.dart';
 
 class AppRouter {
   static const String login = '/login';
@@ -42,30 +42,30 @@ class AppRouter {
         );
       case home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
-      case vehicles:
-        return MaterialPageRoute(builder: (_) => const VehiclesScreen());
-      case addVehicle:
-        return MaterialPageRoute(builder: (_) => const AddVehicleScreen());
-      case plans:
-        return MaterialPageRoute(builder: (_) => const PlansScreen());
-      case bookSlot:
-        return MaterialPageRoute(builder: (_) => const BookSlotScreen());
-      case checkout:
-        return MaterialPageRoute(builder: (_) => const CheckoutScreen());
-      case payment:
-        return MaterialPageRoute(builder: (_) => const PaymentScreen());
-      case orderSuccess:
-        return MaterialPageRoute(builder: (_) => const OrderSuccessScreen());
-      case inspection:
-        return MaterialPageRoute(builder: (_) => const InspectionScreen());
-      case inspectionDone:
-        return MaterialPageRoute(builder: (_) => const InspectionDoneScreen());
-      case profile:
-        return MaterialPageRoute(builder: (_) => const ProfileScreen());
-      case editProfile:
-        return MaterialPageRoute(builder: (_) => const EditProfileScreen());
-      case invoices:
-        return MaterialPageRoute(builder: (_) => const InvoicesScreen());
+      // case vehicles:
+      //   return MaterialPageRoute(builder: (_) => const VehiclesScreen());
+      // case addVehicle:
+      //   return MaterialPageRoute(builder: (_) => const AddVehicleScreen());
+      // case plans:
+      //   return MaterialPageRoute(builder: (_) => const PlansScreen());
+      // case bookSlot:
+      //   return MaterialPageRoute(builder: (_) => const BookSlotScreen());
+      // case checkout:
+      //   return MaterialPageRoute(builder: (_) => const CheckoutScreen());
+      // case payment:
+      //   return MaterialPageRoute(builder: (_) => const PaymentScreen());
+      // case orderSuccess:
+      //   return MaterialPageRoute(builder: (_) => const OrderSuccessScreen());
+      // case inspection:
+      //   return MaterialPageRoute(builder: (_) => const InspectionScreen());
+      // case inspectionDone:
+      //   return MaterialPageRoute(builder: (_) => const InspectionDoneScreen());
+      // case profile:
+      //   return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      // case editProfile:
+      //   return MaterialPageRoute(builder: (_) => const EditProfileScreen());
+      // case invoices:
+      //   return MaterialPageRoute(builder: (_) => const InvoicesScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>

@@ -17,7 +17,7 @@ class CustomCard extends StatelessWidget {
     this.color,
     this.elevation,
     this.borderRadius,
-    this.onTap,
+    this.onTap, required Border border,
   }) : super(key: key);
 
   @override
