@@ -1,0 +1,50 @@
+import 'package:flutter/material.dart';
+
+class ExploreCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final bool fullWidth;
+  final VoidCallback? onTap;
+
+  const ExploreCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.fullWidth = false,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap, // this triggers navigation
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+
+        child: Column(
+          crossAxisAlignment: fullWidth
+              ? CrossAxisAlignment.center
+              : CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFECBC),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: 26),
+            ),
+
+            const SizedBox(height: 10),
+
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+    );
+  }
+}
