@@ -1,7 +1,55 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
-class ArrivalTimerCard extends StatelessWidget {
-  const ArrivalTimerCard({super.key});
+class ArrivalTimerCard extends StatefulWidget {
+  final VoidCallback onTimerFinished;
+
+  const ArrivalTimerCard({super.key, required this.onTimerFinished});
+
+  @override
+  State<ArrivalTimerCard> createState() => _ArrivalTimerCardState();
+}
+
+class _ArrivalTimerCardState extends State<ArrivalTimerCard> {
+  Duration remainingTime = const Duration(seconds: 5); // change if needed
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  void startTimer() {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingTime.inSeconds == 0) {
+        timer.cancel();
+
+        /// notify parent screen
+        widget.onTimerFinished();
+      } else {
+        setState(() {
+          remainingTime = remainingTime - const Duration(seconds: 1);
+        });
+      }
+    });
+  }
+
+  String formatTime(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+
+    final hours = twoDigits(duration.inHours);
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+
+    return "$hours:$minutes:$seconds";
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +65,8 @@ class ArrivalTimerCard extends StatelessWidget {
       ),
 
       child: Column(
-        children: const [
-          Row(
+        children: [
+          const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.access_time, color: Colors.orange),
@@ -33,16 +81,16 @@ class ArrivalTimerCard extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
 
           Text(
-            "00:59:54",
-            style: TextStyle(fontSize: 42, fontWeight: FontWeight.bold),
+            formatTime(remainingTime),
+            style: const TextStyle(fontSize: 42, fontWeight: FontWeight.bold),
           ),
 
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
 
-          Text(
+          const Text(
             "Inspector will arrive at your location",
             style: TextStyle(color: Colors.grey),
           ),

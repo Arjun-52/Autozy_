@@ -33,7 +33,11 @@ class OrderDetailsCard extends StatelessWidget {
 
                 Text(
                   "ORD–2026001",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Color(0xFF013E6D),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),

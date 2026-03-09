@@ -1,6 +1,6 @@
-import 'package:autozy/features/booking/widget/order_details_card.dart';
-import 'package:autozy/features/booking/widget/success_button.dart';
-import 'package:autozy/features/booking/widget/success_icon.dart';
+import 'package:autozy/features/booking/widgets/order_details_card.dart';
+import 'package:autozy/features/booking/widgets/success_button.dart';
+import 'package:autozy/features/booking/widgets/success_icon.dart';
 import 'package:flutter/material.dart';
 
 class OrderSuccessScreen extends StatelessWidget {
@@ -16,7 +16,7 @@ class OrderSuccessScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 30),
 
-            const SuccessIcon(),
+            SuccessIcon(),
 
             const SizedBox(height: 20),
 
@@ -36,7 +36,7 @@ class OrderSuccessScreen extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            const OrderDetailsCard(),
+            OrderDetailsCard(),
 
             const Spacer(),
 

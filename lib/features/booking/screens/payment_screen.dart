@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:autozy/features/booking/models/payment_method_model.dart';
-import 'package:autozy/features/booking/widget/payment_method_card.dart';
-import 'package:autozy/features/booking/widget/pay_button.dart';
+import 'package:autozy/features/booking/widgets/payment_method_card.dart';
+import 'package:autozy/features/booking/widgets/pay_button.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key});

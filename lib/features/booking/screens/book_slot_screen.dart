@@ -1,9 +1,9 @@
-import 'package:autozy/features/booking/widget/bottom_bar.dart';
-import 'package:autozy/features/booking/widget/date_selector.dart'
+import 'package:autozy/features/booking/widgets/bottom_bar.dart';
+import 'package:autozy/features/booking/widgets/date_selector.dart'
     show DateSelector;
-import 'package:autozy/features/booking/widget/info_box.dart';
-import 'package:autozy/features/booking/widget/section_title.dart';
-import 'package:autozy/features/booking/widget/time_slot_list.dart';
+import 'package:autozy/features/booking/widgets/info_box.dart';
+import 'package:autozy/features/booking/widgets/section_title.dart';
+import 'package:autozy/features/booking/widgets/time_slot_list.dart';
 import 'package:flutter/material.dart';
 
 class BookSlotScreen extends StatefulWidget {

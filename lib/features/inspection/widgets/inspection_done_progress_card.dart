@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/inspection_step_model.dart';
 
-class InspectionProgressCard extends StatelessWidget {
-  const InspectionProgressCard({super.key});
+class InspectionDoneProgressCard extends StatelessWidget {
+  const InspectionDoneProgressCard({super.key});
 
   List<InspectionStepModel> get steps => const [
     InspectionStepModel(
@@ -11,19 +11,19 @@ class InspectionProgressCard extends StatelessWidget {
       completed: true,
     ),
     InspectionStepModel(
-      title: "Inspection In Progress",
+      title: "Inspection In Progress", 
       subtitle: "Inspector is checking your vehicle",
       completed: true,
     ),
     InspectionStepModel(
       title: "Photos Captured",
       subtitle: "Before-service photos documented",
-      completed: false,
+      completed: true,
     ),
     InspectionStepModel(
       title: "Inspection Approved",
       subtitle: "Vehicle cleared for service",
-      completed: false,
+      completed: true,
     ),
   ];
 

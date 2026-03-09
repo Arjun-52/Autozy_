@@ -1,7 +1,7 @@
-import 'package:autozy/features/booking/widget/booking_slot_card.dart';
-import 'package:autozy/features/booking/widget/checkout_button.dart';
-import 'package:autozy/features/booking/widget/plan_details_card.dart';
-import 'package:autozy/features/booking/widget/price_breakdown_card.dart';
+import 'package:autozy/features/booking/widgets/booking_slot_card.dart';
+import 'package:autozy/features/booking/widgets/checkout_button.dart';
+import 'package:autozy/features/booking/widgets/plan_details_card.dart';
+import 'package:autozy/features/booking/widgets/price_breakdown_card.dart';
 import 'package:flutter/material.dart';
 
 class CheckoutScreen extends StatelessWidget {

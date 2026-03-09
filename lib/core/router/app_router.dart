@@ -66,8 +66,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const OrderSuccessScreen());
       case inspection:
         return MaterialPageRoute(builder: (_) => const InspectionScreen());
-      // case inspectionDone:
-      //   return MaterialPageRoute(builder: (_) => const InspectionDoneScreen());
+      case inspectionDone:
+        return MaterialPageRoute(builder: (_) => const InspectionDoneScreen());
       // case profile:
       //   return MaterialPageRoute(builder: (_) => const ProfileScreen());
       // case editProfile:
