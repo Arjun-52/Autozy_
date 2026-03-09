@@ -1,4 +1,6 @@
-import 'widgets/plan_card.dart';
+import '../../../core/router/app_router.dart';
+import '../../booking/screens/book_slot_screen.dart';
+import '../widgets/plan_card.dart';
 import 'package:flutter/material.dart';
 
 class PlansScreen extends StatefulWidget {
@@ -118,7 +120,9 @@ class _PlansScreenState extends State<PlansScreen> {
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, AppRouter.bookSlot);
+              },
               child: const Text(
                 "Continue to Slot Selection",
                 style: TextStyle(
@@ -137,6 +141,15 @@ class _PlansScreenState extends State<PlansScreen> {
         currentIndex: 2,
         selectedItemColor: const Color(0xffC68A00),
         unselectedItemColor: Colors.grey,
+
+        type: BottomNavigationBarType.fixed,
+
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+
+        selectedLabelStyle: const TextStyle(fontSize: 12),
+        unselectedLabelStyle: const TextStyle(fontSize: 12),
+
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),

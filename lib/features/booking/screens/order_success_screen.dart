@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_strings.dart';
-import '../../core/constants/colors.dart';
-import '../../core/constants/text_styles.dart';
-import '../../core/widgets/primary_button.dart';
+import '../../../core/constants/app_strings.dart';
+import '../../../core/constants/colors.dart';
+import '../../../core/constants/text_styles.dart';
+import '../../../core/widgets/primary_button.dart';
 
 class OrderSuccessScreen extends StatelessWidget {
   const OrderSuccessScreen({Key? key}) : super(key: key);
@@ -59,22 +59,30 @@ class OrderSuccessScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Booking Details',
-                      style: AppTextStyles.headline3,
-                    ),
+                    Text('Booking Details', style: AppTextStyles.headline3),
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        Icon(Icons.directions_car, color: AppColors.primary, size: 20),
+                        Icon(
+                          Icons.directions_car,
+                          color: AppColors.primary,
+                          size: 20,
+                        ),
                         const SizedBox(width: 12),
-                        Text('Honda Civic - ABC-1234', style: AppTextStyles.bodyText2),
+                        Text(
+                          'Honda Civic - ABC-1234',
+                          style: AppTextStyles.bodyText2,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Icon(Icons.calendar_today, color: AppColors.primary, size: 20),
+                        Icon(
+                          Icons.calendar_today,
+                          color: AppColors.primary,
+                          size: 20,
+                        ),
                         const SizedBox(width: 12),
                         Text('15 March 2024', style: AppTextStyles.bodyText2),
                       ],
@@ -82,7 +90,11 @@ class OrderSuccessScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Icon(Icons.access_time, color: AppColors.primary, size: 20),
+                        Icon(
+                          Icons.access_time,
+                          color: AppColors.primary,
+                          size: 20,
+                        ),
                         const SizedBox(width: 12),
                         Text('10:00 AM', style: AppTextStyles.bodyText2),
                       ],
@@ -90,9 +102,16 @@ class OrderSuccessScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Icon(Icons.location_on, color: AppColors.primary, size: 20),
+                        Icon(
+                          Icons.location_on,
+                          color: AppColors.primary,
+                          size: 20,
+                        ),
                         const SizedBox(width: 12),
-                        Text('Autozy Service Center', style: AppTextStyles.bodyText2),
+                        Text(
+                          'Autozy Service Center',
+                          style: AppTextStyles.bodyText2,
+                        ),
                       ],
                     ),
                   ],

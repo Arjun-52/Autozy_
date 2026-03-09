@@ -1,10 +1,10 @@
-import 'package:autozy/features/home/widgets/explore_card.dart.dart';
-import 'package:autozy/features/home/widgets/greeting_section.dart';
-import 'package:autozy/features/home/widgets/home_bottom_nav.dart';
-import 'package:autozy/features/home/widgets/home_header.dart';
-import 'package:autozy/features/home/widgets/premium_services_card.dart';
-import 'package:autozy/features/home/widgets/vehicle_card.dart';
-import 'package:autozy/features/plans/plans_screen.dart';
+import 'widgets/explore_card.dart.dart';
+import 'widgets/greeting_section.dart';
+import 'widgets/home_bottom_nav.dart';
+import 'widgets/home_header.dart';
+import 'widgets/premium_services_card.dart';
+import 'widgets/vehicle_card.dart';
+import '../../../core/router/app_router.dart';
 import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
 
@@ -24,7 +24,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               const HomeHeader(),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
               const GreetingSection(),
 
@@ -48,20 +48,18 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.description_outlined,
                       title: "View Plans",
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => PlansScreen(),
-                          ),
-                        );
+                        Navigator.pushNamed(context, AppRouter.plans);
                       },
                     ),
                   ),
                   const SizedBox(width: 14),
-                  const Expanded(
+                  Expanded(
                     child: ExploreCard(
                       icon: Icons.add_circle_outline,
                       title: "Add Vehicle",
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRouter.addVehicle);
+                      },
                     ),
                   ),
                 ],
@@ -69,10 +67,13 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 14),
 
-              const ExploreCard(
+              ExploreCard(
                 icon: Icons.calendar_today_outlined,
                 title: "Book Slot",
                 fullWidth: true,
+                onTap: () {
+                  Navigator.pushNamed(context, AppRouter.bookSlot);
+                },
               ),
 
               const SizedBox(height: 20),

@@ -12,7 +12,7 @@ class Booking {
   final DateTime createdAt;
   final DateTime updatedAt;
 
-  Booking({
+  const Booking({
     required this.id,
     required this.userId,
     required this.vehicleId,
@@ -33,16 +33,22 @@ class Booking {
       userId: json['userId'] ?? '',
       vehicleId: json['vehicleId'] ?? '',
       planId: json['planId'] ?? '',
-      bookingDate: DateTime.parse(json['bookingDate'] ?? DateTime.now().toIso8601String()),
-      inspectionDate: json['inspectionDate'] != null 
-          ? DateTime.parse(json['inspectionDate']) 
+      bookingDate: json['bookingDate'] != null
+          ? DateTime.tryParse(json['bookingDate']) ?? DateTime.now()
+          : DateTime.now(),
+      inspectionDate: json['inspectionDate'] != null
+          ? DateTime.tryParse(json['inspectionDate'])
           : null,
       status: json['status'] ?? '',
-      totalAmount: (json['totalAmount'] ?? 0).toDouble(),
+      totalAmount: (json['totalAmount'] as num?)?.toDouble() ?? 0.0,
       paymentStatus: json['paymentStatus'] ?? '',
       paymentDetails: json['paymentDetails'],
-      createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
-      updatedAt: DateTime.parse(json['updatedAt'] ?? DateTime.now().toIso8601String()),
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+          : DateTime.now(),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt']) ?? DateTime.now()
+          : DateTime.now(),
     );
   }
 

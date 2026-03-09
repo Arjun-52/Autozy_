@@ -4,11 +4,11 @@ import '../../features/auth/otp_screen.dart';
 import '../../features/home/home_screen.dart';
 // import '../../features/vehicles/vehicles_screen.dart';
 // import '../../features/vehicles/add_vehicle_screen.dart';
-// import '../../features/plans/plans_screen.dart';
-// import '../../features/booking/book_slot_screen.dart';
-// import '../../features/booking/checkout_screen.dart';
-// import '../../features/booking/payment_screen.dart';
-// import '../../features/booking/order_success_screen.dart';
+import '../../features/plans/screens/plans_screen.dart';
+import '../../features/booking/screens/book_slot_screen.dart';
+import '../../features/booking/screens/checkout_screen.dart';
+import '../../features/booking/screens/payment_screen.dart';
+// import '../../features/booking/screens/order_success_screen.dart';
 // import '../../features/inspection/inspection_screen.dart';
 // import '../../features/inspection/inspection_done_screen.dart';
 // import '../../features/profile/profile_screen.dart';
@@ -46,14 +46,22 @@ class AppRouter {
       //   return MaterialPageRoute(builder: (_) => const VehiclesScreen());
       // case addVehicle:
       //   return MaterialPageRoute(builder: (_) => const AddVehicleScreen());
-      // case plans:
-      //   return MaterialPageRoute(builder: (_) => const PlansScreen());
-      // case bookSlot:
-      //   return MaterialPageRoute(builder: (_) => const BookSlotScreen());
-      // case checkout:
-      //   return MaterialPageRoute(builder: (_) => const CheckoutScreen());
-      // case payment:
-      //   return MaterialPageRoute(builder: (_) => const PaymentScreen());
+      case plans:
+        return MaterialPageRoute(builder: (_) => const PlansScreen());
+      case bookSlot:
+        return MaterialPageRoute(builder: (_) => const BookSlotScreen());
+      case checkout:
+        final args = settings.arguments as Map<String, dynamic>;
+
+        return MaterialPageRoute(
+          builder: (_) => CheckoutScreen(
+            day: args["day"],
+            date: args["date"],
+            time: args["time"],
+          ),
+        );
+      case payment:
+        return MaterialPageRoute(builder: (_) => const PaymentScreen());
       // case orderSuccess:
       //   return MaterialPageRoute(builder: (_) => const OrderSuccessScreen());
       // case inspection:
