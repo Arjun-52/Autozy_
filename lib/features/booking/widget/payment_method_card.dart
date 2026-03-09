@@ -50,10 +50,24 @@ class PaymentMethodCard extends StatelessWidget {
             );
           }),
 
-          const Divider(),
-
           ListTile(
-            leading: const Icon(Icons.account_balance_wallet_outlined),
+            leading: Image.asset(
+              "assets/images/upi.jpg",
+              width: 30,
+              height: 30,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: 30,
+                  height: 30,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: const Icon(Icons.error, color: Colors.white, size: 16),
+                );
+              },
+            ),
             title: const Text("Add UPI ID"),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
           ),

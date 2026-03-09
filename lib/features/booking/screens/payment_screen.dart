@@ -14,9 +14,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
   int selectedIndex = 0;
 
   final List<PaymentMethodModel> methods = [
-    PaymentMethodModel(name: "Paytm", icon: "assets/paytm.jpg"),
-    PaymentMethodModel(name: "PhonePe", icon: "assets/phonepe.jpg"),
-    PaymentMethodModel(name: "GPay", icon: "assets/gpay.jpg"),
+    PaymentMethodModel(name: "Paytm", icon: "assets/images/paytm.jpg"),
+    PaymentMethodModel(name: "PhonePe", icon: "assets/images/phonepay.jpg"),
+    PaymentMethodModel(name: "GPay", icon: "assets/images/gpay.jpg"),
   ];
 
   @override
@@ -48,19 +48,23 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
           const SizedBox(height: 20),
 
-          Expanded(
-            child: PaymentMethodCard(
-              methods: methods,
-              selectedIndex: selectedIndex,
-              onSelect: (index) {
-                setState(() {
-                  selectedIndex = index;
-                });
-              },
-            ),
+          PaymentMethodCard(
+            methods: methods,
+            selectedIndex: selectedIndex,
+            onSelect: (index) {
+              setState(() {
+                selectedIndex = index;
+              });
+            },
           ),
+          SizedBox(height: 180),
 
-          PayButton(price: "799", onPressed: () {}),
+          PayButton(
+            price: "799",
+            onPressed: () {
+              Navigator.pushNamed(context, "/order-success");
+            },
+          ),
         ],
       ),
     );

@@ -1,12 +1,12 @@
-import 'widgets/explore_card.dart.dart';
-import 'widgets/greeting_section.dart';
-import 'widgets/home_bottom_nav.dart';
-import 'widgets/home_header.dart';
-import 'widgets/premium_services_card.dart';
-import 'widgets/vehicle_card.dart';
-import '../../../core/router/app_router.dart';
+import '../widgets/explore_card.dart.dart';
+import '../widgets/greeting_section.dart';
+import '../widgets/home_bottom_nav.dart';
+import '../widgets/home_header.dart';
+import '../widgets/premium_services_card.dart';
+import '../widgets/vehicle_card.dart';
+import '../../../../core/router/app_router.dart';
 import 'package:flutter/material.dart';
-import '../../../core/constants/colors.dart';
+import '../../../../core/constants/colors.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});

@@ -27,11 +27,22 @@ class PaymentOptionTile extends StatelessWidget {
 
           title: Row(
             children: [
-              Image.asset(method.icon, width: 32),
+              Image.asset(
+                method.icon,
+                width: 32,
+                height: 32,
+                fit: BoxFit.contain,
+              ),
 
               const SizedBox(width: 10),
 
-              Text(method.name, style: const TextStyle(fontSize: 18)),
+              Expanded(
+                child: Text(
+                  method.name,
+                  style: const TextStyle(fontSize: 18),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ],
           ),
         ),

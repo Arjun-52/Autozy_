@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/auth/otp_screen.dart';
-import '../../features/home/home_screen.dart';
+import '../../features/home/screens/home_screen.dart';
 // import '../../features/vehicles/vehicles_screen.dart';
 // import '../../features/vehicles/add_vehicle_screen.dart';
 import '../../features/plans/screens/plans_screen.dart';
 import '../../features/booking/screens/book_slot_screen.dart';
 import '../../features/booking/screens/checkout_screen.dart';
 import '../../features/booking/screens/payment_screen.dart';
-// import '../../features/booking/screens/order_success_screen.dart';
-// import '../../features/inspection/inspection_screen.dart';
-// import '../../features/inspection/inspection_done_screen.dart';
+import '../../features/booking/screens/order_success_screen.dart';
+import '../../features/inspection/screens/inspection_screen.dart';
+import '../../features/inspection/screens/inspection_done_screen.dart';
 // import '../../features/profile/profile_screen.dart';
 // import '../../features/profile/edit_profile_screen.dart';
 // import '../../features/profile/invoices_screen.dart';
@@ -62,10 +62,10 @@ class AppRouter {
         );
       case payment:
         return MaterialPageRoute(builder: (_) => const PaymentScreen());
-      // case orderSuccess:
-      //   return MaterialPageRoute(builder: (_) => const OrderSuccessScreen());
-      // case inspection:
-      //   return MaterialPageRoute(builder: (_) => const InspectionScreen());
+      case orderSuccess:
+        return MaterialPageRoute(builder: (_) => const OrderSuccessScreen());
+      case inspection:
+        return MaterialPageRoute(builder: (_) => const InspectionScreen());
       // case inspectionDone:
       //   return MaterialPageRoute(builder: (_) => const InspectionDoneScreen());
       // case profile:
