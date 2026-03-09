@@ -1,10 +1,10 @@
+import 'package:autozy/features/navigation/main_screen.dart';
 import 'package:flutter/material.dart';
 import '../../features/auth/login_screen.dart';
 import '../../features/auth/otp_screen.dart';
 import '../../features/home/screens/home_screen.dart';
 // import '../../features/vehicles/vehicles_screen.dart';
 // import '../../features/vehicles/add_vehicle_screen.dart';
-import '../../features/plans/screens/plans_screen.dart';
 import '../../features/booking/screens/book_slot_screen.dart';
 import '../../features/booking/screens/checkout_screen.dart';
 import '../../features/booking/screens/payment_screen.dart';
@@ -41,13 +41,15 @@ class AppRouter {
           builder: (_) => const OtpScreen(phone: '1234567890'),
         );
       case home:
-        return MaterialPageRoute(builder: (_) => const HomeScreen());
+        return MaterialPageRoute(builder: (_) => const MainScreen());
       // case vehicles:
       //   return MaterialPageRoute(builder: (_) => const VehiclesScreen());
       // case addVehicle:
       //   return MaterialPageRoute(builder: (_) => const AddVehicleScreen());
       case plans:
-        return MaterialPageRoute(builder: (_) => const PlansScreen());
+        return MaterialPageRoute(
+          builder: (_) => const MainScreen(initialIndex: 2),
+        );
       case bookSlot:
         return MaterialPageRoute(builder: (_) => const BookSlotScreen());
       case checkout:

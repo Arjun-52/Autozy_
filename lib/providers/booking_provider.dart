@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../data/repositories/booking_repository.dart';
-import '../data/models/booking_model.dart';
+import '../../data/models/booking_model.dart';
 
 class BookingProvider extends ChangeNotifier {
   final BookingRepository _bookingRepository;
@@ -80,9 +80,9 @@ class BookingProvider extends ChangeNotifier {
       final newBooking = await _bookingRepository.createBooking(booking);
       _bookings.add(newBooking);
 
-      if (newBooking.bookingDate.isAfter(DateTime.now())) {
+      if (newBooking.status == 'upcoming') {
         _upcomingBookings.add(newBooking);
-      } else {
+      } else if (newBooking.status == 'completed') {
         _pastBookings.add(newBooking);
       }
 
@@ -194,7 +194,10 @@ class BookingProvider extends ChangeNotifier {
     _clearError();
 
     try {
-      return await _bookingRepository.getBookingsByStatus(userId, status);
+      return (await _bookingRepository.getBookingsByStatus(
+        userId,
+        status,
+      )).cast<Booking>();
     } catch (e) {
       _setError(e.toString());
       rethrow;

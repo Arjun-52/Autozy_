@@ -16,6 +16,7 @@ class AppColors {
   static const Color divider = Color(0xFFE0E0E0);
   static const Color customer = Color(0xFFA18902);
   static const Color yellow = Color(0xFFFFCB2F);
+  static const Color premiureYellow = Color(0xFFFFB315);
   // Cards
   static const Color card = Colors.white;
 

@@ -1,3 +1,4 @@
+import 'package:autozy/features/home/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class InspectionHomeButton extends StatelessWidget {
@@ -10,7 +11,14 @@ class InspectionHomeButton extends StatelessWidget {
       height: 55,
 
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const HomeScreen(showPlanActiveCard: true),
+            ),
+          );
+        },
 
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFFF6C431),

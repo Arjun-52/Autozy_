@@ -1,3 +1,4 @@
+import 'package:autozy/features/vehicles/vehicles_screen.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatelessWidget {
@@ -6,20 +7,22 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      currentIndex: 0,
+      currentIndex: 1,
 
-      selectedItemColor: Colors.grey,
+      onTap: (index) {
+        if (index == 1) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const VehicleScreen()),
+          );
+        }
+      },
+
+      selectedItemColor: const Color(0xffC68A00),
       unselectedItemColor: Colors.grey,
 
-      selectedIconTheme: const IconThemeData(color: Colors.grey),
-      unselectedIconTheme: const IconThemeData(color: Colors.grey),
-
-      selectedLabelStyle: const TextStyle(color: Colors.grey),
-      unselectedLabelStyle: const TextStyle(color: Colors.grey),
-
-      type: BottomNavigationBarType.fixed,
       showUnselectedLabels: true,
-      enableFeedback: false,
+      showSelectedLabels: true,
 
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "Home"),

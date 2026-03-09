@@ -1,3 +1,5 @@
+import 'package:autozy/features/home/widgets/standard_plan_active_card.dart';
+
 import '../widgets/explore_card.dart.dart';
 import '../widgets/greeting_section.dart';
 import '../widgets/home_bottom_nav.dart';
@@ -9,7 +11,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/colors.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.showPlanActiveCard = false});
+  final bool showPlanActiveCard;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +32,7 @@ class HomeScreen extends StatelessWidget {
               const GreetingSection(),
 
               const SizedBox(height: 20),
+              if (showPlanActiveCard) const StandardPlanActiveCard(),
 
               const VehicleCard(),
 
@@ -83,8 +87,6 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-
-      bottomNavigationBar: const HomeBottomNav(),
     );
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../data/repositories/inspection_repository.dart';
-import '../data/models/booking_model.dart';
+import '../../data/models/booking_model.dart';
 
 class InspectionProvider extends ChangeNotifier {
   final InspectionRepository _inspectionRepository;
@@ -115,7 +115,7 @@ class InspectionProvider extends ChangeNotifier {
 
       final index = _inspections.indexWhere((i) => i.id == inspectionId);
       if (index != -1) {
-        _inspections[index] = updatedInspection;
+        _inspections[index] = updatedInspection as Booking;
       }
 
       final upcomingIndex = _upcomingInspections.indexWhere(

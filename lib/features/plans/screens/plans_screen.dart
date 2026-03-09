@@ -135,40 +135,6 @@ class _PlansScreenState extends State<PlansScreen> {
           ),
         ],
       ),
-
-      /// BOTTOM NAVBAR
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2,
-        selectedItemColor: const Color(0xffC68A00),
-        unselectedItemColor: Colors.grey,
-
-        type: BottomNavigationBarType.fixed,
-
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-
-        selectedLabelStyle: const TextStyle(fontSize: 12),
-        unselectedLabelStyle: const TextStyle(fontSize: 12),
-
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.directions_car),
-            label: "Vehicles",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.access_time),
-            label: "Plans",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: "Profile",
-          ),
-        ],
-      ),
     );
   }
 }

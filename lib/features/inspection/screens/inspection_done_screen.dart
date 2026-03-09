@@ -1,8 +1,9 @@
 import 'package:autozy/features/home/widgets/home_bottom_nav.dart';
+import 'package:autozy/features/inspection/widgets/inspection_completed_progress.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/inspection_success_card.dart';
-import '../widgets/inspection_progress_card.dart';
+
 import '../widgets/inspection_photos_grid.dart';
 import '../widgets/inspection_notice_card.dart';
 import '../widgets/inspection_home_button.dart';
@@ -36,7 +37,7 @@ class InspectionDoneScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            const InspectionProgressCard(),
+            InspectionCompletedProgressCard(),
 
             const SizedBox(height: 20),
 
