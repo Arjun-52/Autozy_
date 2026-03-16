@@ -5,8 +5,30 @@ import 'package:provider/provider.dart';
 import '../../../providers/otp_provider.dart';
 import '../../../core/constants/text_styles.dart';
 
-class ResendOtpText extends StatelessWidget {
+class ResendOtpText extends StatefulWidget {
   const ResendOtpText({super.key});
+
+  @override
+  State<ResendOtpText> createState() => _ResendOtpTextState();
+}
+
+class _ResendOtpTextState extends State<ResendOtpText> {
+  late TapGestureRecognizer _tapGestureRecognizer;
+
+  @override
+  void initState() {
+    super.initState();
+    _tapGestureRecognizer = TapGestureRecognizer()
+      ..onTap = () {
+        context.read<OtpProvider>().startTimer();
+      };
+  }
+
+  @override
+  void dispose() {
+    _tapGestureRecognizer.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +51,7 @@ class ResendOtpText extends StatelessWidget {
                     color: const Color(0xFFDD900C),
                     fontWeight: FontWeight.w600,
                   ),
-
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      otpProvider.startTimer();
-                    },
+                  recognizer: _tapGestureRecognizer,
                 )
               : TextSpan(
                   text: "Resend in ${otpProvider.secondsRemaining}s",

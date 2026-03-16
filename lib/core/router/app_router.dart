@@ -1,19 +1,18 @@
 import 'package:autozy/features/navigation/main_screen.dart';
 import 'package:flutter/material.dart';
-import '../../features/auth/login_screen.dart';
-import '../../features/auth/otp_screen.dart';
-import '../../features/home/screens/home_screen.dart';
-// import '../../features/vehicles/vehicles_screen.dart';
-// import '../../features/vehicles/add_vehicle_screen.dart';
+import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/otp_screen.dart';
+import '../../features/vehicles/vehicles_screen.dart';
+import '../../features/vehicles/add_vehicle_screen.dart';
 import '../../features/booking/screens/book_slot_screen.dart';
 import '../../features/booking/screens/checkout_screen.dart';
 import '../../features/booking/screens/payment_screen.dart';
 import '../../features/booking/screens/order_success_screen.dart';
 import '../../features/inspection/screens/inspection_screen.dart';
 import '../../features/inspection/screens/inspection_done_screen.dart';
-// import '../../features/profile/profile_screen.dart';
-// import '../../features/profile/edit_profile_screen.dart';
-// import '../../features/profile/invoices_screen.dart';
+import '../../features/profile/screens/profile_screen.dart';
+import '../../features/profile/screens/edit_profile_screen.dart';
+import '../../features/profile/screens/invoices_screen.dart';
 
 class AppRouter {
   static const String login = '/login';
@@ -44,8 +43,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const MainScreen());
       // case vehicles:
       //   return MaterialPageRoute(builder: (_) => const VehiclesScreen());
-      // case addVehicle:
-      //   return MaterialPageRoute(builder: (_) => const AddVehicleScreen());
+      case addVehicle:
+        return MaterialPageRoute(builder: (_) => const AddVehicleScreen());
       case plans:
         return MaterialPageRoute(
           builder: (_) => const MainScreen(initialIndex: 2),
@@ -70,12 +69,12 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const InspectionScreen());
       case inspectionDone:
         return MaterialPageRoute(builder: (_) => const InspectionDoneScreen());
-      // case profile:
-      //   return MaterialPageRoute(builder: (_) => const ProfileScreen());
-      // case editProfile:
-      //   return MaterialPageRoute(builder: (_) => const EditProfileScreen());
-      // case invoices:
-      //   return MaterialPageRoute(builder: (_) => const InvoicesScreen());
+      case profile:
+        return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      case editProfile:
+        return MaterialPageRoute(builder: (_) => const EditProfileScreen());
+      case invoices:
+        return MaterialPageRoute(builder: (_) => const InvoicesScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>

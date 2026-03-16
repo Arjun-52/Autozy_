@@ -1,4 +1,3 @@
-import 'package:autozy/features/home/widgets/home_bottom_nav.dart';
 import 'package:autozy/features/inspection/screens/inspection_done_screen.dart';
 import 'package:autozy/features/inspection/widgets/arrival_timer_card.dart';
 import 'package:autozy/features/inspection/widgets/inspection_info_box.dart';
@@ -55,8 +54,6 @@ class _InspectionScreenState extends State<InspectionScreen> {
           ],
         ),
       ),
-
-      bottomNavigationBar: const HomeBottomNav(),
     );
   }
 }

@@ -1,4 +1,3 @@
-import 'package:autozy/features/home/widgets/home_bottom_nav.dart';
 import 'package:autozy/features/inspection/widgets/inspection_completed_progress.dart';
 import 'package:flutter/material.dart';
 
@@ -53,7 +52,6 @@ class InspectionDoneScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: HomeBottomNav(),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:autozy/features/profile/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../features/home/screens/home_screen.dart';
@@ -16,11 +17,11 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late int currentIndex;
 
-  final List<Widget> screens = [
-    const HomeScreen(),
-    const VehicleScreen(),
-    const PlansScreen(),
-    const Placeholder(), // Profile screen
+  final List<Widget> screens = const [
+    HomeScreen(),
+    VehicleScreen(),
+    PlansScreen(),
+    ProfileScreen(),
   ];
 
   @override
@@ -43,10 +44,8 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
         onTap: onTabTapped,
-
         selectedItemColor: const Color(0xffC68A00),
         unselectedItemColor: Colors.grey,
-
         type: BottomNavigationBarType.fixed,
 
         items: const [

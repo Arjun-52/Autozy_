@@ -1,3 +1,4 @@
+import 'package:autozy/features/profile/profile_screen.dart';
 import 'package:autozy/features/vehicles/vehicles_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/home_screen.dart';
@@ -17,6 +18,7 @@ class _HomeBottomNavState extends State<HomeBottomNav> {
     const VehicleScreen(),
     const Center(child: Text("Plans Screen")),
     const Center(child: Text("Profile Screen")),
+    const ProfileScreen(),
   ];
 
   @override

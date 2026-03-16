@@ -1,5 +1,4 @@
 import '../../../core/router/app_router.dart';
-import '../../booking/screens/book_slot_screen.dart';
 import '../widgets/plan_card.dart';
 import 'package:flutter/material.dart';
 

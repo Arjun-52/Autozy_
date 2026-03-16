@@ -3,13 +3,13 @@ import 'package:autozy/features/auth/widgets/otp_input_fields.dart';
 import 'package:autozy/features/auth/widgets/otp_logo.dart';
 import 'package:autozy/features/auth/widgets/resend_otp_text.dart';
 import 'package:autozy/features/auth/widgets/verify_button.dart';
-import 'package:autozy/features/home/screens/home_screen.dart';
+import 'package:autozy/features/navigation/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/constants/colors.dart';
-import '../../../core/constants/text_styles.dart';
-import '../../../providers/otp_provider.dart';
+import '../../../../core/constants/colors.dart';
+import '../../../../core/constants/text_styles.dart';
+import '../../../../providers/otp_provider.dart';
 
 class OtpScreen extends StatefulWidget {
   final String phone;
@@ -25,10 +25,15 @@ class _OtpScreenState extends State<OtpScreen> {
   void initState() {
     super.initState();
 
-    /// Start countdown when screen opens
     Future.microtask(() {
       context.read<OtpProvider>().startTimer();
     });
+  }
+
+  @override
+  void dispose() {
+    context.read<OtpProvider>().disposeTimer();
+    super.dispose();
   }
 
   @override
@@ -91,10 +96,20 @@ class _OtpScreenState extends State<OtpScreen> {
               /// Verify Button
               VerifyButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
-                  );
+                  final otpProvider = context.read<OtpProvider>();
+
+                  if (otpProvider.otp.length == 4) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const MainScreen()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please enter the complete OTP"),
+                      ),
+                    );
+                  }
                 },
               ),
 

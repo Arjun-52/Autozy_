@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/colors.dart';
 
 class VehicleCard extends StatelessWidget {
   const VehicleCard({super.key});

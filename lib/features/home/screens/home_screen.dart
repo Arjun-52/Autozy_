@@ -2,7 +2,6 @@ import 'package:autozy/features/home/widgets/standard_plan_active_card.dart';
 
 import '../widgets/explore_card.dart.dart';
 import '../widgets/greeting_section.dart';
-import '../widgets/home_bottom_nav.dart';
 import '../widgets/home_header.dart';
 import '../widgets/premium_services_card.dart';
 import '../widgets/vehicle_card.dart';
@@ -87,7 +86,6 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const HomeBottomNav(),
     );
   }
 }

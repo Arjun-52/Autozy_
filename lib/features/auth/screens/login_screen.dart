@@ -1,11 +1,38 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/constants/text_styles.dart';
-import '../../../core/constants/spacing.dart';
 import 'otp_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController phoneController = TextEditingController();
+
+  bool isValidPhone(String phone) {
+    RegExp regex = RegExp(r'^[6-9]\d{9}$');
+    return regex.hasMatch(phone);
+  }
+
+  void continueLogin() {
+    String phone = phoneController.text.trim();
+
+    if (!isValidPhone(phone)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Enter a valid 10 digit mobile number")),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => OtpScreen(phone: phone)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,28 +97,24 @@ class LoginScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Text(
+                    const Text(
                       "🇮🇳 +91",
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(width: 4),
-                    Icon(
-                      Icons.keyboard_arrow_down,
-                      size: 18,
-                      color: Colors.grey,
-                    ),
 
                     const SizedBox(width: 10),
 
-                    const Expanded(
+                    Expanded(
                       child: TextField(
+                        controller: phoneController,
                         keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
+                        maxLength: 10,
+                        decoration: const InputDecoration(
                           hintText: "Enter Mobile Number",
-                          hintStyle: TextStyle(color: Color(0xFF9796A1)),
+                          counterText: "",
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(vertical: 18),
                         ),
@@ -108,15 +131,7 @@ class LoginScreen extends StatelessWidget {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            const OtpScreen(phone: '9347830977'),
-                      ),
-                    );
-                  },
+                  onPressed: continueLogin,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.yellow,
                     shape: RoundedRectangleBorder(
@@ -133,7 +148,7 @@ class LoginScreen extends StatelessWidget {
               const Spacer(),
 
               /// TERMS
-              Text(
+              const Text(
                 "By continuing, you agree to our Terms and Conditions\n& Privacy Policy",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Color(0xFF5B5B5E)),
