@@ -1,5 +1,5 @@
 import '../services/api_service.dart';
-import '../models/booking_model.dart';
+import 'package:autozy/data/models/booking_model.dart';
 
 class InspectionRepository {
   final ApiService _apiService;

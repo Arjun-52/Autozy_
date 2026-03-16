@@ -1,3 +1,4 @@
+import 'package:autozy/features/vehicles/widgets/add_vehicle_button.dart';
 import 'package:flutter/material.dart';
 
 class VehicleScreen extends StatelessWidget {
@@ -77,29 +78,43 @@ class VehicleScreen extends StatelessWidget {
                   ),
 
                   /// CURRENT TAG
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.green),
-                    ),
-
-                    child: const Row(
+                  SizedBox(
+                    height: 60,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Icon(Icons.check_circle, color: Colors.green, size: 16),
-                        SizedBox(width: 4),
-                        Text("Current", style: TextStyle(color: Colors.green)),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.green),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.check_circle,
+                                color: Colors.green,
+                                size: 16,
+                              ),
+                              SizedBox(width: 4),
+                              Text(
+                                "Current",
+                                style: TextStyle(color: Colors.green),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.delete_outline, color: Colors.red),
                       ],
                     ),
                   ),
 
                   const SizedBox(width: 10),
-
-                  const Icon(Icons.delete_outline, color: Colors.red),
                 ],
               ),
             ),
@@ -107,26 +122,7 @@ class VehicleScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             /// ADD VEHICLE BUTTON
-            Container(
-              width: double.infinity,
-              height: 60,
-
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xffC68A00), width: 2),
-              ),
-
-              child: const Center(
-                child: Text(
-                  "+  Add Vehicle",
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Color(0xffC68A00),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
+            const AddVehicleButton(),
           ],
         ),
       ),
