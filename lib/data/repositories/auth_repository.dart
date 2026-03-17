@@ -1,5 +1,6 @@
 import '../services/auth_service.dart';
 import '../models/user_model.dart';
+import '../models/dto/auth_dto.dart';
 
 class AuthRepository {
   final AuthService _authService;
@@ -9,16 +10,28 @@ class AuthRepository {
   Future<User> login(String email, String password) async {
     try {
       final response = await _authService.login(email, password);
-      return User.fromJson(response['user']);
+      final dto = LoginResponseDto.fromJson(response);
+      return dto.user;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<User> register(String name, String email, String phone, String password) async {
+  Future<User> register(
+    String name,
+    String email,
+    String phone,
+    String password,
+  ) async {
     try {
-      final response = await _authService.register(name, email, phone, password);
-      return User.fromJson(response['user']);
+      final response = await _authService.register(
+        name,
+        email,
+        phone,
+        password,
+      );
+      final dto = RegisterResponseDto.fromJson(response);
+      return dto.user;
     } catch (e) {
       rethrow;
     }
@@ -35,7 +48,8 @@ class AuthRepository {
   Future<User> verifyOtp(String phone, String otp) async {
     try {
       final response = await _authService.verifyOtp(phone, otp);
-      return User.fromJson(response['user']);
+      final dto = OtpVerifyResponseDto.fromJson(response);
+      return dto.user;
     } catch (e) {
       rethrow;
     }
@@ -66,9 +80,9 @@ class AuthRepository {
     }
   }
 
-  Future<void> resetPassword(String token, String newPassword) async {
+  Future<void> resetPassword(String token, String password) async {
     try {
-      await _authService.resetPassword(token, newPassword);
+      await _authService.resetPassword(token, password);
     } catch (e) {
       rethrow;
     }

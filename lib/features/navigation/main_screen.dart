@@ -17,11 +17,11 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late int currentIndex;
 
-  final List<Widget> screens = const [
-    HomeScreen(),
-    VehicleScreen(),
-    PlansScreen(),
-    ProfileScreen(),
+  final List<Widget> screens = [
+    const HomeScreen(),
+    const VehicleScreen(),
+    const PlansScreen(),
+    const ProfileScreen(),
   ];
 
   @override
