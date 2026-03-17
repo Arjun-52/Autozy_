@@ -1,4 +1,4 @@
-import 'package:autozy/features/profile/widgets/_buildInputField.dart';
+import 'package:autozy/features/profile/widgets/build_input_field.dart';
 import 'package:flutter/material.dart';
 
 class EditProfileScreen extends StatefulWidget {
