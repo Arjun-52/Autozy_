@@ -1,4 +1,4 @@
-import 'package:autozy/features/vehicles/vehicles_screen.dart';
+import 'package:autozy/features/vehicles/screens/vehicles_screen.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavBar extends StatelessWidget {

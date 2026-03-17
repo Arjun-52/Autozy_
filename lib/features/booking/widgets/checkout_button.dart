@@ -1,5 +1,5 @@
-import 'package:autozy/core/router/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class CheckoutButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -24,7 +24,7 @@ class CheckoutButton extends StatelessWidget {
           ),
 
           onPressed: () {
-            Navigator.pushNamed(context, AppRouter.payment);
+            context.pushNamed('payment');
           },
 
           child: const Text(

@@ -80,7 +80,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
               const SizedBox(height: 26),
 
-              /// Enter code text
+              /// code text
               const Text(
                 "Enter The Code",
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
@@ -115,7 +115,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
               const SizedBox(height: 30),
 
-              /// Resend OTP section
+              /// Resend OTP
               const ResendOtpText(),
 
               const SizedBox(height: 20),

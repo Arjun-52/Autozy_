@@ -23,13 +23,11 @@ class VehicleScreen extends StatelessWidget {
 
       body: Padding(
         padding: const EdgeInsets.all(16),
-
         child: Column(
           children: [
             /// VEHICLE CARD
             Container(
               padding: const EdgeInsets.all(16),
-
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
@@ -56,7 +54,7 @@ class VehicleScreen extends StatelessWidget {
 
                   const SizedBox(width: 16),
 
-                  /// VEHICLE DETAILS
+                  /// DETAILS
                   const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +75,7 @@ class VehicleScreen extends StatelessWidget {
                     ),
                   ),
 
-                  /// CURRENT TAG
+                  /// STATUS
                   SizedBox(
                     height: 60,
                     child: Column(
@@ -121,7 +119,6 @@ class VehicleScreen extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            /// ADD VEHICLE BUTTON
             const AddVehicleButton(),
           ],
         ),

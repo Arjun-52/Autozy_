@@ -1,5 +1,5 @@
-import 'package:autozy/features/profile/profile_screen.dart';
-import 'package:autozy/features/vehicles/vehicles_screen.dart';
+import 'package:autozy/features/profile/screens/profile_screen.dart';
+import 'package:autozy/features/vehicles/screens/vehicles_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/home_screen.dart';
 

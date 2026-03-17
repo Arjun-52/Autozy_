@@ -15,7 +15,7 @@ class AuthService {
       _apiService.setAuthToken(data['token']);
       return data;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -39,7 +39,7 @@ class AuthService {
       _apiService.setAuthToken(data['token']);
       return data;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -52,7 +52,7 @@ class AuthService {
 
       return data;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -66,7 +66,7 @@ class AuthService {
       _apiService.setAuthToken(data['token']);
       return data;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -76,7 +76,7 @@ class AuthService {
       _apiService.clearAuthToken();
     } catch (e) {
       _apiService.clearAuthToken();
-      throw e;
+      rethrow;
     }
   }
 
@@ -88,7 +88,7 @@ class AuthService {
       return responseData;
     } catch (e) {
       _apiService.clearAuthToken();
-      throw e;
+      rethrow;
     }
   }
 
@@ -101,7 +101,7 @@ class AuthService {
 
       return data;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -117,7 +117,7 @@ class AuthService {
 
       return data;
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 }

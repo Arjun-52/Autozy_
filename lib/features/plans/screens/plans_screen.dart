@@ -1,6 +1,6 @@
-import '../../../core/router/app_router.dart';
-import '../widgets/plan_card.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../widgets/plan_card.dart';
 
 class PlansScreen extends StatefulWidget {
   const PlansScreen({super.key});
@@ -120,7 +120,7 @@ class _PlansScreenState extends State<PlansScreen> {
                 ),
               ),
               onPressed: () {
-                Navigator.pushNamed(context, AppRouter.bookSlot);
+                context.pushNamed('bookSlot');
               },
               child: const Text(
                 "Continue to Slot Selection",

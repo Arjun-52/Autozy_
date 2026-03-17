@@ -16,7 +16,7 @@ class VehicleRepository {
       final List<dynamic> vehicles = data['vehicles'];
       return vehicles.map((vehicle) => Vehicle.fromJson(vehicle)).toList();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -25,7 +25,7 @@ class VehicleRepository {
       final data = await _apiService.get('/vehicles/$vehicleId');
       return Vehicle.fromJson(data['vehicle']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -34,7 +34,7 @@ class VehicleRepository {
       final data = await _apiService.post('/vehicles', data: vehicle.toJson());
       return Vehicle.fromJson(data['vehicle']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -46,7 +46,7 @@ class VehicleRepository {
       );
       return Vehicle.fromJson(data['vehicle']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -54,7 +54,7 @@ class VehicleRepository {
     try {
       await _apiService.delete('/vehicles/$vehicleId');
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -68,7 +68,7 @@ class VehicleRepository {
       final List<dynamic> vehicles = data['vehicles'];
       return vehicles.map((vehicle) => Vehicle.fromJson(vehicle)).toList();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 }

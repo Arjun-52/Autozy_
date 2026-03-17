@@ -17,7 +17,7 @@ class CustomTextfield extends StatelessWidget {
   final String? Function(String?)? validator;
 
   const CustomTextfield({
-    Key? key,
+    super.key,
     this.labelText,
     this.hintText,
     this.errorText,
@@ -32,7 +32,7 @@ class CustomTextfield extends StatelessWidget {
     this.readOnly = false,
     this.maxLines = 1,
     this.validator,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -18,7 +18,7 @@ class InspectionRepository {
           .map((inspection) => Booking.fromJson(inspection))
           .toList();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -27,7 +27,7 @@ class InspectionRepository {
       final data = await _apiService.get('/inspections/$inspectionId');
       return Booking.fromJson(data['inspection']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -45,7 +45,7 @@ class InspectionRepository {
       );
       return Booking.fromJson(data['inspection']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -60,7 +60,7 @@ class InspectionRepository {
       );
       return Booking.fromJson(data['inspection']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -68,7 +68,7 @@ class InspectionRepository {
     try {
       await _apiService.patch('/inspections/$inspectionId/cancel');
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -82,7 +82,7 @@ class InspectionRepository {
         data: results,
       );
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -97,7 +97,7 @@ class InspectionRepository {
       );
       return Booking.fromJson(data['inspection']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -109,7 +109,7 @@ class InspectionRepository {
       );
       return Booking.fromJson(data['inspection']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -118,7 +118,7 @@ class InspectionRepository {
       final data = await _apiService.get('/inspections/$inspectionId/report');
       return data['report'];
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -134,7 +134,7 @@ class InspectionRepository {
           .map((inspection) => Booking.fromJson(inspection))
           .toList();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -150,7 +150,7 @@ class InspectionRepository {
           .map((inspection) => Booking.fromJson(inspection))
           .toList();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -163,7 +163,7 @@ class InspectionRepository {
       final List<dynamic> history = data['inspections'];
       return history.map((item) => item as Map<String, dynamic>).toList();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 }

@@ -13,7 +13,7 @@ class PlanRepository {
       final List<dynamic> plans = data['plans'];
       return plans.map((plan) => Plan.fromJson(plan)).toList();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -22,7 +22,7 @@ class PlanRepository {
       final data = await _apiService.get('/plans/$planId');
       return Plan.fromJson(data['plan']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -33,7 +33,7 @@ class PlanRepository {
       final List<dynamic> plans = data['plans'];
       return plans.map((plan) => Plan.fromJson(plan)).toList();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -47,7 +47,7 @@ class PlanRepository {
       final List<dynamic> plans = data['plans'];
       return plans.map((plan) => Plan.fromJson(plan)).toList();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -56,7 +56,7 @@ class PlanRepository {
       final data = await _apiService.post('/plans', data: plan.toJson());
       return Plan.fromJson(data['plan']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -68,7 +68,7 @@ class PlanRepository {
       );
       return Plan.fromJson(data['plan']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -76,7 +76,7 @@ class PlanRepository {
     try {
       await _apiService.delete('/plans/$planId');
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -84,7 +84,7 @@ class PlanRepository {
     try {
       await _apiService.patch('/plans/$planId/activate');
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -92,7 +92,7 @@ class PlanRepository {
     try {
       await _apiService.patch('/plans/$planId/deactivate');
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 }

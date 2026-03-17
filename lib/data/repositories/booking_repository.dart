@@ -16,7 +16,7 @@ class BookingRepository {
       final List<dynamic> bookings = data['bookings'];
       return bookings.map((booking) => Booking.fromJson(booking)).toList();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -25,7 +25,7 @@ class BookingRepository {
       final data = await _apiService.get('/bookings/$bookingId');
       return Booking.fromJson(data['booking']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -34,7 +34,7 @@ class BookingRepository {
       final data = await _apiService.post('/bookings', data: booking.toJson());
       return Booking.fromJson(data['booking']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -46,7 +46,7 @@ class BookingRepository {
       );
       return Booking.fromJson(data['booking']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -54,7 +54,7 @@ class BookingRepository {
     try {
       await _apiService.delete('/bookings/$bookingId');
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -65,7 +65,7 @@ class BookingRepository {
         data: {'newDate': newDate.toIso8601String()},
       );
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -82,7 +82,7 @@ class BookingRepository {
       final List<dynamic> bookings = data['bookings'];
       return bookings.map((booking) => Booking.fromJson(booking)).toList();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -96,7 +96,7 @@ class BookingRepository {
       final List<dynamic> bookings = data['bookings'];
       return bookings.map((booking) => Booking.fromJson(booking)).toList();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -110,7 +110,7 @@ class BookingRepository {
       final List<dynamic> bookings = data['bookings'];
       return bookings.map((booking) => Booking.fromJson(booking)).toList();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 }

@@ -1,4 +1,4 @@
-import 'package:autozy/features/vehicles/add_vehicle_screen.dart';
+import 'package:autozy/features/vehicles/screens/add_vehicle_screen.dart';
 import 'package:flutter/material.dart';
 
 class AddVehicleButton extends StatelessWidget {

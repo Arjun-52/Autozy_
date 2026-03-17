@@ -1,4 +1,3 @@
-import 'package:autozy/features/navigation/main_screen.dart';
 import 'package:flutter/material.dart';
 
 class InvoicesScreen extends StatelessWidget {

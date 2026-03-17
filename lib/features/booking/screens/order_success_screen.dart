@@ -2,6 +2,7 @@ import 'package:autozy/features/booking/widgets/order_details_card.dart';
 import 'package:autozy/features/booking/widgets/success_button.dart';
 import 'package:autozy/features/booking/widgets/success_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class OrderSuccessScreen extends StatelessWidget {
   const OrderSuccessScreen({super.key});
@@ -39,12 +40,11 @@ class OrderSuccessScreen extends StatelessWidget {
             OrderDetailsCard(),
 
             const Spacer(),
-
             SuccessButton(
               text: "Continue to Inspection",
               filled: true,
               onPressed: () {
-                Navigator.pushNamed(context, '/inspection');
+                context.push('/inspection');
               },
             ),
 
@@ -54,11 +54,7 @@ class OrderSuccessScreen extends StatelessWidget {
               text: "Go to Home",
               filled: false,
               onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  '/home',
-                  (route) => false,
-                );
+                context.go('/home');
               },
             ),
 

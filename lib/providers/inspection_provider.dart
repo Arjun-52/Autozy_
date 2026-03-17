@@ -115,7 +115,7 @@ class InspectionProvider extends ChangeNotifier {
 
       final index = _inspections.indexWhere((i) => i.id == inspectionId);
       if (index != -1) {
-        _inspections[index] = updatedInspection as Booking;
+        _inspections[index] = updatedInspection;
       }
 
       final upcomingIndex = _upcomingInspections.indexWhere(

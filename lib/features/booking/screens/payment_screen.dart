@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:autozy/features/booking/models/payment_method_model.dart';
 import 'package:autozy/features/booking/widgets/payment_method_card.dart';
 import 'package:autozy/features/booking/widgets/pay_button.dart';
+import 'package:go_router/go_router.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key});
@@ -62,7 +63,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           PayButton(
             price: "799",
             onPressed: () {
-              Navigator.pushNamed(context, "/order-success");
+              context.push('/order-success');
             },
           ),
         ],

@@ -1,7 +1,6 @@
-import 'package:autozy/features/navigation/main_screen.dart';
 import 'package:autozy/features/profile/widgets/menu_tile.dart';
 import 'package:flutter/material.dart';
-import 'edit_profile_screen.dart';
+import '../../../../core/router/navigation_helper.dart';
 import 'invoices_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -26,12 +25,16 @@ class ProfileScreen extends StatelessWidget {
             /// USER CARD
             InkWell(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const EditProfileScreen(),
-                  ),
-                );
+                // Safe navigation - ready for GoRouter migration
+                NavigationHelper.safeNavigate(context, 'editProfile');
+
+                // Original navigation (preserved for safety):
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => const EditProfileScreen(),
+                //   ),
+                // );
               },
               child: Container(
                 padding: const EdgeInsets.all(16),

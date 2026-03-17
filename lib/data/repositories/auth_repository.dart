@@ -11,7 +11,7 @@ class AuthRepository {
       final response = await _authService.login(email, password);
       return User.fromJson(response['user']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -20,7 +20,7 @@ class AuthRepository {
       final response = await _authService.register(name, email, phone, password);
       return User.fromJson(response['user']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -28,7 +28,7 @@ class AuthRepository {
     try {
       await _authService.sendOtp(phone);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -37,7 +37,7 @@ class AuthRepository {
       final response = await _authService.verifyOtp(phone, otp);
       return User.fromJson(response['user']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -45,7 +45,7 @@ class AuthRepository {
     try {
       await _authService.logout();
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -54,7 +54,7 @@ class AuthRepository {
       final response = await _authService.refreshToken();
       return User.fromJson(response['user']);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -62,7 +62,7 @@ class AuthRepository {
     try {
       await _authService.forgotPassword(email);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 
@@ -70,7 +70,7 @@ class AuthRepository {
     try {
       await _authService.resetPassword(token, newPassword);
     } catch (e) {
-      throw e;
+      rethrow;
     }
   }
 }

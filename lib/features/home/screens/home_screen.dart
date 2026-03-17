@@ -5,8 +5,8 @@ import '../widgets/greeting_section.dart';
 import '../widgets/home_header.dart';
 import '../widgets/premium_services_card.dart';
 import '../widgets/vehicle_card.dart';
-import '../../../../core/router/app_router.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -51,7 +51,7 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.description_outlined,
                       title: "View Plans",
                       onTap: () {
-                        Navigator.pushNamed(context, AppRouter.plans);
+                        context.pushNamed('plans');
                       },
                     ),
                   ),
@@ -61,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                       icon: Icons.add_circle_outline,
                       title: "Add Vehicle",
                       onTap: () {
-                        Navigator.pushNamed(context, AppRouter.addVehicle);
+                        context.pushNamed('vehicles');
                       },
                     ),
                   ),
@@ -75,7 +75,7 @@ class HomeScreen extends StatelessWidget {
                 title: "Book Slot",
                 fullWidth: true,
                 onTap: () {
-                  Navigator.pushNamed(context, AppRouter.bookSlot);
+                  context.pushNamed('bookSlot');
                 },
               ),
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/constants/colors.dart';
-import 'core/router/app_router.dart';
+import 'core/router/go_router.dart';
 
 import 'data/services/api_service.dart';
 import 'data/services/auth_service.dart';
@@ -86,19 +86,18 @@ class AutozyApp extends StatelessWidget {
         ),
       ],
 
-      child: MaterialApp(
+      child: MaterialApp.router(
+        // ✅ FIXED
         title: 'Autozy',
         debugShowCheckedModeBanner: false,
 
+        routerConfig: AppGoRouter.router, // ✅ Correct usage
         /// APP THEME
         theme: ThemeData(
           fontFamily: 'Poppins',
-
           primaryColor: AppColors.primary,
-
           scaffoldBackgroundColor: AppColors.background,
 
-          /// APPBAR STYLE
           appBarTheme: AppBarTheme(
             backgroundColor: AppColors.background,
             elevation: 0,
@@ -111,7 +110,6 @@ class AutozyApp extends StatelessWidget {
             ),
           ),
 
-          /// BUTTON STYLE
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
@@ -131,10 +129,6 @@ class AutozyApp extends StatelessWidget {
             type: BottomNavigationBarType.fixed,
           ),
         ),
-
-        /// ROUTING
-        initialRoute: '/login',
-        onGenerateRoute: AppRouter.generateRoute,
       ),
     );
   }

@@ -2,7 +2,7 @@ import 'package:autozy/features/profile/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../features/home/screens/home_screen.dart';
-import '../../features/vehicles/vehicles_screen.dart';
+import '../../features/vehicles/screens/vehicles_screen.dart';
 import '../../features/plans/screens/plans_screen.dart';
 
 class MainScreen extends StatefulWidget {
