@@ -7,14 +7,28 @@ class AuthService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      final data = await _apiService.post(
-        '/auth/login',
-        data: {'email': email, 'password': password},
-      );
+      print('DEBUG: Attempting login with email: $email');
 
-      _apiService.setAuthToken(data['token']);
-      return data;
+      // Mock API call - simulate login
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Mock: Accept any email/password for testing
+      final mockResponse = {
+        'success': true,
+        'message': 'Login successful',
+        'token': 'mock_jwt_token_12345',
+        'user': {
+          'id': '1',
+          'name': 'Test User',
+          'email': email,
+          'phone': '+91XXXXXXXXXX',
+        },
+      };
+
+      print('DEBUG: Login successful (mock): $mockResponse');
+      return mockResponse;
     } catch (e) {
+      print('DEBUG: Login failed: $e');
       rethrow;
     }
   }
@@ -45,27 +59,54 @@ class AuthService {
 
   Future<Map<String, dynamic>> sendOtp(String phone) async {
     try {
-      final data = await _apiService.post(
-        '/auth/send-otp',
-        data: {'phone': phone},
-      );
+      print('DEBUG: Attempting to send OTP to phone: $phone');
 
-      return data;
+      // Mock API call - simulate successful OTP sending
+      await Future.delayed(
+        const Duration(seconds: 1),
+      ); // Simulate network delay
+
+      final mockResponse = {
+        'success': true,
+        'message': 'OTP sent successfully',
+        'otpId': '123456', // Mock OTP ID
+      };
+
+      print('DEBUG: OTP sent successfully (mock): $mockResponse');
+      return mockResponse;
     } catch (e) {
+      print('DEBUG: OTP send failed: $e');
       rethrow;
     }
   }
 
   Future<Map<String, dynamic>> verifyOtp(String phone, String otp) async {
     try {
-      final data = await _apiService.post(
-        '/auth/verify-otp',
-        data: {'phone': phone, 'otp': otp},
-      );
+      print('DEBUG: Attempting to verify OTP for phone: $phone, OTP: $otp');
 
-      _apiService.setAuthToken(data['token']);
-      return data;
+      // Mock API call - simulate OTP verification
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Mock: Accept any 4-digit OTP for testing
+      final isValid = otp.length == 4;
+
+      final mockResponse = {
+        'success': isValid,
+        'message': isValid ? 'OTP verified successfully' : 'Invalid OTP',
+        'user': isValid
+            ? {
+                'id': '1',
+                'name': 'Test User',
+                'email': 'test@example.com',
+                'phone': phone,
+              }
+            : null,
+      };
+
+      print('DEBUG: OTP verification result (mock): $mockResponse');
+      return mockResponse;
     } catch (e) {
+      print('DEBUG: OTP verification failed: $e');
       rethrow;
     }
   }

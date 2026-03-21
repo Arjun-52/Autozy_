@@ -1,146 +1,115 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../data/repositories/auth_repository.dart';
 import '../data/models/user_model.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthRepository _authRepository;
 
+  AuthProvider(this._authRepository);
+
   User? _user;
   bool _isLoading = false;
   String? _error;
-
-  AuthProvider(this._authRepository);
 
   User? get user => _user;
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get isAuthenticated => _user != null;
 
-  Future<void> login(String email, String password) async {
-    _setLoading(true);
-    _clearError();
-
-    try {
-      _user = await _authRepository.login(email, password);
-      notifyListeners();
-    } catch (e) {
-      _setError(e.toString());
-    } finally {
-      _setLoading(false);
-    }
+  /// ================= PHONE VALIDATION =================
+  bool _isValidPhone(String phone) {
+    final regex = RegExp(r'^[6-9]\d{9}$');
+    return regex.hasMatch(phone);
   }
 
-  Future<void> register(
-    String name,
-    String email,
-    String phone,
-    String password,
-  ) async {
-    _setLoading(true);
-    _clearError();
+  /// ================= SEND OTP =================
+  Future<bool> continueWithPhone(String phone) async {
+    phone = phone.trim();
 
-    try {
-      _user = await _authRepository.register(name, email, phone, password);
+    if (!_isValidPhone(phone)) {
+      _setError("Enter a valid 10 digit mobile number");
       notifyListeners();
-    } catch (e) {
-      _setError(e.toString());
-    } finally {
-      _setLoading(false);
+      return false;
     }
-  }
 
-  Future<void> sendOtp(String phone) async {
     _setLoading(true);
     _clearError();
+    notifyListeners();
 
     try {
       await _authRepository.sendOtp(phone);
+      return true;
     } catch (e) {
-      _setError(e.toString());
+      // Better error handling for debugging
+      String errorMessage = "Failed to send OTP";
+
+      if (e.toString().contains('Connection refused')) {
+        errorMessage =
+            "Server not responding. Please check your internet connection.";
+      } else if (e.toString().contains('timeout')) {
+        errorMessage = "Request timed out. Please try again.";
+      } else if (e.toString().contains('No internet')) {
+        errorMessage = "No internet connection. Please check your network.";
+      } else {
+        errorMessage = "Failed to send OTP: ${e.toString()}";
+      }
+
+      _setError(errorMessage);
+      return false;
     } finally {
       _setLoading(false);
+      notifyListeners();
     }
   }
 
-  Future<void> verifyOtp(String phone, String otp) async {
+  /// ================= VERIFY OTP =================
+  Future<bool> verifyOtpAndLogin(String phone, String otp) async {
+    if (otp.length != 4) {
+      _setError("Please enter complete OTP");
+      notifyListeners();
+      return false;
+    }
+
     _setLoading(true);
     _clearError();
+    notifyListeners();
 
     try {
       _user = await _authRepository.verifyOtp(phone, otp);
-      notifyListeners();
+      return true;
     } catch (e) {
-      _setError(e.toString());
+      _setError("Invalid OTP");
+      return false;
     } finally {
       _setLoading(false);
+      notifyListeners();
     }
   }
 
+  /// ================= LOGOUT =================
   Future<void> logout() async {
     _setLoading(true);
     _clearError();
+    notifyListeners();
 
     try {
       await _authRepository.logout();
       _user = null;
-      notifyListeners();
     } catch (e) {
-      _setError(e.toString());
+      _setError("Logout failed");
     } finally {
       _setLoading(false);
-    }
-  }
-
-  Future<void> refreshToken() async {
-    try {
-      _user = await _authRepository.refreshToken();
-      notifyListeners();
-    } catch (e) {
-      _setError(e.toString());
-      _user = null;
       notifyListeners();
     }
   }
 
-  Future<void> forgotPassword(String email) async {
-    _setLoading(true);
-    _clearError();
-
-    try {
-      await _authRepository.forgotPassword(email);
-    } catch (e) {
-      _setError(e.toString());
-    } finally {
-      _setLoading(false);
-    }
+  /// ================= HELPERS =================
+  void _setLoading(bool value) {
+    _isLoading = value;
   }
 
-  Future<void> resetPassword(String token, String newPassword) async {
-    _setLoading(true);
-    _clearError();
-
-    try {
-      await _authRepository.resetPassword(token, newPassword);
-    } catch (e) {
-      _setError(e.toString());
-    } finally {
-      _setLoading(false);
-    }
-  }
-
-  void updateUser(User user) {
-    _user = user;
-    notifyListeners();
-  }
-
-  void _setLoading(bool loading) {
-    _isLoading = loading;
-    notifyListeners();
-  }
-
-  void _setError(String error) {
-    _error = error;
-    notifyListeners();
+  void _setError(String message) {
+    _error = message;
   }
 
   void _clearError() {

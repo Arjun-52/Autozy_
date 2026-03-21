@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'https://api.autozy.com';
+  static const String baseUrl =
+      'https://jsonplaceholder.typicode.com'; // Mock API for testing
   String? _authToken;
 
   void setAuthToken(String token) {
     _authToken = token;
+    print('DEBUG: Auth token set: $token');
   }
 
   void clearAuthToken() {

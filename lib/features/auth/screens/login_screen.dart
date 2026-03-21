@@ -1,6 +1,9 @@
+import 'package:autozy/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
+
 import 'otp_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,70 +16,50 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController phoneController = TextEditingController();
 
-  bool isValidPhone(String phone) {
-    RegExp regex = RegExp(r'^[6-9]\d{9}$');
-    return regex.hasMatch(phone);
-  }
-
-  void continueLogin() {
-    String phone = phoneController.text.trim();
-
-    if (!isValidPhone(phone)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Enter a valid 10 digit mobile number")),
-      );
-      return;
-    }
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => OtpScreen(phone: phone)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+
+    /// 🔥 Show error from ViewModel
+    if (authProvider.error != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(authProvider.error!)));
+      });
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
-
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-
           child: Column(
             children: [
-              /// TOP SECTION
-              Column(
-                children: [
-                  const SizedBox(height: 40),
+              const SizedBox(height: 40),
 
-                  Container(
-                    height: 140,
-                    width: 140,
-                    decoration: BoxDecoration(
-                      color: AppColors.background,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Image.asset(
-                        "assets/images/logo.jpg",
-                        fit: BoxFit.contain,
-                      ),
-                    ),
+              /// LOGO
+              Container(
+                height: 140,
+                width: 140,
+                decoration: BoxDecoration(
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Image.asset(
+                    "assets/images/logo.jpg",
+                    fit: BoxFit.contain,
                   ),
-
-                  Text("autozy", style: AppTextStyles.heading1),
-
-                  const SizedBox(height: 1),
-
-                  Text("Customer", style: AppTextStyles.caption),
-                ],
+                ),
               ),
+
+              Text("autozy", style: AppTextStyles.heading1),
+              Text("Customer", style: AppTextStyles.caption),
 
               const SizedBox(height: 75),
 
-              /// LOGIN TITLE
               Text(
                 "Log in or Sign Up",
                 style: AppTextStyles.heading1.copyWith(
@@ -104,9 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-
                     const SizedBox(width: 10),
-
                     Expanded(
                       child: TextField(
                         controller: phoneController,
@@ -126,28 +107,48 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 24),
 
-              /// CONTINUE BUTTON
+              /// BUTTON
               SizedBox(
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: continueLogin,
+                  onPressed: authProvider.isLoading
+                      ? null
+                      : () async {
+                          final success = await context
+                              .read<AuthProvider>()
+                              .continueWithPhone(phoneController.text);
+
+                          if (success) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => OtpScreen(
+                                  phone: phoneController.text.trim(),
+                                ),
+                              ),
+                            );
+                          }
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.yellow,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text(
-                    "Continue",
-                    style: AppTextStyles.button.copyWith(color: Colors.black),
-                  ),
+                  child: authProvider.isLoading
+                      ? const CircularProgressIndicator(color: Colors.black)
+                      : Text(
+                          "Continue",
+                          style: AppTextStyles.button.copyWith(
+                            color: Colors.black,
+                          ),
+                        ),
                 ),
               ),
 
               const Spacer(),
 
-              /// TERMS
               const Text(
                 "By continuing, you agree to our Terms and Conditions\n& Privacy Policy",
                 textAlign: TextAlign.center,

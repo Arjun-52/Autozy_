@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
 
 class VerifyButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final Future<void> Function()? onPressed;
 
   const VerifyButton({super.key, required this.onPressed});
 
