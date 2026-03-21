@@ -1,5 +1,5 @@
-import 'package:autozy/features/home/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/services/navigation_service.dart';
 
 class InspectionHomeButton extends StatelessWidget {
   const InspectionHomeButton({super.key});
@@ -12,11 +12,9 @@ class InspectionHomeButton extends StatelessWidget {
 
       child: ElevatedButton(
         onPressed: () {
-          Navigator.pushReplacement(
+          NavigationService.navigateAndClearStackPath(
             context,
-            MaterialPageRoute(
-              builder: (_) => const HomeScreen(showPlanActiveCard: true),
-            ),
+            '/home?showPlanActiveCard=true',
           );
         },
 

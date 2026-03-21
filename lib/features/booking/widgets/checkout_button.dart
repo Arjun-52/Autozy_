@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import '../../../../core/services/navigation_service.dart';
 
 class CheckoutButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -24,7 +24,7 @@ class CheckoutButton extends StatelessWidget {
           ),
 
           onPressed: () {
-            context.pushNamed('payment');
+            NavigationService.navigateToNamed(context, 'payment');
           },
 
           child: const Text(
