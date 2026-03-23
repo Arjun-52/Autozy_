@@ -44,7 +44,11 @@ class AppGoRouter {
           final initialIndex =
               int.tryParse(state.uri.queryParameters['initialIndex'] ?? '0') ??
               0;
-          return MainScreen(initialIndex: initialIndex);
+          final showPlanActiveCard = state.extra as bool? ?? false;
+          return MainScreen(
+            initialIndex: initialIndex,
+            showPlanActiveCard: showPlanActiveCard,
+          );
         },
         routes: [
           GoRoute(
@@ -103,12 +107,9 @@ class AppGoRouter {
       GoRoute(
         path: '/inspection',
         name: 'inspection',
-        builder: (context, state) => const InspectionScreen(),
-      ),
-      GoRoute(
-        path: '/inspection-done',
-        name: 'inspectionDone',
-        builder: (context, state) => const InspectionDoneScreen(),
+        builder: (context, state) {
+          return const MainScreen(initialIndex: 0, screen: 'inspection');
+        },
       ),
 
       // Profile routes

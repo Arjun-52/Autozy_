@@ -218,6 +218,41 @@ class InvoicesScreen extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0, // 👈 change based on which tab this screen is
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.pushReplacementNamed(context, '/home');
+          } else if (index == 1) {
+            Navigator.pushReplacementNamed(context, '/vehicles');
+          } else if (index == 2) {
+            Navigator.pushReplacementNamed(context, '/plans');
+          } else if (index == 3) {
+            Navigator.pushReplacementNamed(context, '/profile');
+          }
+        },
+        selectedItemColor: const Color(0xffC68A00),
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.directions_car_outlined),
+            label: "Vehicles",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.access_time),
+            label: "Plans",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: "Profile",
+          ),
+        ],
+      ),
     );
   }
 }

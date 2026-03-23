@@ -1,5 +1,6 @@
 import 'package:autozy/features/profile/widgets/menu_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/router/navigation_helper.dart';
 import 'invoices_screen.dart';
 
@@ -16,6 +17,13 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         foregroundColor: Colors.black,
+
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go('/home');
+          },
+        ),
       ),
 
       body: SingleChildScrollView(
@@ -25,16 +33,7 @@ class ProfileScreen extends StatelessWidget {
             /// USER CARD
             InkWell(
               onTap: () {
-                // Safe navigation - ready for GoRouter migration
                 NavigationHelper.safeNavigate(context, 'editProfile');
-
-                // Original navigation (preserved for safety):
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => const EditProfileScreen(),
-                //   ),
-                // );
               },
               child: Container(
                 padding: const EdgeInsets.all(16),
@@ -84,7 +83,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 40),
 
             /// MENU ITEMS
             MenuTile(
@@ -108,30 +107,35 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             /// LOGOUT
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.red),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Icon(Icons.logout, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text(
-                    "Log Out",
-                    style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
+            GestureDetector(
+              onTap: () {
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.red),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(Icons.logout, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text(
+                      "Log Out",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
 
             /// APP INFO
             SizedBox(
@@ -151,10 +155,15 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Column(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.directions_car, size: 50, color: Colors.amber),
+                    Image.asset(
+                      'assets/images/logo.jpg',
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.contain,
+                    ),
                     SizedBox(height: 12),
                     Text(
                       "autozy",

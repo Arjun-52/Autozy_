@@ -85,6 +85,20 @@ class NavigationService {
     }
   }
 
+  /// Clear navigation stack and navigate to path with arguments
+  static void navigateAndClearStackPathWithArgs(
+    BuildContext context,
+    String path, {
+    Object? arguments,
+  }) {
+    try {
+      context.go(path, extra: arguments);
+    } catch (e) {
+      debugPrint('Navigation error: $e');
+      _fallbackNavigation(context, path, arguments, true);
+    }
+  }
+
   /// Pop current route
   static void pop(BuildContext context, {Object? result}) {
     try {

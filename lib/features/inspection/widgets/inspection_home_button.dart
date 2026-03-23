@@ -12,9 +12,10 @@ class InspectionHomeButton extends StatelessWidget {
 
       child: ElevatedButton(
         onPressed: () {
-          NavigationService.navigateAndClearStackPath(
+          NavigationService.navigateAndClearStackPathWithArgs(
             context,
-            '/home?showPlanActiveCard=true',
+            '/home',
+            arguments: true,
           );
         },
 
