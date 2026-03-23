@@ -16,13 +16,13 @@ class AuthProvider extends ChangeNotifier {
   String? get error => _error;
   bool get isAuthenticated => _user != null;
 
-  /// ================= PHONE VALIDATION =================
+  /// PHONE VALIDATION
   bool _isValidPhone(String phone) {
     final regex = RegExp(r'^[6-9]\d{9}$');
     return regex.hasMatch(phone);
   }
 
-  /// ================= SEND OTP =================
+  /// SEND OTP
   Future<bool> continueWithPhone(String phone) async {
     phone = phone.trim();
 
@@ -62,7 +62,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// ================= VERIFY OTP =================
+  /// VERIFY OTP
   Future<bool> verifyOtpAndLogin(String phone, String otp) async {
     if (otp.length != 4) {
       _setError("Please enter complete OTP");
@@ -86,7 +86,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// ================= LOGOUT =================
+  /// LOGOUT
   Future<void> logout() async {
     _setLoading(true);
     _clearError();
@@ -103,7 +103,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// ================= HELPERS =================
+  ///HELPERS
   void _setLoading(bool value) {
     _isLoading = value;
   }

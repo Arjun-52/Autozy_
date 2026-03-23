@@ -10,7 +10,7 @@ class ApiClient {
 
   String? _authToken;
 
-  /// Configuration for different environments
+
   static bool isProduction = true;
   static String get baseUrl => isProduction
       ? 'https://api.autozy.com'
@@ -41,7 +41,7 @@ class ApiClient {
     return headers;
   }
 
-  /// Enhanced GET with retry logic
+
   Future<Map<String, dynamic>> get(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
@@ -66,7 +66,7 @@ class ApiClient {
             .get(uri, headers: _getHeaders())
             .timeout(defaultTimeout);
 
-        // Apply response interceptor
+      
         final interceptedResponse = await ApiInterceptor.interceptResponse(
           response,
           request,
@@ -80,15 +80,13 @@ class ApiClient {
           throw _handleError(e);
         }
 
-        // Exponential backoff
+ 
         await Future.delayed(Duration(milliseconds: 1000 * attempt));
       }
     }
 
     throw Exception('Max retries exceeded');
   }
-
-  /// Enhanced POST with retry logic
   Future<Map<String, dynamic>> post(
     String endpoint, {
     dynamic data,

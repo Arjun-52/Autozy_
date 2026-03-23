@@ -20,7 +20,10 @@ class BookingSlotCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.17),
+            blurRadius: 10,
+          ),
         ],
       ),
       child: Row(
@@ -39,9 +42,9 @@ class BookingSlotCard extends StatelessWidget {
                 const SizedBox(height: 4),
 
                 Text(
-                  "$day, $date, $time",
+                  "Thursday, Mar 09, 08:00 - 13:00",
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
