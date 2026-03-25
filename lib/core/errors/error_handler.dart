@@ -1,11 +1,11 @@
-import 'dart:developer' as developer;
 import 'app_exceptions.dart';
+import '../utils/app_logger.dart';
 
 class ErrorHandler {
   static AppException handleException(dynamic error) {
-    // Log technical details for debugging
-    developer.log(
+    AppLogger.error(
       'Error occurred: ${error.runtimeType}',
+      tag: 'ErrorHandler',
       error: error,
       stackTrace: StackTrace.current,
     );

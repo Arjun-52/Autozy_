@@ -1,3 +1,4 @@
+import '../../core/utils/app_logger.dart';
 import 'api_service.dart';
 
 class AuthService {
@@ -7,7 +8,7 @@ class AuthService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
-      print('DEBUG: Attempting login with email: $email');
+      AppLogger.debug('Attempting login: $email', tag: 'Auth');
 
       // Mock API call - simulate login
       await Future.delayed(const Duration(seconds: 1));
@@ -25,10 +26,10 @@ class AuthService {
         },
       };
 
-      print('DEBUG: Login successful (mock): $mockResponse');
+      AppLogger.info('Login successful (mock)', tag: 'Auth');
       return mockResponse;
-    } catch (e) {
-      print('DEBUG: Login failed: $e');
+    } catch (e, st) {
+      AppLogger.error('Login failed', tag: 'Auth', error: e, stackTrace: st);
       rethrow;
     }
   }
@@ -40,6 +41,7 @@ class AuthService {
     String password,
   ) async {
     try {
+      AppLogger.debug('Registering user: $email', tag: 'Auth');
       final data = await _apiService.post(
         '/auth/register',
         data: {
@@ -51,38 +53,38 @@ class AuthService {
       );
 
       _apiService.setAuthToken(data['token']);
+      AppLogger.info('Registration successful', tag: 'Auth');
       return data;
-    } catch (e) {
+    } catch (e, st) {
+      AppLogger.error('Registration failed', tag: 'Auth', error: e, stackTrace: st);
       rethrow;
     }
   }
 
   Future<Map<String, dynamic>> sendOtp(String phone) async {
     try {
-      print('DEBUG: Attempting to send OTP to phone: $phone');
+      AppLogger.debug('Sending OTP to: $phone', tag: 'Auth');
 
       // Mock API call - simulate successful OTP sending
-      await Future.delayed(
-        const Duration(seconds: 1),
-      ); // Simulate network delay
+      await Future.delayed(const Duration(seconds: 1));
 
-      final mockResponse = {
+      final response = {
         'success': true,
         'message': 'OTP sent successfully',
-        'otpId': '123456', // Mock OTP ID
+        'otpId': '123456',
       };
 
-      print('DEBUG: OTP sent successfully (mock): $mockResponse');
-      return mockResponse;
-    } catch (e) {
-      print('DEBUG: OTP send failed: $e');
+      AppLogger.info('OTP sent successfully (mock)', tag: 'Auth');
+      return response;
+    } catch (e, st) {
+      AppLogger.error('OTP send failed', tag: 'Auth', error: e, stackTrace: st);
       rethrow;
     }
   }
 
   Future<Map<String, dynamic>> verifyOtp(String phone, String otp) async {
     try {
-      print('DEBUG: Attempting to verify OTP for phone: $phone, OTP: $otp');
+      AppLogger.debug('Verifying OTP for: $phone', tag: 'Auth');
 
       // Mock API call - simulate OTP verification
       await Future.delayed(const Duration(seconds: 1));
@@ -90,7 +92,7 @@ class AuthService {
       // Mock: Accept any 4-digit OTP for testing
       final isValid = otp.length == 4;
 
-      final mockResponse = {
+      final response = {
         'success': isValid,
         'message': isValid ? 'OTP verified successfully' : 'Invalid OTP',
         'user': isValid
@@ -103,19 +105,22 @@ class AuthService {
             : null,
       };
 
-      print('DEBUG: OTP verification result (mock): $mockResponse');
-      return mockResponse;
-    } catch (e) {
-      print('DEBUG: OTP verification failed: $e');
+      AppLogger.info('OTP verification: ${isValid ? 'success' : 'failed'}', tag: 'Auth');
+      return response;
+    } catch (e, st) {
+      AppLogger.error('OTP verification failed', tag: 'Auth', error: e, stackTrace: st);
       rethrow;
     }
   }
 
   Future<void> logout() async {
     try {
+      AppLogger.debug('Logging out', tag: 'Auth');
       await _apiService.post('/auth/logout');
       _apiService.clearAuthToken();
-    } catch (e) {
+      AppLogger.info('Logout successful', tag: 'Auth');
+    } catch (e, st) {
+      AppLogger.error('Logout failed', tag: 'Auth', error: e, stackTrace: st);
       _apiService.clearAuthToken();
       rethrow;
     }
@@ -123,11 +128,13 @@ class AuthService {
 
   Future<Map<String, dynamic>> refreshToken() async {
     try {
+      AppLogger.debug('Refreshing token', tag: 'Auth');
       final responseData = await _apiService.post('/auth/refresh-token');
-
       _apiService.setAuthToken(responseData['token']);
+      AppLogger.info('Token refreshed', tag: 'Auth');
       return responseData;
-    } catch (e) {
+    } catch (e, st) {
+      AppLogger.error('Token refresh failed', tag: 'Auth', error: e, stackTrace: st);
       _apiService.clearAuthToken();
       rethrow;
     }
@@ -135,13 +142,14 @@ class AuthService {
 
   Future<Map<String, dynamic>> forgotPassword(String email) async {
     try {
+      AppLogger.debug('Forgot password request: $email', tag: 'Auth');
       final data = await _apiService.post(
         '/auth/forgot-password',
         data: {'email': email},
       );
-
       return data;
-    } catch (e) {
+    } catch (e, st) {
+      AppLogger.error('Forgot password failed', tag: 'Auth', error: e, stackTrace: st);
       rethrow;
     }
   }
@@ -151,13 +159,14 @@ class AuthService {
     String newPassword,
   ) async {
     try {
+      AppLogger.debug('Resetting password', tag: 'Auth');
       final data = await _apiService.post(
         '/auth/reset-password',
         data: {'token': token, 'newPassword': newPassword},
       );
-
       return data;
-    } catch (e) {
+    } catch (e, st) {
+      AppLogger.error('Password reset failed', tag: 'Auth', error: e, stackTrace: st);
       rethrow;
     }
   }

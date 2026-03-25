@@ -136,12 +136,9 @@ class BookingProvider extends ChangeNotifier {
     try {
       await _bookingRepository.cancelBooking(bookingId);
 
-      final booking = _bookings.firstWhere((b) => b.id == bookingId);
-      final updatedBooking = booking.copyWith(status: 'cancelled');
-
       final index = _bookings.indexWhere((b) => b.id == bookingId);
       if (index != -1) {
-        _bookings[index] = updatedBooking;
+        _bookings[index] = _bookings[index].copyWith(status: 'cancelled');
       }
 
       _upcomingBookings.removeWhere((b) => b.id == bookingId);
@@ -162,21 +159,22 @@ class BookingProvider extends ChangeNotifier {
     try {
       await _bookingRepository.rescheduleBooking(bookingId, newDate);
 
-      final booking = _bookings.firstWhere((b) => b.id == bookingId);
-      final updatedBooking = booking.copyWith(bookingDate: newDate);
-
       final index = _bookings.indexWhere((b) => b.id == bookingId);
+      Booking? updatedBooking;
       if (index != -1) {
+        updatedBooking = _bookings[index].copyWith(bookingDate: newDate);
         _bookings[index] = updatedBooking;
       }
 
       _upcomingBookings.removeWhere((b) => b.id == bookingId);
       _pastBookings.removeWhere((b) => b.id == bookingId);
 
-      if (newDate.isAfter(DateTime.now())) {
-        _upcomingBookings.add(updatedBooking);
-      } else {
-        _pastBookings.add(updatedBooking);
+      if (updatedBooking != null) {
+        if (newDate.isAfter(DateTime.now())) {
+          _upcomingBookings.add(updatedBooking);
+        } else {
+          _pastBookings.add(updatedBooking);
+        }
       }
 
       notifyListeners();

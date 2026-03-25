@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../../core/utils/app_logger.dart';
 
 class ApiService {
   static const String baseUrl =
@@ -8,11 +9,12 @@ class ApiService {
 
   void setAuthToken(String token) {
     _authToken = token;
-    print('DEBUG: Auth token set: $token');
+    AppLogger.debug('Auth token set', tag: 'ApiService');
   }
 
   void clearAuthToken() {
     _authToken = null;
+    AppLogger.debug('Auth token cleared', tag: 'ApiService');
   }
 
   Map<String, String> _getHeaders() {

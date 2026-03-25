@@ -1,9 +1,9 @@
-import 'package:autozy/features/inspection/screens/inspection_done_screen.dart';
+import 'package:autozy/core/constants/colors.dart';
 import 'package:autozy/features/inspection/widgets/arrival_timer_card.dart';
 import 'package:autozy/features/inspection/widgets/inspection_info_box.dart';
 import 'package:autozy/features/inspection/widgets/inspection_progress_card.dart';
-import 'package:autozy/features/inspection/widgets/inspection_completed_card.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class InspectionScreen extends StatefulWidget {
   const InspectionScreen({super.key});
@@ -13,19 +13,14 @@ class InspectionScreen extends StatefulWidget {
 }
 
 class _InspectionScreenState extends State<InspectionScreen> {
-  bool inspectionCompleted = false;
-
   void onTimerFinished() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const InspectionDoneScreen()),
-    );
+    context.go('/inspection-done');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF6F6F6),
+      backgroundColor: AppColors.backgroundLight,
 
       appBar: AppBar(
         title: const Text("Inspection"),
@@ -44,9 +39,7 @@ class _InspectionScreenState extends State<InspectionScreen> {
 
             const SizedBox(height: 20),
 
-            inspectionCompleted
-                ? const InspectionCompletedCard()
-                : const InspectionProgressCard(),
+            const InspectionProgressCard(),
 
             const SizedBox(height: 20),
 

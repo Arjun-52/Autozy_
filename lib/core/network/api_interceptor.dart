@@ -1,5 +1,5 @@
-import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
+import '../utils/app_logger.dart';
 
 /// API interceptor for logging, auth, and error handling
 class ApiInterceptor {
@@ -7,7 +7,7 @@ class ApiInterceptor {
   static Future<http.BaseRequest> interceptRequest(
     http.BaseRequest request,
   ) async {
-    developer.log('API Request: ${request.method} ${request.url}');
+    AppLogger.debug('→ ${request.method} ${request.url}', tag: 'ApiInterceptor');
 
     // Add request ID for tracking
     request.headers['X-Request-ID'] = _generateRequestId();
@@ -21,13 +21,16 @@ class ApiInterceptor {
     http.Response response,
     http.BaseRequest request,
   ) async {
-    developer.log(
-      'API Response: ${response.statusCode} for ${request.url}',
-      error: response.statusCode >= 400 ? response.body : null,
-    );
-
-    // Log response time (simplified)
-    developer.log('Response completed');
+    final status = response.statusCode;
+    if (status >= 400) {
+      AppLogger.error(
+        '← $status ${request.url}',
+        tag: 'ApiInterceptor',
+        error: response.body,
+      );
+    } else {
+      AppLogger.debug('← $status ${request.url}', tag: 'ApiInterceptor');
+    }
 
     return response;
   }

@@ -127,16 +127,15 @@ class PlanProvider extends ChangeNotifier {
 
     try {
       await _planRepository.activatePlan(planId);
-      
-      final plan = _plans.firstWhere((p) => p.id == planId);
-      final updatedPlan = plan.copyWith(isActive: true);
-      
+
       final index = _plans.indexWhere((p) => p.id == planId);
+      Plan? updatedPlan;
       if (index != -1) {
+        updatedPlan = _plans[index].copyWith(isActive: true);
         _plans[index] = updatedPlan;
       }
-      
-      if (!_activePlans.any((p) => p.id == planId)) {
+
+      if (updatedPlan != null && !_activePlans.any((p) => p.id == planId)) {
         _activePlans.add(updatedPlan);
       }
       
@@ -154,15 +153,12 @@ class PlanProvider extends ChangeNotifier {
 
     try {
       await _planRepository.deactivatePlan(planId);
-      
-      final plan = _plans.firstWhere((p) => p.id == planId);
-      final updatedPlan = plan.copyWith(isActive: false);
-      
+
       final index = _plans.indexWhere((p) => p.id == planId);
       if (index != -1) {
-        _plans[index] = updatedPlan;
+        _plans[index] = _plans[index].copyWith(isActive: false);
       }
-      
+
       _activePlans.removeWhere((p) => p.id == planId);
       
       notifyListeners();

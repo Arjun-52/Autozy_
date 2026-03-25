@@ -1,6 +1,6 @@
-import 'dart:developer' as developer;
 import 'app_exceptions.dart';
 import 'error_handler.dart';
+import '../utils/app_logger.dart';
 
 class RetryHelper {
   /// Execute function with retry logic
@@ -19,15 +19,16 @@ class RetryHelper {
 
         // Check if we should retry
         final customShouldRetry = shouldRetry ?? ErrorHandler.isRetryable;
-        if (!customShouldRetry(lastException!) || attempt == maxRetries) {
-          developer.log('Retry failed after $attempt attempts');
+        if (!customShouldRetry(lastException) || attempt == maxRetries) {
+          AppLogger.warning('Retry failed after $attempt attempts', tag: 'RetryHelper');
           rethrow;
         }
 
         // Wait before retry
         final delay = ErrorHandler.getRetryDelay(lastException, attempt);
-        developer.log(
+        AppLogger.debug(
           'Retrying after ${delay}ms (attempt $attempt/$maxRetries)',
+          tag: 'RetryHelper',
         );
         await Future.delayed(Duration(milliseconds: delay));
       }

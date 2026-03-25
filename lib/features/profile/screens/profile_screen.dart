@@ -1,8 +1,8 @@
+import 'package:autozy/core/constants/colors.dart';
 import 'package:autozy/features/profile/widgets/menu_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/navigation_helper.dart';
-import 'invoices_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -10,7 +10,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF5F5F5),
+      backgroundColor: AppColors.background,
 
       appBar: AppBar(
         title: const Text("Profile"),
@@ -54,7 +54,7 @@ class ProfileScreen extends StatelessWidget {
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF6C431),
+                        color: AppColors.brandYellow,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Icon(Icons.person),
@@ -93,14 +93,7 @@ class ProfileScreen extends StatelessWidget {
             MenuTile(
               icon: Icons.receipt_long_outlined,
               title: "Invoices & Bills",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const InvoicesScreen(),
-                  ),
-                );
-              },
+              onTap: () => context.pushNamed('invoices'),
             ),
             MenuTile(icon: Icons.notifications_none, title: "Notifications"),
 
@@ -108,9 +101,7 @@ class ProfileScreen extends StatelessWidget {
 
             /// LOGOUT
             GestureDetector(
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/login');
-              },
+              onTap: () => context.go('/login'),
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),

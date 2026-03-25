@@ -1,3 +1,4 @@
+import 'package:autozy/core/constants/colors.dart';
 import 'package:autozy/features/inspection/widgets/inspection_completed_progress.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +14,7 @@ class InspectionDoneScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF5F5F5),
+      backgroundColor: AppColors.background,
 
       appBar: AppBar(
         backgroundColor: Colors.white,
