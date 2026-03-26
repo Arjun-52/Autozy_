@@ -3,9 +3,9 @@ import 'package:autozy/features/auth/widgets/otp_input_fields.dart';
 import 'package:autozy/features/auth/widgets/otp_logo.dart';
 import 'package:autozy/features/auth/widgets/resend_otp_text.dart';
 import 'package:autozy/features/auth/widgets/verify_button.dart';
-import 'package:autozy/features/navigation/main_screen.dart';
 import 'package:autozy/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/constants/colors.dart';
@@ -104,13 +104,8 @@ class _OtpScreenState extends State<OtpScreen> {
                             .read<AuthProvider>()
                             .verifyOtpAndLogin(widget.phone, otpProvider.otp);
 
-                        if (success) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const MainScreen(),
-                            ),
-                          );
+                        if (success && context.mounted) {
+                          context.go('/home');
                         }
                       },
               ),

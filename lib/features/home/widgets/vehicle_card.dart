@@ -13,7 +13,7 @@ class VehicleCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             spreadRadius: 2,
             offset: Offset(0, 4),
@@ -57,9 +57,9 @@ class VehicleCard extends StatelessWidget {
                   vertical: 5,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(.1),
+                  color: Colors.green.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.green.withOpacity(.8)),
+                  border: Border.all(color: Colors.green.withValues(alpha: 0.8)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

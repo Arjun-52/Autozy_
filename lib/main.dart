@@ -124,7 +124,7 @@ class AutozyApp extends StatelessWidget {
           bottomNavigationBarTheme: const BottomNavigationBarThemeData(
             showSelectedLabels: true,
             showUnselectedLabels: true,
-            selectedItemColor: Color(0xffC68A00),
+            selectedItemColor: AppColors.brandOrange,
             unselectedItemColor: Colors.grey,
             type: BottomNavigationBarType.fixed,
           ),

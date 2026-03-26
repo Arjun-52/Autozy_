@@ -153,12 +153,9 @@ class InspectionProvider extends ChangeNotifier {
     try {
       await _inspectionRepository.cancelInspection(inspectionId);
 
-      final inspection = _inspections.firstWhere((i) => i.id == inspectionId);
-      final updatedInspection = inspection.copyWith(status: 'cancelled');
-
       final index = _inspections.indexWhere((i) => i.id == inspectionId);
       if (index != -1) {
-        _inspections[index] = updatedInspection;
+        _inspections[index] = _inspections[index].copyWith(status: 'cancelled');
       }
 
       _upcomingInspections.removeWhere((i) => i.id == inspectionId);
@@ -185,16 +182,17 @@ class InspectionProvider extends ChangeNotifier {
         inspectionData,
       );
 
-      final inspection = _inspections.firstWhere((i) => i.id == inspectionId);
-      final updatedInspection = inspection.copyWith(status: 'completed');
-
       final index = _inspections.indexWhere((i) => i.id == inspectionId);
+      Booking? updatedInspection;
       if (index != -1) {
+        updatedInspection = _inspections[index].copyWith(status: 'completed');
         _inspections[index] = updatedInspection;
       }
 
       _upcomingInspections.removeWhere((i) => i.id == inspectionId);
-      _pastInspections.add(updatedInspection);
+      if (updatedInspection != null) {
+        _pastInspections.add(updatedInspection);
+      }
 
       notifyListeners();
     } catch (e) {

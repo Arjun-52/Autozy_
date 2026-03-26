@@ -1,10 +1,9 @@
 import 'package:autozy/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
-
-import 'otp_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -118,14 +117,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               .read<AuthProvider>()
                               .continueWithPhone(phoneController.text);
 
-                          if (success) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => OtpScreen(
-                                  phone: phoneController.text.trim(),
-                                ),
-                              ),
+                          if (success && context.mounted) {
+                            context.pushNamed(
+                              'otp',
+                              queryParameters: {
+                                'phone': phoneController.text.trim(),
+                              },
                             );
                           }
                         },

@@ -87,17 +87,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               width: double.infinity,
               height: 60,
               child: ElevatedButton(
-                onPressed: () {
-                  String name = nameController.text;
-                  String phone = phoneController.text;
-                  String email = emailController.text;
-
-                  print(name);
-                  print(phone);
-                  print(email);
-
-                  Navigator.pop(context);
-                },
+                onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFF6C431),
                   shape: RoundedRectangleBorder(

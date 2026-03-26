@@ -36,7 +36,7 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(.05), blurRadius: 10),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
         ],
       ),
       child: Column(
@@ -119,10 +119,7 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        final upi = upiController.text.trim();
-                        if (upi.isNotEmpty) {
-                          print("UPI Entered: $upi");
-                        }
+                        // TODO: handle UPI submission
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,

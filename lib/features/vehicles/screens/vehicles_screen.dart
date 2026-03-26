@@ -1,3 +1,4 @@
+import 'package:autozy/core/constants/colors.dart';
 import 'package:autozy/features/vehicles/widgets/add_vehicle_button.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +8,7 @@ class VehicleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF6F6F6),
+      backgroundColor: AppColors.backgroundLight,
 
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -33,7 +34,7 @@ class VehicleScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                   ),
                 ],
@@ -46,7 +47,7 @@ class VehicleScreen extends StatelessWidget {
                     width: 60,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF6C431),
+                      color: AppColors.brandYellow,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Icon(Icons.directions_car),
