@@ -43,7 +43,7 @@ class VehicleCard extends StatelessWidget {
                 children: [
                   Text(
                     "Hyundai Creta",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                   ),
                   Text("TS 01 AB 1234"),
                 ],
@@ -53,13 +53,15 @@ class VehicleCard extends StatelessWidget {
 
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 5,
+                  horizontal: 12,
+                  vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.green.withValues(alpha: 0.1),
+                  color: Color(0xFF008847).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.green.withValues(alpha: 0.8)),
+                  border: Border.all(
+                    color: Color(0xFF008847).withValues(alpha: 0.8),
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -68,7 +70,14 @@ class VehicleCard extends StatelessWidget {
 
                     SizedBox(width: 4),
 
-                    Text("Cleaned", style: TextStyle(color: Colors.green)),
+                    Text(
+                      "Cleaned",
+                      style: TextStyle(
+                        color: Color(0xFF008847),
+                        fontWeight: FontWeight.w500,
+                        fontSize: 10,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -80,7 +89,7 @@ class VehicleCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: Colors.grey.shade200,
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Text("✨ Your car was cleaned today at 7:15 AM"),

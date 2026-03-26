@@ -21,7 +21,9 @@ class ProfileScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.go('/home');
+            print("Before back, route: ${GoRouterState.of(context).uri}");
+
+            context.go('/home?initialIndex=0');
           },
         ),
       ),
@@ -160,7 +162,7 @@ class ProfileScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'assets/images/logo.png',
+                      'assets/images/new-logo.png',
                       width: 50,
                       height: 50,
                       fit: BoxFit.contain,

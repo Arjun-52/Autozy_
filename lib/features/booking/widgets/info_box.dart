@@ -20,6 +20,11 @@ class InfoBox extends StatelessWidget {
           Expanded(
             child: Text(
               "Slots must be booked at least 48 hours in advance. Availability depends on area capacity.",
+              style: TextStyle(
+                color: Color(0xFF3E4347),
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],

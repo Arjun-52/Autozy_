@@ -33,7 +33,7 @@ class PremiumServicesCard extends StatelessWidget {
               children: [
                 Text(
                   "Premium Services",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 SizedBox(height: 4),
                 Text("Interior deep cleaning, ceramic coating & more"),

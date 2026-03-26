@@ -24,7 +24,7 @@ class InvoicesScreen extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               value,
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
             Text(label, style: const TextStyle(color: Colors.grey)),
           ],
@@ -113,7 +113,8 @@ class InvoicesScreen extends StatelessWidget {
                       paid ? "Paid" : "Failed",
                       style: TextStyle(
                         color: paid ? Colors.green : Colors.red,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 10,
                       ),
                     ),
                   ],
@@ -137,8 +138,8 @@ class InvoicesScreen extends StatelessWidget {
                   Text(
                     price,
                     style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(width: 6),
@@ -162,7 +163,11 @@ class InvoicesScreen extends StatelessWidget {
         elevation: 0,
         title: const Text(
           "Invoices & Bills",
-          style: TextStyle(color: Colors.black, fontSize: 19),
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
@@ -219,7 +224,7 @@ class InvoicesScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0, // 👈 change based on which tab this screen is
+        currentIndex: 0,
         onTap: (index) {
           if (index == 0) {
             Navigator.pushReplacementNamed(context, '/home');

@@ -32,7 +32,12 @@ class OrderSuccessScreen extends StatelessWidget {
               "Your plan and slot has been booked\nsuccessfully",
               textAlign: TextAlign.center,
 
-              style: TextStyle(color: Colors.grey, fontSize: 16, height: 1.4),
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+                height: 1.4,
+                fontWeight: FontWeight.w500,
+              ),
             ),
 
             const SizedBox(height: 30),

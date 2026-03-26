@@ -25,7 +25,7 @@ class PlanDetailsCard extends StatelessWidget {
         children: [
           const Text(
             "Plan Details",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
           ),
 
           const SizedBox(height: 16),
@@ -38,7 +38,12 @@ class PlanDetailsCard extends StatelessWidget {
                   color: const Color(0xffF4C430),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.auto_awesome),
+                child: Image.asset(
+                  'assets/images/star-icon.png',
+                  height: 24,
+                  width: 24,
+                  fit: BoxFit.contain,
+                ),
               ),
 
               const SizedBox(width: 14),
@@ -48,7 +53,11 @@ class PlanDetailsCard extends StatelessWidget {
                 children: const [
                   Text(
                     "Standard",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      color: Color(0xFF7E8392),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
 
                   SizedBox(height: 4),
@@ -57,7 +66,7 @@ class PlanDetailsCard extends StatelessWidget {
                     TextSpan(
                       children: [
                         TextSpan(
-                          text: "₹799 /",
+                          text: "₹799",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -65,10 +74,11 @@ class PlanDetailsCard extends StatelessWidget {
                           ),
                         ),
                         TextSpan(
-                          text: "month",
+                          text: " /month",
                           style: TextStyle(
                             fontSize: 16,
-                            color: AppColors.onSurface,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF7E8392),
                           ),
                         ),
                       ],

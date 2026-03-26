@@ -20,7 +20,7 @@ class PayButton extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xffF4C430),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(15),
               ),
             ),
 
@@ -29,9 +29,9 @@ class PayButton extends StatelessWidget {
             child: Text(
               "Pay ₹$price",
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 18,
                 color: Colors.black,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

@@ -11,13 +11,10 @@ import '../../features/booking/screens/book_slot_screen.dart';
 import '../../features/booking/screens/checkout_screen.dart';
 import '../../features/booking/screens/payment_screen.dart';
 import '../../features/booking/screens/order_success_screen.dart';
-import '../../features/inspection/screens/inspection_screen.dart';
 import '../../features/inspection/screens/inspection_done_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/invoices_screen.dart';
 
-/// Centralized GoRouter configuration
-/// Preserves all existing route behavior while providing modern navigation
 class AppGoRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/login',
@@ -48,25 +45,35 @@ class AppGoRouter {
               0;
           final showPlanActiveCard = state.extra as bool? ?? false;
           return MainScreen(
+            key: ValueKey('home-$initialIndex'),
             initialIndex: initialIndex,
             showPlanActiveCard: showPlanActiveCard,
           );
         },
         routes: [
           GoRoute(
-            path: '/vehicles',
+            path: 'vehicles',
             name: 'vehicles',
-            builder: (context, state) => const MainScreen(initialIndex: 1),
+            builder: (context, state) => const MainScreen(
+              key: ValueKey('home-1'),
+              initialIndex: 1,
+            ),
           ),
           GoRoute(
-            path: '/plans',
+            path: 'plans',
             name: 'plans',
-            builder: (context, state) => const MainScreen(initialIndex: 2),
+            builder: (context, state) => const MainScreen(
+              key: ValueKey('home-2'),
+              initialIndex: 2,
+            ),
           ),
           GoRoute(
-            path: '/profile',
+            path: 'profile',
             name: 'profile',
-            builder: (context, state) => const MainScreen(initialIndex: 3),
+            builder: (context, state) => const MainScreen(
+              key: ValueKey('home-3'),
+              initialIndex: 3,
+            ),
           ),
         ],
       ),
@@ -134,7 +141,11 @@ class AppGoRouter {
         path: '/inspection',
         name: 'inspection',
         builder: (context, state) {
-          return const MainScreen(initialIndex: 0, screen: 'inspection');
+          return const MainScreen(
+            key: ValueKey('home-inspection'),
+            initialIndex: 0,
+            screen: 'inspection',
+          );
         },
       ),
 

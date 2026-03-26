@@ -46,7 +46,7 @@ class _ResendOtpTextState extends State<ResendOtpText> {
 
           otpProvider.canResend
               ? TextSpan(
-                  text: "Resend",
+                  text: "Resend OTP",
                   style: AppTextStyles.caption.copyWith(
                     color: const Color(0xFFDD900C),
                     fontWeight: FontWeight.w600,

@@ -85,7 +85,11 @@ class _OtpScreenState extends State<OtpScreen> {
 
               const Text(
                 "Enter The Code",
-                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
               ),
 
               const SizedBox(height: 30),

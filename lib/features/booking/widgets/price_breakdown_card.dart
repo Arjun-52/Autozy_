@@ -25,7 +25,7 @@ class PriceBreakdownCard extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text(
               "Price Breakdown",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
           ),
 
@@ -66,14 +66,14 @@ class _PriceRow extends StatelessWidget {
           title,
           style: TextStyle(
             color: isBold ? Colors.black : Colors.grey,
-            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-            fontSize: isBold ? 18 : 16,
+            fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
+            fontSize: isBold ? 14 : 14,
           ),
         ),
         Text(
           price,
           style: TextStyle(
-            fontWeight: isBold ? FontWeight.bold : FontWeight.w500,
+            fontWeight: isBold ? FontWeight.w500 : FontWeight.w500,
             fontSize: isBold ? 18 : 16,
           ),
         ),

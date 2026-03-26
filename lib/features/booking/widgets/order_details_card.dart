@@ -14,7 +14,10 @@ class OrderDetailsCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+          ),
         ],
       ),
 
@@ -110,7 +113,10 @@ class OrderDetailsCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Plan Details", style: TextStyle(fontSize: 18)),
+                const Text(
+                  "Plan Details",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
 
                 const SizedBox(height: 12),
 
@@ -123,7 +129,12 @@ class OrderDetailsCard extends StatelessWidget {
                         color: const Color(0xffF4C430),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.auto_awesome),
+                      child: Image.asset(
+                        'assets/images/star-icon.png',
+                        height: 24,
+                        width: 24,
+                        fit: BoxFit.contain,
+                      ),
                     ),
 
                     const SizedBox(width: 10),
@@ -133,9 +144,27 @@ class OrderDetailsCard extends StatelessWidget {
                       children: [
                         Text("Standard"),
 
-                        Text(
-                          "₹799 /month",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "₹799",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: AppColors.onSurface,
+                                ),
+                              ),
+                              TextSpan(
+                                text: " /month",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF7E8392),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -152,12 +181,12 @@ class OrderDetailsCard extends StatelessWidget {
             children: [
               Text(
                 "Amount Paid",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
               ),
               const Spacer(),
               Text(
                 "₹799",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
               ),
             ],
           ),

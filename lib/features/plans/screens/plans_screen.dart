@@ -15,7 +15,7 @@ class _PlansScreenState extends State<PlansScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF6F6F6),
+      backgroundColor: const Color(0xFFF6F6F6),
 
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -23,12 +23,12 @@ class _PlansScreenState extends State<PlansScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.pop(context);
+            context.goNamed('home');
           },
         ),
         title: const Text(
           "Plans",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
         ),
       ),
 
@@ -43,11 +43,28 @@ class _PlansScreenState extends State<PlansScreen> {
                   PlanCard(
                     title: "Basic",
                     price: "₹499",
-                    icon: Icons.sell_outlined,
+                    icon: Container(
+                      height: 36,
+                      width: 36,
+                      decoration: BoxDecoration(
+                        color: selectedPlan == 0
+                            ? const Color(0xFFFFC107) // selected
+                            : const Color(0xFFFFECBC), // not selected
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/basic-icon.png',
+                          height: 20,
+                          width: 20,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
                     features: [
-                      "Daily exterior wash",
-                      "Dashboard wipe",
-                      "Feature number three",
+                      {"title": "Daily exterior wash", "isSelected": true},
+                      {"title": "Dashboard wipe", "isSelected": true},
+                      {"title": "Feature number three", "isSelected": true},
                     ],
                     isSelected: selectedPlan == 0,
                     onTap: () {
@@ -56,20 +73,38 @@ class _PlansScreenState extends State<PlansScreen> {
                       });
                     },
                   ),
-
                   const SizedBox(height: 16),
 
                   /// STANDARD PLAN
                   PlanCard(
                     title: "Standard",
                     price: "₹799",
-                    icon: Icons.auto_awesome,
+                    icon: Container(
+                      height: 36,
+                      width: 36,
+                      decoration: BoxDecoration(
+                        color: selectedPlan == 1
+                            ? const Color(0xFFFFC107) // selected (dark yellow)
+                            : const Color(
+                                0xFFFFECBC,
+                              ), // not selected (light yellow)
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/star-icon.png',
+                          height: 20,
+                          width: 20,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
                     isPopular: true,
                     features: [
-                      "Everything in Basic",
-                      "Interior vacuum (weekly)",
-                      "Tyre dressing (weekly)",
-                      "Priority Support",
+                      {"title": "Everything in Basic", "isSelected": true},
+                      {"title": "Interior vacuum (weekly)", "isSelected": true},
+                      {"title": "Tyre dressing (weekly)", "isSelected": true},
+                      {"title": "Priority Support", "isSelected": true},
                     ],
                     isSelected: selectedPlan == 1,
                     onTap: () {
@@ -85,13 +120,38 @@ class _PlansScreenState extends State<PlansScreen> {
                   PlanCard(
                     title: "Premium",
                     price: "₹1,299",
-                    icon: Icons.workspace_premium,
+                    icon: Container(
+                      height: 36,
+                      width: 36,
+                      decoration: BoxDecoration(
+                        color: selectedPlan == 2
+                            ? const Color(0xFFFFC107) // selected (dark yellow)
+                            : const Color(
+                                0xFFFFECBC,
+                              ), // not selected (light yellow)
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/ranking-icon.png',
+                          height: 20,
+                          width: 20,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
                     features: [
-                      "Everything in Standard",
-                      "Full interior clean (bi-weekly)",
-                      "AC vent cleaning",
-                      "Ceramic spray coating (monthly)",
-                      "Dedicated detailer",
+                      {"title": "Everything in Standard", "isSelected": true},
+                      {
+                        "title": "Full interior clean (bi-weekly)",
+                        "isSelected": true,
+                      },
+                      {"title": "AC vent cleaning", "isSelected": true},
+                      {
+                        "title": "Ceramic spray coating (monthly)",
+                        "isSelected": true,
+                      },
+                      {"title": "Dedicated detailer", "isSelected": true},
                     ],
                     isSelected: selectedPlan == 2,
                     onTap: () {
@@ -100,7 +160,6 @@ class _PlansScreenState extends State<PlansScreen> {
                       });
                     },
                   ),
-
                   const SizedBox(height: 100),
                 ],
               ),
@@ -133,6 +192,22 @@ class _PlansScreenState extends State<PlansScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget buildPlanIcon(String path, bool isSelected) {
+    return Container(
+      height: 36,
+      width: 36,
+      decoration: BoxDecoration(
+        color: isSelected
+            ? const Color(0xFFFFC107) // selected
+            : const Color(0xFFFFECBC), // not selected
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Center(
+        child: Image.asset(path, height: 20, width: 20, fit: BoxFit.contain),
       ),
     );
   }

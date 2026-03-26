@@ -31,8 +31,8 @@ class CheckoutButton extends StatelessWidget {
             "Proceed to Payment",
             style: TextStyle(
               color: Colors.black,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),

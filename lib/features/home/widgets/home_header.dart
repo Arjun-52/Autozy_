@@ -16,13 +16,13 @@ class HomeHeader extends StatelessWidget {
               height: 62,
               width: 62,
               decoration: BoxDecoration(
-                color: const Color(0xFFF5F0E3),
+                color: const Color(0xFFF5F0E3).withValues(alpha: 0.099),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8),
                 child: Image.asset(
-                  'assets/images/logo.png',
+                  'assets/images/new-logo.png',
                   fit: BoxFit.contain,
                 ),
               ),
@@ -30,7 +30,7 @@ class HomeHeader extends StatelessWidget {
             const SizedBox(width: 10),
             const Text(
               "autozy",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ],
         ),

@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(10),
                   child: Image.asset(
-                    "assets/images/logo.png",
+                    "assets/images/new-logo.png",
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -84,6 +84,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
+                    ),
+                    SizedBox(width: 4),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 18,
+                      color: Colors.black,
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -146,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const Spacer(),
 
               const Text(
-                "By continuing, you agree to our Terms and Conditions\n& Privacy Policy",
+                "By continuing, you agree to our Terms and Conditions& Privacy Policy",
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Color(0xFF5B5B5E)),
               ),

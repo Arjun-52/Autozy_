@@ -1,5 +1,5 @@
-import 'package:autozy/features/vehicles/screens/vehicles_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key});
@@ -11,10 +11,7 @@ class BottomNavBar extends StatelessWidget {
 
       onTap: (index) {
         if (index == 1) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const VehicleScreen()),
-          );
+          context.go('/home/vehicles');
         }
       },
 

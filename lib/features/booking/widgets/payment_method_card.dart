@@ -36,7 +36,10 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 10,
+          ),
         ],
       ),
       child: Column(
@@ -48,7 +51,7 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
               alignment: Alignment.centerLeft,
               child: Text(
                 "UPI",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
             ),
           ),

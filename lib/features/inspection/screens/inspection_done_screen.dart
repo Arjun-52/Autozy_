@@ -25,7 +25,14 @@ class InspectionDoneScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        title: const Text("Inspection", style: TextStyle(color: Colors.black)),
+        title: const Text(
+          "Inspection",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
+            fontSize: 18,
+          ),
+        ),
       ),
 
       body: SingleChildScrollView(

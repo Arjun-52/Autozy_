@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 class PlanCard extends StatelessWidget {
   final String title;
   final String price;
-  final List<String> features;
+  final List<Map<String, dynamic>> features;
   final bool isPopular;
   final bool isSelected;
   final VoidCallback onTap;
-  final IconData icon;
+  final Widget icon;
 
   const PlanCard({
     super.key,
@@ -34,7 +34,10 @@ class PlanCard extends StatelessWidget {
             width: 2,
           ),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+            ),
           ],
         ),
         child: Column(
@@ -73,7 +76,7 @@ class PlanCard extends StatelessWidget {
                             : const Color(0xFFFFECBC),
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: Icon(icon, color: Colors.black, size: 26),
+                      child: icon,
                     ),
 
                     const SizedBox(width: 12),
@@ -85,8 +88,8 @@ class PlanCard extends StatelessWidget {
                         Text(
                           title,
                           style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
 
@@ -97,13 +100,17 @@ class PlanCard extends StatelessWidget {
                             Text(
                               price,
                               style: const TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                             const Text(
                               " /month",
-                              style: TextStyle(color: Color(0xFF7E8392)),
+                              style: TextStyle(
+                                color: Color(0xFF7E8392),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ],
                         ),
@@ -113,11 +120,19 @@ class PlanCard extends StatelessWidget {
                 ),
 
                 /// SELECTED CHECK CIRCLE
-                CircleAvatar(
-                  radius: 14,
-                  backgroundColor: isSelected
-                      ? const Color(0xffF4C430)
-                      : Colors.grey[300],
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isSelected ? const Color(0xFFFFCB2F) : Colors.white,
+                    border: Border.all(
+                      color: isSelected
+                          ? const Color(0xFFFFCB2F)
+                          : Colors.grey.shade400,
+                      width: 2,
+                    ),
+                  ),
                   child: isSelected
                       ? const Icon(Icons.check, size: 16, color: Colors.black)
                       : null,
@@ -127,24 +142,33 @@ class PlanCard extends StatelessWidget {
             const SizedBox(height: 16),
 
             Column(
-              children: features
-                  .map(
-                    (f) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.check,
-                            size: 18,
-                            color: Color(0xffC68A00),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(f),
-                        ],
+              children: features.map((f) {
+                final isSelected = f["isSelected"] as bool;
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.check,
+                        size: 18,
+                        color: isSelected
+                            ? const Color(0xFFFFCB2F)
+                            : const Color(0xFF7E8392),
                       ),
-                    ),
-                  )
-                  .toList(),
+                      const SizedBox(width: 8),
+                      Text(
+                        f["title"] as String,
+                        style: TextStyle(
+                          color: isSelected
+                              ? Colors.black
+                              : const Color(0xFF7E8392),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
           ],
         ),

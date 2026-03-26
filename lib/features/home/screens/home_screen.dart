@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F0E3),
+      backgroundColor: const Color(0xFFFFFFFF),
 
       body: SafeArea(
         child: Padding(
@@ -38,7 +38,7 @@ class HomeScreen extends StatelessWidget {
 
               const Text(
                 "Explore",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
 
               const SizedBox(height: 16),
@@ -47,7 +47,11 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: ExploreCard(
-                      icon: Icons.description_outlined,
+                      icon: Image.asset(
+                        'assets/images/view_plan_icon.png',
+                        height: 24,
+                        width: 24,
+                      ),
                       title: "View Plans",
                       onTap: () {
                         context.pushNamed('plans');
@@ -57,7 +61,7 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(width: 14),
                   Expanded(
                     child: ExploreCard(
-                      icon: Icons.add_circle_outline,
+                      icon: Icon(Icons.add_circle_outline),
                       title: "Add Vehicle",
                       onTap: () {
                         context.pushNamed('vehicles');
@@ -70,7 +74,11 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 14),
 
               ExploreCard(
-                icon: Icons.calendar_today_outlined,
+                icon: Image.asset(
+                  'assets/images/bookslot_icon.png',
+                  height: 24,
+                  width: 24,
+                ),
                 title: "Book Slot",
                 fullWidth: true,
                 onTap: () {

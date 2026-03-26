@@ -15,7 +15,7 @@ class OtpLogo extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(10),
-        child: Image.asset("assets/images/logo.png", fit: BoxFit.contain),
+        child: Image.asset("assets/images/new-logo.png", fit: BoxFit.contain),
       ),
     );
   }

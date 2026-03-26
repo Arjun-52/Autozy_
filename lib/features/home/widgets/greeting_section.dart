@@ -10,7 +10,7 @@ class GreetingSection extends StatelessWidget {
       children: [
         Text(
           "Good morning!",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
         ),
 
         SizedBox(height: 4),

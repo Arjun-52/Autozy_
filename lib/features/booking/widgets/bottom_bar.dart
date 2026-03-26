@@ -52,7 +52,8 @@ class BottomBar extends StatelessWidget {
               "Next",
               style: TextStyle(
                 color: Colors.black,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
               ),
             ),
           ),

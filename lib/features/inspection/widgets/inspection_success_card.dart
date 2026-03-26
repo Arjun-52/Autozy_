@@ -25,13 +25,14 @@ class InspectionSuccessCard extends StatelessWidget {
 
           Text(
             "Inspection Complete!",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
 
           SizedBox(height: 6),
 
           Text(
             "Your Standard plan service will start soon",
+            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
             textAlign: TextAlign.center,
           ),
         ],

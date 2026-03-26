@@ -41,7 +41,7 @@ class AddressCard extends StatelessWidget {
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
-                  Text(address, style: const TextStyle(color: Colors.grey)),
+                  Text(address, style: const TextStyle(color: Colors.black)),
                 ],
               ),
             ),

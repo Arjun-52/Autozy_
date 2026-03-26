@@ -2,6 +2,7 @@ import 'package:autozy/features/inspection/screens/inspection_done_screen.dart';
 import 'package:autozy/features/inspection/screens/inspection_screen.dart';
 import 'package:autozy/features/profile/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../features/home/screens/home_screen.dart';
 import '../../features/vehicles/screens/vehicles_screen.dart';
@@ -24,8 +25,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  late int currentIndex;
-
   final List<Widget> screens = [
     const HomeScreen(),
     const VehicleScreen(),
@@ -33,20 +32,15 @@ class _MainScreenState extends State<MainScreen> {
     const ProfileScreen(),
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    currentIndex = widget.initialIndex;
-  }
-
   void onTabTapped(int index) {
-    setState(() {
-      currentIndex = index;
-    });
+    // Drive tab changes through routing so UI always matches the URL.
+    context.go('/home?initialIndex=$index');
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentIndex = widget.initialIndex;
+    print("MainScreen build, route: ${GoRouterState.of(context).uri}");
     return Scaffold(
       body: () {
         if (widget.screen == 'inspection') {

@@ -25,7 +25,7 @@ class TimeSlotList extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: selected ? const Color(0xffF5E6C8) : Colors.white,
+              color: selected ? const Color(0xFFFFFBF0) : Colors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: selected ? Colors.orange : Colors.grey.shade300,
@@ -52,7 +52,17 @@ class TimeSlotList extends StatelessWidget {
                   ],
                 ),
                 if (selected)
-                  const Icon(Icons.check_circle, color: Colors.orange),
+                  Container(
+                    height: 24,
+                    width: 24,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFFFC107),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Center(
+                      child: Icon(Icons.check, color: Colors.black, size: 16),
+                    ),
+                  ),
               ],
             ),
           ),

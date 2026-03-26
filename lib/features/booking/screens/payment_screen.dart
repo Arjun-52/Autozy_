@@ -26,7 +26,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
       backgroundColor: const Color(0xffF6F6F6),
 
       appBar: AppBar(
-        title: const Text("Payment"),
+        title: const Text(
+          "Payment",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         foregroundColor: Colors.black,
@@ -42,7 +45,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 "Select Payment Method",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
               ),
             ),
           ),
