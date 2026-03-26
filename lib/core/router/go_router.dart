@@ -11,7 +11,7 @@ import '../../features/booking/screens/book_slot_screen.dart';
 import '../../features/booking/screens/checkout_screen.dart';
 import '../../features/booking/screens/payment_screen.dart';
 import '../../features/booking/screens/order_success_screen.dart';
-import '../../features/inspection/screens/inspection_screen.dart';
+
 import '../../features/inspection/screens/inspection_done_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/invoices_screen.dart';
