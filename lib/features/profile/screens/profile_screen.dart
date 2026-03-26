@@ -87,8 +87,11 @@ class ProfileScreen extends StatelessWidget {
 
             /// MENU ITEMS
             MenuTile(
-              icon: Icons.location_on_outlined,
+              icon: Icons.location_on,
               title: "Saved Addresses",
+              onTap: () {
+                context.push('/saved-address');
+              },
             ),
             MenuTile(
               icon: Icons.receipt_long_outlined,
@@ -102,7 +105,14 @@ class ProfileScreen extends StatelessWidget {
                 );
               },
             ),
-            MenuTile(icon: Icons.notifications_none, title: "Notifications"),
+            MenuTile(
+              icon: Icons.notifications_none,
+              title: "Notifications",
+              showBadge: true,
+              onTap: () {
+                context.push('/notifications');
+              },
+            ),
 
             const SizedBox(height: 20),
 
@@ -144,11 +154,11 @@ class ProfileScreen extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Color(0xFFEEEEEE),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
+                      color: Colors.black.withValues(alpha: 0.2),
                       blurRadius: 12,
                       spreadRadius: 1,
                       offset: const Offset(0, 4),
@@ -159,7 +169,7 @@ class ProfileScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'assets/images/logo.jpg',
+                      'assets/images/logo.png',
                       width: 50,
                       height: 50,
                       fit: BoxFit.contain,

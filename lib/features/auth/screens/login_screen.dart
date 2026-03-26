@@ -20,7 +20,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
 
-   
     if (authProvider.error != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(
@@ -49,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(10),
                   child: Image.asset(
-                    "assets/images/logo.jpg",
+                    "assets/images/logo.png",
                     fit: BoxFit.contain,
                   ),
                 ),

@@ -1,4 +1,6 @@
 import 'package:autozy/features/navigation/main_screen.dart';
+import 'package:autozy/features/notification/notification_screen.dart';
+import 'package:autozy/features/profile/screens/saved_address_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -69,6 +71,30 @@ class AppGoRouter {
         ],
       ),
 
+      // Notification route
+      GoRoute(
+        path: '/notifications',
+        name: 'notifications',
+        builder: (context, state) => const NotificationScreen(),
+      ),
+
+      // Profile routes
+      GoRoute(
+        path: '/saved-address',
+        name: 'savedAddress',
+        builder: (context, state) => const SavedAddressScreen(),
+      ),
+      GoRoute(
+        path: '/edit-profile',
+        name: 'editProfile',
+        builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/invoices',
+        name: 'invoices',
+        builder: (context, state) => const InvoicesScreen(),
+      ),
+
       // Vehicle routes
       GoRoute(
         path: '/add-vehicle',
@@ -111,17 +137,10 @@ class AppGoRouter {
           return const MainScreen(initialIndex: 0, screen: 'inspection');
         },
       ),
-
-      // Profile routes
       GoRoute(
-        path: '/edit-profile',
-        name: 'editProfile',
-        builder: (context, state) => const EditProfileScreen(),
-      ),
-      GoRoute(
-        path: '/invoices',
-        name: 'invoices',
-        builder: (context, state) => const InvoicesScreen(),
+        path: '/inspection-done',
+        name: 'inspectionDone',
+        builder: (context, state) => const InspectionDoneScreen(),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
@@ -190,4 +209,6 @@ class AppRoutes {
   static const String inspectionDone = '/inspection-done';
   static const String editProfile = '/edit-profile';
   static const String invoices = '/invoices';
+  static const String notifications = '/notifications';
+  static const String savedAddress = '/saved-address';
 }

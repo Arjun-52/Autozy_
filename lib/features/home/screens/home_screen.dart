@@ -7,7 +7,6 @@ import '../widgets/premium_services_card.dart';
 import '../widgets/vehicle_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/colors.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, this.showPlanActiveCard = false});
@@ -16,7 +15,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFFF5F0E3),
 
       body: SafeArea(
         child: Padding(

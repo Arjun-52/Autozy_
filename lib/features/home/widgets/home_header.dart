@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/colors.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
@@ -13,13 +13,19 @@ class HomeHeader extends StatelessWidget {
         Row(
           children: [
             Container(
-              height: 42,
-              width: 42,
+              height: 62,
+              width: 62,
               decoration: BoxDecoration(
-                color: AppColors.yellow,
+                color: const Color(0xFFF5F0E3),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.directions_car),
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
             const SizedBox(width: 10),
             const Text(
@@ -29,23 +35,28 @@ class HomeHeader extends StatelessWidget {
           ],
         ),
 
-        Stack(
-          children: [
-            const Icon(Icons.notifications_none, size: 28),
+        GestureDetector(
+          onTap: () {
+            context.push('/notifications');
+          },
+          child: Stack(
+            children: [
+              const Icon(Icons.notifications_none, size: 28),
 
-            Positioned(
-              right: 0,
-              top: 0,
-              child: Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
+              Positioned(
+                right: 0,
+                top: 0,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
