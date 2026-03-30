@@ -1,5 +1,5 @@
-import 'package:autozy/features/profile/widgets/address_card.dart';
 import 'package:flutter/material.dart';
+import 'package:autozy/features/profile/widgets/address_card.dart';
 
 class SavedAddressScreen extends StatefulWidget {
   const SavedAddressScreen({super.key});
@@ -9,27 +9,67 @@ class SavedAddressScreen extends StatefulWidget {
 }
 
 class _SavedAddressScreenState extends State<SavedAddressScreen> {
-  /// ✅ Address List
   List<Map<String, String>> addresses = [
     {"title": "Home", "address": "Hyderabad"},
     {"title": "Work", "address": "Hitech City"},
   ];
 
-  /// ✅ Bottom Sheet Function
-  void showAddAddressSheet(BuildContext context) {
+  int defaultIndex = 0;
+
+  /// 🔹 Reusable TextField
+  Widget buildField(
+    String hint,
+    TextEditingController controller, {
+    TextInputType? type,
+    int? maxLength,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextField(
+        controller: controller,
+        keyboardType: type,
+        maxLength: maxLength,
+        decoration: InputDecoration(
+          hintText: hint,
+          counterText: "",
+          filled: true,
+          fillColor: Colors.grey.shade100,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.grey),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFFFFC107), width: 1.5),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 🔹 Bottom Sheet (Add / Edit)
+  void showAddAddressSheet({int? editIndex}) {
     final nameController = TextEditingController();
     final addressController = TextEditingController();
     final cityController = TextEditingController();
     final pincodeController = TextEditingController();
 
+    // Pre-fill if editing
+    if (editIndex != null) {
+      final data = addresses[editIndex];
+      nameController.text = data["title"]!;
+      final parts = data["address"]!.split(", ");
+      addressController.text = parts[0];
+      cityController.text = parts.length > 1 ? parts[1] : "";
+    }
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) {
+      builder: (_) {
         return Padding(
           padding: EdgeInsets.only(
             left: 16,
@@ -48,81 +88,45 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
                     child: const Icon(Icons.close),
                   ),
                   const SizedBox(width: 8),
-                  const Text(
-                    "Add Address",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  Text(
+                    editIndex != null ? "Edit Address" : "Add Address",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ],
               ),
 
               const SizedBox(height: 16),
 
-              /// NAME
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  hintText: "Home / Work",
-                  filled: true,
-                  fillColor: Colors.grey.shade100,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
+              /// MAP IMAGE
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  'assets/images/map.png',
+                  height: 150,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
 
-              /// ADDRESS
-              TextField(
-                controller: addressController,
-                decoration: InputDecoration(
-                  hintText: "Full Address",
-                  filled: true,
-                  fillColor: Colors.grey.shade100,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+              /// FIELDS
+              buildField("Home / Work", nameController),
+              buildField("Full Address", addressController),
+              buildField("City", cityController),
+              buildField(
+                "Pincode",
+                pincodeController,
+                type: TextInputType.number,
+                maxLength: 6,
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
 
-              /// CITY
-              TextField(
-                controller: cityController,
-                decoration: InputDecoration(
-                  hintText: "City",
-                  filled: true,
-                  fillColor: Colors.grey.shade100,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              /// PINCODE
-              TextField(
-                controller: pincodeController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  hintText: "Pincode",
-                  filled: true,
-                  fillColor: Colors.grey.shade100,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              /// ADD BUTTON
+              /// BUTTON
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -139,18 +143,24 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
                       return;
 
                     setState(() {
-                      addresses.add({
+                      final newData = {
                         "title": nameController.text,
                         "address":
                             "${addressController.text}, ${cityController.text}",
-                      });
+                      };
+
+                      if (editIndex != null) {
+                        addresses[editIndex] = newData;
+                      } else {
+                        addresses.add(newData);
+                      }
                     });
 
                     Navigator.pop(context);
                   },
-                  child: const Text(
-                    "Add Address",
-                    style: TextStyle(color: Colors.black),
+                  child: Text(
+                    editIndex != null ? "Update Address" : "Add Address",
+                    style: const TextStyle(color: Colors.black),
                   ),
                 ),
               ),
@@ -158,6 +168,20 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
           ),
         );
       },
+    );
+  }
+
+  /// 🔹 Reusable option tile
+  Widget buildOption(
+    IconData icon,
+    String text,
+    VoidCallback onTap,
+    Color? color,
+  ) {
+    return ListTile(
+      leading: Icon(icon, color: color),
+      title: Text(text),
+      onTap: onTap,
     );
   }
 
@@ -171,14 +195,14 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
         elevation: 0,
         title: const Text(
           "Saved Addresses",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          style: TextStyle(color: Colors.black),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
 
       body: Column(
         children: [
-          /// ✅ ADDRESS LIST
+          /// ADDRESS LIST
           Expanded(
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -191,13 +215,48 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
                   child: AddressCard(
                     title: item["title"]!,
                     address: item["address"]!,
-                    onTap: () {},
+
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
+                          ),
+                        ),
+                        builder: (_) {
+                          return Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                buildOption(Icons.edit, "Edit Address", () {
+                                  Navigator.pop(context);
+                                  showAddAddressSheet(editIndex: index);
+                                }, null),
+
+                                buildOption(Icons.delete, "Delete Address", () {
+                                  setState(() => addresses.removeAt(index));
+                                  Navigator.pop(context);
+                                }, Colors.red),
+
+                                buildOption(Icons.star, "Set as Default", () {
+                                  setState(() => defaultIndex = index);
+                                  Navigator.pop(context);
+                                }, null),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
                 );
               },
             ),
           ),
 
+          /// ADD BUTTON
           Padding(
             padding: const EdgeInsets.all(16),
             child: SizedBox(
@@ -210,7 +269,7 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: () => showAddAddressSheet(context),
+                onPressed: () => showAddAddressSheet(),
                 child: const Text(
                   "Add New Address",
                   style: TextStyle(color: Colors.black),

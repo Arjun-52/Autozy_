@@ -57,7 +57,7 @@ class VehicleCard extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Color(0xFF008847).withValues(alpha: 0.15),
+                  color: Color(0xFFE4FFF2).withValues(alpha: 1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: Color(0xFF008847).withValues(alpha: 0.8),

@@ -47,11 +47,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: ExploreCard(
-                      icon: Image.asset(
-                        'assets/images/view_plan_icon.png',
-                        height: 24,
-                        width: 24,
-                      ),
+                      icon: Icon(Icons.manage_search),
                       title: "View Plans",
                       onTap: () {
                         context.pushNamed('plans');
