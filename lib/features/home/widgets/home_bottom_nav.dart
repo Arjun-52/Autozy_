@@ -29,7 +29,7 @@ class _HomeBottomNavState extends State<HomeBottomNav> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: Colors.orange,
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: const Color(0xFF8E8E93),
         showUnselectedLabels: true,
         showSelectedLabels: true,
 
@@ -39,8 +39,8 @@ class _HomeBottomNavState extends State<HomeBottomNav> {
           });
         },
 
-        items: const [
-          BottomNavigationBarItem(
+        items: [
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             label: "Home",
           ),
@@ -48,11 +48,11 @@ class _HomeBottomNavState extends State<HomeBottomNav> {
             icon: Icon(Icons.directions_car_outlined),
             label: "Vehicles",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.access_time),
             label: "Plans",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             label: "Profile",
           ),

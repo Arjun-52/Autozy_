@@ -1,5 +1,6 @@
 import 'package:autozy/features/profile/widgets/build_input_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -55,10 +56,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 color: Color(0xFFF6C431),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.person_outline,
-                size: 80,
-                color: Colors.black,
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/images/profile.svg',
+                  height: 80,
+                  width: 80,
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
 
@@ -98,7 +102,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   "Save Changes",
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../core/constants/colors.dart';
 
 class PremiumServicesCard extends StatelessWidget {
@@ -22,7 +23,11 @@ class PremiumServicesCard extends StatelessWidget {
               color: Colors.black,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.flash_on, color: Colors.white),
+            child: SvgPicture.asset(
+              'assets/images/Lightning.svg',
+              height: 24,
+              width: 24,
+            ),
           ),
 
           const SizedBox(width: 12),

@@ -61,8 +61,8 @@ class _LoginScreenState extends State<LoginScreen> {
               Text(
                 "Log in or Sign Up",
                 style: AppTextStyles.heading1.copyWith(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
 
@@ -99,6 +99,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         maxLength: 10,
                         decoration: const InputDecoration(
                           hintText: "Enter Mobile Number",
+                          hintStyle: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                          ),
                           counterText: "",
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(vertical: 18),

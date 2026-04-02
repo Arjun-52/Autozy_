@@ -3,8 +3,8 @@ import 'colors.dart';
 
 class AppTextStyles {
   static const TextStyle headline1 = TextStyle(
-    fontSize: 32,
-    fontWeight: FontWeight.bold,
+    fontSize: 40,
+    fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
   );
 
@@ -29,7 +29,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
   );
-  
+
   static const TextStyle bodyText1 = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.normal,
@@ -43,8 +43,8 @@ class AppTextStyles {
   );
 
   static const TextStyle caption = TextStyle(
-    fontSize: 17,
-    fontWeight: FontWeight.normal,
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
     color: AppColors.customer,
   );
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class VehicleCard extends StatelessWidget {
   const VehicleCard({super.key});
@@ -33,7 +34,11 @@ class VehicleCard extends StatelessWidget {
                   color: Color(0xFFFFCB2F).withValues(alpha: .9),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.directions_car),
+                child: SvgPicture.asset(
+                  'assets/images/car2.svg',
+                  height: 20,
+                  width: 20,
+                ),
               ),
 
               const SizedBox(width: 12),

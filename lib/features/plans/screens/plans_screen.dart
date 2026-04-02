@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import '../widgets/plan_card.dart';
 
@@ -53,11 +54,10 @@ class _PlansScreenState extends State<PlansScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
-                        child: Image.asset(
-                          'assets/images/basic-icon.png',
+                        child: SvgPicture.asset(
+                          'assets/images/basic.svg',
                           height: 20,
                           width: 20,
-                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
@@ -91,11 +91,10 @@ class _PlansScreenState extends State<PlansScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
-                        child: Image.asset(
-                          'assets/images/star-icon.png',
+                        child: SvgPicture.asset(
+                          'assets/images/Star.svg',
                           height: 20,
                           width: 20,
-                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
@@ -132,11 +131,10 @@ class _PlansScreenState extends State<PlansScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
-                        child: Image.asset(
-                          'assets/images/ranking-icon.png',
+                        child: SvgPicture.asset(
+                          'assets/images/ranking.svg',
                           height: 20,
                           width: 20,
-                          fit: BoxFit.contain,
                         ),
                       ),
                     ),

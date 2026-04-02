@@ -2,6 +2,8 @@ import 'package:autozy/features/inspection/screens/inspection_done_screen.dart';
 import 'package:autozy/features/inspection/screens/inspection_screen.dart';
 import 'package:autozy/features/profile/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui' show BlendMode, ColorFilter;
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/home/screens/home_screen.dart';
@@ -58,22 +60,32 @@ class _MainScreenState extends State<MainScreen> {
         currentIndex: currentIndex,
         onTap: onTabTapped,
         selectedItemColor: const Color(0xffC68A00),
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: const Color(0xFF8E8E93),
         type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
+        items: [
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.directions_car_outlined),
+            icon: Builder(
+              builder: (context) {
+                final tint = IconTheme.of(context).color ?? const Color(0xFF8E8E93);
+                return SvgPicture.asset(
+                  'assets/images/car2.svg',
+                  height: 24,
+                  width: 24,
+                  colorFilter: ColorFilter.mode(tint, BlendMode.srcIn),
+                );
+              },
+            ),
             label: "Vehicles",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.access_time),
             label: "Plans",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             label: "Profile",
           ),

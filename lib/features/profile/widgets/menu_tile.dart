@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MenuTile extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String title;
   final VoidCallback? onTap;
   final bool showBadge;
@@ -39,7 +39,11 @@ class MenuTile extends StatelessWidget {
           children: [
             Stack(
               children: [
-                Icon(icon, color: Colors.orange),
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: icon,
+                ),
 
                 if (showBadge)
                   Positioned(
@@ -63,8 +67,8 @@ class MenuTile extends StatelessWidget {
               child: Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),

@@ -1,6 +1,7 @@
 import 'package:autozy/core/constants/colors.dart';
 import 'package:autozy/features/profile/widgets/menu_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/navigation_helper.dart';
 
@@ -59,7 +60,16 @@ class ProfileScreen extends StatelessWidget {
                         color: AppColors.brandYellow,
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: const Icon(Icons.person),
+                      child: Center(
+                        child: SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: SvgPicture.asset(
+                            'assets/images/profile.svg',
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 16),
 
@@ -71,10 +81,17 @@ class ProfileScreen extends StatelessWidget {
                             "John Kevin",
                             style: TextStyle(
                               fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                          Text("+91 9123456789"),
+                          Text(
+                            "+91 9123456789",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Color(0xff7E8392),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -89,19 +106,34 @@ class ProfileScreen extends StatelessWidget {
 
             /// MENU ITEMS
             MenuTile(
-              icon: Icons.location_on,
+              icon: SvgPicture.asset(
+                'assets/images/location.svg',
+                height: 24,
+                width: 24,
+                fit: BoxFit.contain,
+              ),
               title: "Saved Addresses",
               onTap: () {
                 context.push('/saved-address');
               },
             ),
             MenuTile(
-              icon: Icons.receipt_long_outlined,
+              icon: SvgPicture.asset(
+                'assets/images/bills.svg',
+                height: 24,
+                width: 24,
+                fit: BoxFit.contain,
+              ),
               title: "Invoices & Bills",
               onTap: () => context.pushNamed('invoices'),
             ),
             MenuTile(
-              icon: Icons.notifications_none,
+              icon: SvgPicture.asset(
+                'assets/images/notification.svg',
+                height: 24,
+                width: 24,
+                fit: BoxFit.contain,
+              ),
               title: "Notifications",
               showBadge: true,
               onTap: () {
@@ -130,7 +162,8 @@ class ProfileScreen extends StatelessWidget {
                       "Log Out",
                       style: TextStyle(
                         color: Colors.red,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
                       ),
                     ),
                   ],
@@ -171,11 +204,19 @@ class ProfileScreen extends StatelessWidget {
                     Text(
                       "autozy",
                       style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 27,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff363636),
                       ),
                     ),
-                    Text("Version 1.0.0", style: TextStyle(color: Colors.grey)),
+                    Text(
+                      "Version 1.0.0",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff7E8392),
+                      ),
+                    ),
                   ],
                 ),
               ),

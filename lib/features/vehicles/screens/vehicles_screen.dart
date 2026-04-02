@@ -1,4 +1,6 @@
+import 'package:autozy/features/vehicles/widgets/add_vehicle_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'add_vehicle_screen.dart';
 
@@ -60,7 +62,13 @@ class _VehicleScreenState extends State<VehicleScreen> {
               child: vehicles.isEmpty
                   ? Column(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      children: [buildAddButton()],
+                      children: [
+                        AddVehicleButton(
+                          onTap: () {
+                            openAddVehicle();
+                          },
+                        ),
+                      ],
                     )
                   : ListView.builder(
                       itemCount: vehicles.length + 1,
@@ -68,7 +76,11 @@ class _VehicleScreenState extends State<VehicleScreen> {
                         if (index == vehicles.length) {
                           return Padding(
                             padding: const EdgeInsets.only(top: 10, bottom: 20),
-                            child: buildAddButton(),
+                            child: AddVehicleButton(
+                              onTap: () {
+                                openAddVehicle();
+                              },
+                            ),
                           );
                         }
 
@@ -100,9 +112,15 @@ class _VehicleScreenState extends State<VehicleScreen> {
                                     color: const Color(0xFFF6C431),
                                     borderRadius: BorderRadius.circular(14),
                                   ),
-                                  child: const Icon(
-                                    Icons.directions_car,
-                                    color: Colors.black,
+                                  child: Center(
+                                    child: SizedBox(
+                                      height: 24,
+                                      width: 24,
+                                      child: SvgPicture.asset(
+                                        'assets/images/car2.svg',
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
                                   ),
                                 ),
 
@@ -189,9 +207,10 @@ class _VehicleScreenState extends State<VehicleScreen> {
                                     const SizedBox(height: 10),
                                     GestureDetector(
                                       onTap: () => deleteVehicle(index),
-                                      child: const Icon(
-                                        Icons.delete_outline,
-                                        color: Colors.red,
+                                      child: SvgPicture.asset(
+                                        'assets/images/bin.svg',
+                                        height: 24,
+                                        width: 24,
                                       ),
                                     ),
                                   ],
@@ -202,36 +221,6 @@ class _VehicleScreenState extends State<VehicleScreen> {
                         );
                       },
                     ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildAddButton() {
-    return GestureDetector(
-      onTap: openAddVehicle,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFFBF0),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFF6C431), width: 1.5),
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.add, color: Color(0xFFF6C431)),
-            SizedBox(width: 8),
-            Text(
-              "Add Vehicle",
-              style: TextStyle(
-                color: Color(0xFFDD900C),
-
-                fontWeight: FontWeight.w600,
-              ),
             ),
           ],
         ),

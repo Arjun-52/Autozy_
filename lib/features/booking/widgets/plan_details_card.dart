@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import '../../../core/constants/colors.dart';
 
 class PlanDetailsCard extends StatelessWidget {
@@ -38,11 +39,10 @@ class PlanDetailsCard extends StatelessWidget {
                   color: const Color(0xffF4C430),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Image.asset(
-                  'assets/images/star-icon.png',
+                child: SvgPicture.asset(
+                  'assets/images/Star.svg',
                   height: 24,
                   width: 24,
-                  fit: BoxFit.contain,
                 ),
               ),
 

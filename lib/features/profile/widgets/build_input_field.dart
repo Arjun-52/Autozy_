@@ -21,7 +21,7 @@ class BuildInputField extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         decoration: InputDecoration(labelText: label, border: InputBorder.none),
       ),
     );

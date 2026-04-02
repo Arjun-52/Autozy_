@@ -1,5 +1,6 @@
 import 'package:autozy/core/constants/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class OrderDetailsCard extends StatelessWidget {
   const OrderDetailsCard({super.key});
@@ -129,11 +130,10 @@ class OrderDetailsCard extends StatelessWidget {
                         color: const Color(0xffF4C430),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Image.asset(
-                        'assets/images/star-icon.png',
+                      child: SvgPicture.asset(
+                        'assets/images/Star.svg',
                         height: 24,
                         width: 24,
-                        fit: BoxFit.contain,
                       ),
                     ),
 

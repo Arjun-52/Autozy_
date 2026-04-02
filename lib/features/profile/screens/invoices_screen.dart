@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'dart:ui' show BlendMode, ColorFilter;
+import 'package:go_router/go_router.dart';
 
 class InvoicesScreen extends StatelessWidget {
   const InvoicesScreen({super.key});
 
-  Widget buildSummaryCard(String value, String label, IconData icon) {
+  Widget buildSummaryCard(String value, String label, Widget icon) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(18),
@@ -12,7 +15,7 @@ class InvoicesScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.12),
+              color: Colors.black.withOpacity(0.12),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -20,7 +23,7 @@ class InvoicesScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(icon, size: 28, color: Colors.black),
+            SizedBox(height: 28, width: 28, child: icon),
             const SizedBox(height: 10),
             Text(
               value,
@@ -64,7 +67,12 @@ class InvoicesScreen extends StatelessWidget {
                   color: Colors.orange.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.receipt_long, color: Colors.orange),
+                child: SvgPicture.asset(
+                  'assets/images/document.svg',
+                  height: 24,
+                  width: 24,
+                  fit: BoxFit.contain,
+                ),
               ),
 
               const SizedBox(width: 14),
@@ -182,10 +190,24 @@ class InvoicesScreen extends StatelessWidget {
                 buildSummaryCard(
                   "₹3,959",
                   "Total Paid",
-                  Icons.account_balance_wallet,
+                  SvgPicture.asset(
+                    'assets/images/moneys.svg',
+                    height: 24,
+                    width: 24,
+                    fit: BoxFit.contain,
+                  ),
                 ),
                 const SizedBox(width: 12),
-                buildSummaryCard("5", "Invoices", Icons.receipt),
+                buildSummaryCard(
+                  "5",
+                  "Invoices",
+                  SvgPicture.asset(
+                    'assets/images/view_plans.svg',
+                    height: 24,
+                    width: 24,
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ],
             ),
 
@@ -226,33 +248,44 @@ class InvoicesScreen extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         onTap: (index) {
+          // Match go_router nested routes under /home.
           if (index == 0) {
-            Navigator.pushReplacementNamed(context, '/home');
+            context.go('/home?initialIndex=0');
           } else if (index == 1) {
-            Navigator.pushReplacementNamed(context, '/vehicles');
+            context.go('/home/vehicles');
           } else if (index == 2) {
-            Navigator.pushReplacementNamed(context, '/plans');
+            context.go('/home/plans');
           } else if (index == 3) {
-            Navigator.pushReplacementNamed(context, '/profile');
+            context.go('/home/profile');
           }
         },
         selectedItemColor: const Color(0xffC68A00),
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: const Color(0xFF8E8E93),
         type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(
+        items: [
+          const BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.directions_car_outlined),
+            icon: Builder(
+              builder: (context) {
+                final tint = IconTheme.of(context).color ?? const Color(0xFF8E8E93);
+                return SvgPicture.asset(
+                  'assets/images/car2.svg',
+                  height: 24,
+                  width: 24,
+                  colorFilter: ColorFilter.mode(tint, BlendMode.srcIn),
+                );
+              },
+            ),
             label: "Vehicles",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.access_time),
             label: "Plans",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             label: "Profile",
           ),

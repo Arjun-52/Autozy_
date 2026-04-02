@@ -1,4 +1,5 @@
 import 'package:autozy/features/home/widgets/standard_plan_active_card.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../widgets/explore_card.dart.dart';
 import '../widgets/greeting_section.dart';
@@ -47,7 +48,11 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: ExploreCard(
-                      icon: Icon(Icons.manage_search),
+                      icon: SvgPicture.asset(
+                        'assets/images/view_plans.svg',
+                        height: 24,
+                        width: 24,
+                      ),
                       title: "View Plans",
                       onTap: () {
                         context.pushNamed('plans');
@@ -70,8 +75,8 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 14),
 
               ExploreCard(
-                icon: Image.asset(
-                  'assets/images/bookslot_icon.png',
+                icon: SvgPicture.asset(
+                  'assets/images/calender.svg',
                   height: 24,
                   width: 24,
                 ),
