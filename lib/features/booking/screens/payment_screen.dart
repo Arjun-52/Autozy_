@@ -23,7 +23,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF6F6F6),
+      backgroundColor: const Color(0xffFFFFFF),
 
       appBar: AppBar(
         title: const Text(
@@ -45,7 +45,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 "Select Payment Method",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
               ),
             ),
           ),

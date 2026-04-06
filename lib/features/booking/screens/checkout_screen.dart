@@ -19,7 +19,7 @@ class CheckoutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF6F6F6),
+      backgroundColor: const Color(0xffffffff),
 
       appBar: AppBar(
         title: Text("Checkout", style: TextStyle(fontWeight: FontWeight.w500)),

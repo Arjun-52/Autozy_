@@ -30,7 +30,11 @@ class OrderDetailsCard extends StatelessWidget {
               children: [
                 Text(
                   "Order Number",
-                  style: TextStyle(color: AppColors.textSecondary),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xff7E8392),
+                  ),
                 ),
 
                 SizedBox(height: 4),
@@ -38,9 +42,9 @@ class OrderDetailsCard extends StatelessWidget {
                 Text(
                   "ORD–2026001",
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 16,
                     color: Color(0xFF013E6D),
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -77,7 +81,11 @@ class OrderDetailsCard extends StatelessWidget {
 
                     Text(
                       "Booking Slot",
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -87,7 +95,7 @@ class OrderDetailsCard extends StatelessWidget {
                 /// Slot Time
                 const Text(
                   "Thursday, Mar 09, 08:00 - 13:00",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
               ],
             ),
@@ -142,7 +150,14 @@ class OrderDetailsCard extends StatelessWidget {
                     const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Standard"),
+                        Text(
+                          "Standard",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: Color(0xff7E8392),
+                          ),
+                        ),
 
                         Text.rich(
                           TextSpan(
@@ -150,7 +165,7 @@ class OrderDetailsCard extends StatelessWidget {
                               TextSpan(
                                 text: "₹799",
                                 style: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w700,
                                   fontSize: 16,
                                   color: AppColors.onSurface,
                                 ),
@@ -158,7 +173,7 @@ class OrderDetailsCard extends StatelessWidget {
                               TextSpan(
                                 text: " /month",
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                   color: Color(0xFF7E8392),
                                 ),

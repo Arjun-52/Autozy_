@@ -8,15 +8,21 @@ class PlanDetailsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
-
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        color: const Color(0xFFFFFFFF),
+
+        borderRadius: BorderRadius.circular(16),
+
+        border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
+
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.17),
-            blurRadius: 10,
+            color: const Color(0xFF161616).withOpacity(0.12),
+            offset: const Offset(0, 4),
+            blurRadius: 13,
+            spreadRadius: 0,
           ),
         ],
       ),
@@ -29,7 +35,7 @@ class PlanDetailsCard extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 16), // gap
 
           Row(
             children: [
@@ -55,7 +61,7 @@ class PlanDetailsCard extends StatelessWidget {
                     "Standard",
                     style: TextStyle(
                       color: Color(0xFF7E8392),
-                      fontSize: 18,
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -68,7 +74,7 @@ class PlanDetailsCard extends StatelessWidget {
                         TextSpan(
                           text: "₹799",
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w700,
                             fontSize: 16,
                             color: AppColors.onSurface,
                           ),
@@ -76,7 +82,7 @@ class PlanDetailsCard extends StatelessWidget {
                         TextSpan(
                           text: " /month",
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: Color(0xFF7E8392),
                           ),

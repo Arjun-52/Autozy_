@@ -20,10 +20,13 @@ class _InspectionScreenState extends State<InspectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: Colors.white,
 
       appBar: AppBar(
-        title: const Text("Inspection"),
+        title: const Text(
+          "Inspection",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         foregroundColor: Colors.black,

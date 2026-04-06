@@ -24,6 +24,8 @@ class InspectionNoticeCard extends StatelessWidget {
             child: Text(
               "Service begins only after inspection is approved. "
               "Your first wash will be scheduled for the next available slot.",
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
             ),
           ),

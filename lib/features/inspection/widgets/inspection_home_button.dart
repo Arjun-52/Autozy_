@@ -30,7 +30,7 @@ class InspectionHomeButton extends StatelessWidget {
           "Home",
           style: TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
             color: Colors.black,
           ),
         ),

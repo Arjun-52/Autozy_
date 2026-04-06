@@ -15,37 +15,58 @@ class BookingSlotCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity, // ✅ fill
+
       padding: const EdgeInsets.all(16),
+
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+
+        borderRadius: BorderRadius.circular(16), // ✅ fixed
+
+        border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
+
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.17),
-            blurRadius: 10,
+            color: const Color(0xFF161616).withOpacity(0.12), // ✅ exact
+            blurRadius: 13,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
+
       child: Row(
         children: [
-          const Icon(Icons.access_time, size: 28, color: Colors.grey),
-          const SizedBox(width: 10),
+          const Icon(
+            Icons.access_time,
+            size: 20, // ✅ adjusted
+            color: Color(0xff7E8392),
+          ),
+
+          const SizedBox(width: 16), // ✅ exact gap
 
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min, // ✅ prevents overflow
               children: [
                 const Text(
-                  "Booking Slot",
-                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                  "Booking Slot", // ✅ unchanged
+                  style: TextStyle(
+                    color: Color(0xff7E8392),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
+
                 const SizedBox(height: 4),
 
-                Text(
-                  "Thursday, Mar 09, 08:00 - 13:00",
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
+                const Text(
+                  "Thursday, Mar 09, 08:00 - 13:00", // ✅ unchanged
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
                   ),
                 ),
               ],

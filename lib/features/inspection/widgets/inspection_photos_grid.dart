@@ -50,7 +50,7 @@ class _InspectionPhotosGridState extends State<InspectionPhotosGrid> {
         children: [
           const Text(
             "Inspection Photos",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
 
           const SizedBox(height: 16),

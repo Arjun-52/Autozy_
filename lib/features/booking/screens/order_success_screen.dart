@@ -23,7 +23,7 @@ class OrderSuccessScreen extends StatelessWidget {
 
             const Text(
               "Slot Booked!",
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
             ),
 
             const SizedBox(height: 10),

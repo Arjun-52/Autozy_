@@ -16,7 +16,7 @@ class _PlansScreenState extends State<PlansScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: const Color(0xFFFFFFFF),
 
       appBar: AppBar(
         backgroundColor: Colors.white,

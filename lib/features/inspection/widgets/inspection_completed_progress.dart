@@ -104,12 +104,19 @@ class _CompletedProgressItem extends StatelessWidget {
                 Text(
                   step.title,
                   style: const TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     fontSize: 16,
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(step.subtitle, style: const TextStyle(color: Colors.grey)),
+                Text(
+                  step.subtitle,
+                  style: const TextStyle(
+                    color: Color(0xff7e8392),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ],
             ),
           ),
