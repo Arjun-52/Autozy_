@@ -15,7 +15,7 @@ class DateSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 80,
+      height: 90,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: dates.length,
@@ -25,25 +25,46 @@ class DateSelector extends StatelessWidget {
           return GestureDetector(
             onTap: () => onDateSelected(index),
             child: Container(
-              width: 120,
+              width: 90,
+
               margin: const EdgeInsets.only(left: 16),
+
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+
               decoration: BoxDecoration(
                 color: selected ? const Color(0xFFFFFBF0) : Colors.white,
-                borderRadius: BorderRadius.circular(16),
+
+                borderRadius: BorderRadius.circular(14),
+
                 border: Border.all(
-                  color: selected ? Colors.orange : Colors.grey.shade300,
+                  color: selected
+                      ? const Color(0xFFFFCB2F)
+                      : const Color(0xFFE9E9E9),
+                  width: 1.5,
                 ),
               ),
+
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(dates[index]["day"]!),
+                  Text(
+                    dates[index]["day"]!,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                  ),
+
                   const SizedBox(height: 4),
+
                   Text(
                     dates[index]["date"]!,
                     style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
                     ),
                   ),
                 ],

@@ -81,10 +81,10 @@ class HomeScreen extends StatelessWidget {
                   width: 24,
                 ),
                 title: "Book Slot",
-                fullWidth: true,
                 onTap: () {
                   context.pushNamed('bookSlot');
                 },
+                fullWidth: true,
               ),
 
               const SizedBox(height: 20),

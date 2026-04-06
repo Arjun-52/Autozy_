@@ -17,7 +17,10 @@ class OtpHeader extends StatelessWidget {
 
         Text(
           "OTP Verification",
-          style: AppTextStyles.title.copyWith(fontSize: 20),
+          style: AppTextStyles.title.copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ],
     );

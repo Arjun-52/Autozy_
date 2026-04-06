@@ -33,9 +33,12 @@ class _BookSlotScreenState extends State<BookSlotScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF6F6F6),
+      backgroundColor: const Color(0xffFFFFFF),
       appBar: AppBar(
-        title: const Text("Book Slot"),
+        title: const Text(
+          "Book Slot",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         foregroundColor: Colors.black,

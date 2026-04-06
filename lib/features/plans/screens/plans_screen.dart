@@ -29,7 +29,11 @@ class _PlansScreenState extends State<PlansScreen> {
         ),
         title: const Text(
           "Plans",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
 
@@ -184,7 +188,7 @@ class _PlansScreenState extends State<PlansScreen> {
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.black,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),

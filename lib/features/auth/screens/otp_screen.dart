@@ -67,7 +67,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
               Text(
                 "We have sent a verification code to",
-                style: AppTextStyles.headline3,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 textAlign: TextAlign.center,
               ),
 
@@ -76,8 +76,8 @@ class _OtpScreenState extends State<OtpScreen> {
               Text(
                 "+91 ${widget.phone}",
                 style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
 
@@ -86,7 +86,7 @@ class _OtpScreenState extends State<OtpScreen> {
               const Text(
                 "Enter The Code",
                 style: TextStyle(
-                  fontSize: 25,
+                  fontSize: 24,
                   fontWeight: FontWeight.w600,
                   color: Colors.black,
                 ),

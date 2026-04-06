@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -30,7 +31,7 @@ class HomeHeader extends StatelessWidget {
             const SizedBox(width: 10),
             const Text(
               "autozy",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -41,7 +42,15 @@ class HomeHeader extends StatelessWidget {
           },
           child: Stack(
             children: [
-              const Icon(Icons.notifications_none, size: 28),
+              SvgPicture.asset(
+                'assets/images/notification.svg',
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+                height: 24,
+                width: 24,
+              ),
 
               Positioned(
                 right: 0,

@@ -55,7 +55,7 @@ class PlanCard extends StatelessWidget {
                 ),
                 child: const Text(
                   "Most Popular",
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.w500),
                 ),
               ),
 

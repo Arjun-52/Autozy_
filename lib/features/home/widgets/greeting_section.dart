@@ -15,7 +15,14 @@ class GreetingSection extends StatelessWidget {
 
         SizedBox(height: 4),
 
-        Text("Here’s your daily update", style: TextStyle(color: Colors.grey)),
+        Text(
+          "Here’s your daily update",
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            color: Color(0xff7E848D),
+          ),
+        ),
       ],
     );
   }
