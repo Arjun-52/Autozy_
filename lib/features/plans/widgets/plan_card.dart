@@ -28,15 +28,22 @@ class PlanCard extends StatelessWidget {
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+
+          borderRadius: BorderRadius.circular(16),
+
           border: Border.all(
-            color: isSelected ? const Color(0xffF4C430) : Colors.transparent,
-            width: 2,
+            color: isSelected
+                ? const Color(0xffF4C430)
+                : const Color(0xFFE9E9E9),
+            width: isSelected ? 2 : 1,
           ),
+
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
+              color: const Color(0xFF161616).withValues(alpha: 0.12),
+              blurRadius: 13,
+              spreadRadius: 0,
+              offset: const Offset(0, 4),
             ),
           ],
         ),

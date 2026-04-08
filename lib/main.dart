@@ -12,7 +12,8 @@ import 'data/repositories/vehicle_repository.dart';
 import 'data/repositories/plan_repository.dart';
 import 'data/repositories/booking_repository.dart';
 import 'data/repositories/inspection_repository.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'providers/auth_provider.dart';
 import 'providers/vehicle_provider.dart';
 import 'providers/plan_provider.dart';
@@ -20,12 +21,56 @@ import 'providers/booking_provider.dart';
 import 'providers/inspection_provider.dart';
 import 'providers/otp_provider.dart';
 
-void main() {
+Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print(" Background message: ${message.messageId}");
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
+
   runApp(const AutozyApp());
 }
 
-class AutozyApp extends StatelessWidget {
+class AutozyApp extends StatefulWidget {
   const AutozyApp({super.key});
+
+  @override
+  State<AutozyApp> createState() => _AutozyAppState();
+}
+
+class _AutozyAppState extends State<AutozyApp> {
+  @override
+  void initState() {
+    super.initState();
+    setupFCM();
+  }
+
+  void setupFCM() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    print(" Permission: ${settings.authorizationStatus}");
+
+    String? token = await messaging.getToken();
+    print(" FCM TOKEN  $token");
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print(" Foreground message: ${message.notification?.title}");
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print(" Notification clicked!");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,12 +132,11 @@ class AutozyApp extends StatelessWidget {
       ],
 
       child: MaterialApp.router(
-        // ✅ FIXED
         title: 'Autozy',
         debugShowCheckedModeBanner: false,
+        routerConfig: AppGoRouter.router,
 
-        routerConfig: AppGoRouter.router, // ✅ Correct usage
-        /// APP THEME
+        ///  THEME
         theme: ThemeData(
           fontFamily: 'Poppins',
           primaryColor: AppColors.primary,
