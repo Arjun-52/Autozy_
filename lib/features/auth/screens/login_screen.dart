@@ -38,10 +38,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
               /// LOGO
               Container(
-                height: 140,
-                width: 140,
+                height: 120,
+                width: 120,
                 decoration: BoxDecoration(
-                  color: AppColors.background,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Padding(

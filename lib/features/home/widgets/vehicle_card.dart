@@ -72,7 +72,7 @@ class VehicleCard extends StatelessWidget {
               /// STATUS
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
+                  horizontal: 14,
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
@@ -82,11 +82,11 @@ class VehicleCard extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(
-                      Icons.check_circle,
-                      color: Color(0xFF008847),
-                      size: 16,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/images/tick-mark.svg',
+                      width: 16,
+                      height: 16,
                     ),
                     SizedBox(width: 4),
                     Text(
