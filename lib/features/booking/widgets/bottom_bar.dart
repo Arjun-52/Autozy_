@@ -29,7 +29,7 @@ class BottomBar extends StatelessWidget {
           Expanded(
             child: Text(
               "$date, $time",
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
             ),
           ),
 

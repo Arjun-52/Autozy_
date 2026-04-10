@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/otp_screen.dart';
+import 'package:autozy/features/splash/splash_screen.dart';
 import '../../features/vehicles/screens/add_vehicle_screen.dart';
 import '../../features/booking/screens/book_slot_screen.dart';
 import '../../features/booking/screens/checkout_screen.dart';
@@ -17,9 +18,16 @@ import '../../features/profile/screens/invoices_screen.dart';
 
 class AppGoRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/splash',
     debugLogDiagnostics: true,
     routes: [
+      // Splash screen
+      GoRoute(
+        path: '/splash',
+        name: 'splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
+
       // Authentication routes
       GoRoute(
         path: '/login',
@@ -54,26 +62,20 @@ class AppGoRouter {
           GoRoute(
             path: 'vehicles',
             name: 'vehicles',
-            builder: (context, state) => const MainScreen(
-              key: ValueKey('home-1'),
-              initialIndex: 1,
-            ),
+            builder: (context, state) =>
+                const MainScreen(key: ValueKey('home-1'), initialIndex: 1),
           ),
           GoRoute(
             path: 'plans',
             name: 'plans',
-            builder: (context, state) => const MainScreen(
-              key: ValueKey('home-2'),
-              initialIndex: 2,
-            ),
+            builder: (context, state) =>
+                const MainScreen(key: ValueKey('home-2'), initialIndex: 2),
           ),
           GoRoute(
             path: 'profile',
             name: 'profile',
-            builder: (context, state) => const MainScreen(
-              key: ValueKey('home-3'),
-              initialIndex: 3,
-            ),
+            builder: (context, state) =>
+                const MainScreen(key: ValueKey('home-3'), initialIndex: 3),
           ),
         ],
       ),
