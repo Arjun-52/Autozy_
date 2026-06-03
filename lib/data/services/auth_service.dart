@@ -1,4 +1,5 @@
 import '../../core/utils/app_logger.dart';
+import '../models/dto/send_otp_response.dart';
 import 'api_service.dart';
 
 class AuthService {
@@ -61,23 +62,25 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>> sendOtp(String phone) async {
+  Future<SendOtpResponse> sendOtp(String phone) async {
     try {
-      AppLogger.debug('Sending OTP to: $phone', tag: 'Auth');
+      AppLogger.info('OTP request initiated', tag: 'Auth');
+      AppLogger.debug('Phone number submitted: $phone', tag: 'Auth');
+      AppLogger.debug('Request started', tag: 'Auth');
 
-      // Mock API call - simulate successful OTP sending
-      await Future.delayed(const Duration(seconds: 1));
+      final responseData = await _apiService.post(
+        '/api/v1/auth/send-otp',
+        data: {
+          'phone': phone.trim(),
+        },
+      );
 
-      final response = {
-        'success': true,
-        'message': 'OTP sent successfully',
-        'otpId': '123456',
-      };
-
-      AppLogger.info('OTP sent successfully (mock)', tag: 'Auth');
+      final response = SendOtpResponse.fromJson(responseData);
+      AppLogger.info('Request success', tag: 'Auth');
+      AppLogger.info('Success message received: ${response.data?.message}', tag: 'Auth');
       return response;
     } catch (e, st) {
-      AppLogger.error('OTP send failed', tag: 'Auth', error: e, stackTrace: st);
+      AppLogger.error('API failures: OTP send failed', tag: 'Auth', error: e, stackTrace: st);
       rethrow;
     }
   }
@@ -89,8 +92,8 @@ class AuthService {
       // Mock API call - simulate OTP verification
       await Future.delayed(const Duration(seconds: 1));
 
-      // Mock: Accept any 4-digit OTP for testing
-      final isValid = otp.length == 4;
+      // Mock: Accept any 6-digit OTP for testing
+      final isValid = otp.length == 6;
 
       final response = {
         'success': isValid,

@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 import '../../core/utils/app_logger.dart';
 
 class ApiService {
-  static const String baseUrl =
-      'https://jsonplaceholder.typicode.com'; // Mock API for testing
+  static const String apiBaseUrl = 'http://192.168.10.64:3001';
+  static const String baseUrl = apiBaseUrl;
   String? _authToken;
 
   void setAuthToken(String token) {

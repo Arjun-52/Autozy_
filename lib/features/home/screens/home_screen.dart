@@ -5,6 +5,7 @@ import '../widgets/explore_card.dart.dart';
 import '../widgets/greeting_section.dart';
 import '../widgets/home_header.dart';
 import '../widgets/premium_services_card.dart';
+import '../widgets/special_offers.dart';
 import '../widgets/vehicle_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -26,16 +27,16 @@ class HomeScreen extends StatelessWidget {
             children: [
               const HomeHeader(),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
               const GreetingSection(),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               if (showPlanActiveCard) const StandardPlanActiveCard(),
 
               const VehicleCard(),
 
-              const SizedBox(height: 26),
+              const SizedBox(height: 32),
 
               const Text(
                 "Explore",
@@ -87,9 +88,15 @@ class HomeScreen extends StatelessWidget {
                 fullWidth: true,
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
               const PremiumServicesCard(),
+
+              const SizedBox(height: 32),
+
+              const SpecialOffersSection(),
+
+              const SizedBox(height: 40),
             ],
           ),
         ),

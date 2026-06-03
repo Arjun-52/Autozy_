@@ -1,6 +1,7 @@
 import '../services/auth_service.dart';
 import '../models/user_model.dart';
 import '../models/dto/auth_dto.dart';
+import '../models/dto/send_otp_response.dart';
 
 class AuthRepository {
   final AuthService _authService;
@@ -37,9 +38,9 @@ class AuthRepository {
     }
   }
 
-  Future<void> sendOtp(String phone) async {
+  Future<SendOtpResponse> sendOtp(String phone) async {
     try {
-      await _authService.sendOtp(phone);
+      return await _authService.sendOtp(phone);
     } catch (e) {
       rethrow;
     }

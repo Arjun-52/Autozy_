@@ -8,11 +8,13 @@ class ApiConfig {
   /// Current environment (change this for different builds)
   static const String currentEnvironment = production;
 
+  static const String apiBaseUrl = 'http://192.168.10.64:3001';
+
   /// Base URLs for different environments
   static const Map<String, String> baseUrls = {
-    development: 'https://dev-api.autozy.com',
+    development: apiBaseUrl,
     staging: 'https://staging-api.autozy.com',
-    production: 'https://api.autozy.com',
+    production: apiBaseUrl,
   };
 
   /// Get current base URL

@@ -12,14 +12,14 @@ class OtpInputFields extends StatefulWidget {
 
 class _OtpInputFieldsState extends State<OtpInputFields> {
   final List<TextEditingController> controllers = List.generate(
-    4,
+    6,
     (_) => TextEditingController(),
   );
 
-  final List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
+  final List<FocusNode> focusNodes = List.generate(6, (_) => FocusNode());
 
   void moveNext(int index, String value) {
-    if (value.isNotEmpty && index < 3) {
+    if (value.isNotEmpty && index < 5) {
       FocusScope.of(context).requestFocus(focusNodes[index + 1]);
     }
 
@@ -45,10 +45,10 @@ class _OtpInputFieldsState extends State<OtpInputFields> {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: List.generate(4, (index) {
+      children: List.generate(6, (index) {
         return SizedBox(
-          width: 60,
-          height: 60,
+          width: 48,
+          height: 48,
           child: TextField(
             controller: controllers[index],
             focusNode: focusNodes[index],

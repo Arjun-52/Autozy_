@@ -43,6 +43,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
     if (authProvider.error != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(authProvider.error!)));
@@ -102,6 +103,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 onPressed: authProvider.isLoading
                     ? null
                     : () async {
+                        ScaffoldMessenger.of(context).clearSnackBars();
                         final otpProvider = context.read<OtpProvider>();
 
                         final success = await context

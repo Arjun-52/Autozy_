@@ -8,7 +8,7 @@ class OtpProvider extends ChangeNotifier {
   Timer? _timer;
 
   /// OTP STORAGE
-  List<String> otpDigits = ["", "", "", ""];
+  List<String> otpDigits = ["", "", "", "", "", ""];
 
   /// Start OTP timer
   void startTimer() {
@@ -42,7 +42,7 @@ class OtpProvider extends ChangeNotifier {
 
   /// Clear OTP if needed
   void clearOtp() {
-    otpDigits = ["", "", "", ""];
+    otpDigits = ["", "", "", "", "", ""];
     notifyListeners();
   }
 

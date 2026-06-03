@@ -16,6 +16,14 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController phoneController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthProvider>().resetAuthState();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
 
@@ -34,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
-              const SizedBox(height: 40),
+              const Spacer(),
 
               /// LOGO
               Container(
@@ -128,6 +136,13 @@ class _LoginScreenState extends State<LoginScreen> {
                               .continueWithPhone(phoneController.text);
 
                           if (success && context.mounted) {
+                            final successMsg = context.read<AuthProvider>().successMessage ?? "OTP Sent Successfully";
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(successMsg),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
                             context.pushNamed(
                               'otp',
                               queryParameters: {

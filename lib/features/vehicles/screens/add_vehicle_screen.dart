@@ -160,14 +160,45 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
             height: 55,
             child: ElevatedButton(
               onPressed: () {
-                if (numberController.text.isEmpty ||
-                    selectedMake == null ||
-                    selectedModel == null ||
-                    selectedSize == null)
+                if (numberController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please enter your vehicle number"),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
                   return;
+                }
+                if (selectedMake == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please select a vehicle make"),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                  return;
+                }
+                if (selectedModel == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please select a vehicle model"),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                  return;
+                }
+                if (selectedSize == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please select a vehicle size"),
+                      backgroundColor: Colors.redAccent,
+                    ),
+                  );
+                  return;
+                }
 
                 Navigator.pop(context, {
-                  "number": numberController.text,
+                  "number": numberController.text.trim(),
                   "make": selectedMake!,
                   "model": selectedModel!,
                   "size": selectedSize!,
