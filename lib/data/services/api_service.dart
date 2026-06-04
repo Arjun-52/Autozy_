@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../../core/utils/app_logger.dart';
 
@@ -121,6 +122,7 @@ class ApiService {
       final uri = Uri.parse(
         '$baseUrl$endpoint',
       ).replace(queryParameters: queryParameters);
+
       final response = await http
           .patch(
             uri,
@@ -143,6 +145,7 @@ class ApiService {
       return json.decode(response.body);
     } else {
       final statusCode = response.statusCode;
+      print('HTTP ERROR BODY: ${response.body}');
       String message = 'Something went wrong';
 
       try {

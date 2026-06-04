@@ -131,6 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: authProvider.isLoading
                       ? null
                       : () async {
+                          print('LOGIN BUTTON PRESSED');
                           final success = await context
                               .read<AuthProvider>()
                               .continueWithPhone(phoneController.text);

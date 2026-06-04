@@ -1,5 +1,8 @@
 import '../../core/utils/app_logger.dart';
 import '../models/dto/send_otp_response.dart';
+import '../models/dto/logout_response.dart';
+import '../models/dto/update_profile_request.dart';
+import '../models/dto/user_profile_response.dart';
 import 'api_service.dart';
 
 class AuthService {
@@ -7,14 +10,11 @@ class AuthService {
 
   AuthService(this._apiService);
 
+  // LOGIN
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       AppLogger.debug('Attempting login: $email', tag: 'Auth');
-
-      // Mock API call - simulate login
       await Future.delayed(const Duration(seconds: 1));
-
-      // Mock: Accept any email/password for testing
       final mockResponse = {
         'success': true,
         'message': 'Login successful',
@@ -26,7 +26,6 @@ class AuthService {
           'phone': '+91XXXXXXXXXX',
         },
       };
-
       AppLogger.info('Login successful (mock)', tag: 'Auth');
       return mockResponse;
     } catch (e, st) {
@@ -35,12 +34,8 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>> register(
-    String name,
-    String email,
-    String phone,
-    String password,
-  ) async {
+  // REGISTER
+  Future<Map<String, dynamic>> register(String name, String email, String phone, String password) async {
     try {
       AppLogger.debug('Registering user: $email', tag: 'Auth');
       final data = await _apiService.post(
@@ -52,7 +47,6 @@ class AuthService {
           'password': password,
         },
       );
-
       _apiService.setAuthToken(data['token']);
       AppLogger.info('Registration successful', tag: 'Auth');
       return data;
@@ -62,19 +56,12 @@ class AuthService {
     }
   }
 
+  // SEND OTP
   Future<SendOtpResponse> sendOtp(String phone) async {
     try {
       AppLogger.info('OTP request initiated', tag: 'Auth');
-      AppLogger.debug('Phone number submitted: $phone', tag: 'Auth');
-      AppLogger.debug('Request started', tag: 'Auth');
-
-      final responseData = await _apiService.post(
-        '/api/v1/auth/send-otp',
-        data: {
-          'phone': phone.trim(),
-        },
-      );
-
+      final requestBody = {'phone': phone.trim()};
+      final responseData = await _apiService.post('/api/v1/auth/send-otp', data: requestBody);
       final response = SendOtpResponse.fromJson(responseData);
       AppLogger.info('Request success', tag: 'Auth');
       AppLogger.info('Success message received: ${response.data?.message}', tag: 'Auth');
@@ -85,43 +72,48 @@ class AuthService {
     }
   }
 
+  // VERIFY OTP
   Future<Map<String, dynamic>> verifyOtp(String phone, String otp) async {
     try {
       AppLogger.debug('Verifying OTP for: $phone', tag: 'Auth');
-
-      // Mock API call - simulate OTP verification
-      await Future.delayed(const Duration(seconds: 1));
-
-      // Mock: Accept any 6-digit OTP for testing
-      final isValid = otp.length == 6;
-
-      final response = {
-        'success': isValid,
-        'message': isValid ? 'OTP verified successfully' : 'Invalid OTP',
-        'user': isValid
-            ? {
-                'id': '1',
-                'name': 'Test User',
-                'email': 'test@example.com',
-                'phone': phone,
-              }
-            : null,
+      final requestBody = {
+        'phone': phone,
+        'otp': otp,
+        'deviceId': 'autozy_flutter_device',
       };
-
-      AppLogger.info('OTP verification: ${isValid ? 'success' : 'failed'}', tag: 'Auth');
-      return response;
+      final responseData = await _apiService.post('/api/v1/auth/verify-otp', data: requestBody);
+      final accessToken = responseData['accessToken'] ?? (responseData['data'] != null ? responseData['data']['accessToken'] : null) ?? '';
+      final refreshToken = responseData['refreshToken'] ?? (responseData['data'] != null ? responseData['data']['refreshToken'] : null) ?? '';
+      if (accessToken.isNotEmpty) {
+        _apiService.setAuthToken(accessToken);
+      }
+      final normalizedResponse = {
+        'success': responseData['success'] ?? true,
+        'message': responseData['message'] ?? 'OTP verified successfully',
+        'token': accessToken,
+        'refreshToken': refreshToken,
+        'user': responseData['user'] ?? (responseData['data'] != null ? responseData['data']['user'] : null) ?? {
+          'id': '1',
+          'name': 'Test User',
+          'email': 'test@example.com',
+          'phone': phone,
+        },
+      };
+      return normalizedResponse;
     } catch (e, st) {
       AppLogger.error('OTP verification failed', tag: 'Auth', error: e, stackTrace: st);
       rethrow;
     }
   }
 
-  Future<void> logout() async {
+  // LOGOUT
+  Future<LogoutResponse> logout() async {
     try {
-      AppLogger.debug('Logging out', tag: 'Auth');
-      await _apiService.post('/auth/logout');
+      AppLogger.debug('Logout initiated', tag: 'Auth');
+      final responseData = await _apiService.post('/api/v1/auth/logout');
       _apiService.clearAuthToken();
-      AppLogger.info('Logout successful', tag: 'Auth');
+      AppLogger.info('Logout success', tag: 'Auth');
+      return LogoutResponse.fromJson(responseData);
     } catch (e, st) {
       AppLogger.error('Logout failed', tag: 'Auth', error: e, stackTrace: st);
       _apiService.clearAuthToken();
@@ -129,6 +121,46 @@ class AuthService {
     }
   }
 
+  // GET CURRENT USER (legacy)
+  Future<Map<String, dynamic>> getCurrentUser() async {
+    try {
+      AppLogger.debug('Fetching current user', tag: 'Auth');
+      final responseData = await _apiService.get('/api/v1/auth/me');
+      AppLogger.info('Current user fetched', tag: 'Auth');
+      return responseData;
+    } catch (e, st) {
+      AppLogger.error('Failed to fetch current user', tag: 'Auth', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  // GET USER PROFILE
+  Future<UserProfileResponse> getUserProfile() async {
+    try {
+      AppLogger.debug('Fetching user profile', tag: 'Auth');
+      final responseData = await _apiService.get('/api/v1/users/me');
+      AppLogger.info('User profile fetched', tag: 'Auth');
+      return UserProfileResponse.fromJson(responseData);
+    } catch (e, st) {
+      AppLogger.error('Failed to fetch user profile', tag: 'Auth', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  // UPDATE USER PROFILE
+  Future<UserProfileResponse> updateUserProfile(UpdateProfileRequest request) async {
+    try {
+      AppLogger.debug('Updating user profile', tag: 'Auth');
+      final responseData = await _apiService.patch('/api/v1/users/me', data: request.toJson());
+      AppLogger.info('User profile update successful', tag: 'Auth');
+      return UserProfileResponse.fromJson(responseData);
+    } catch (e, st) {
+      AppLogger.error('Failed to update user profile', tag: 'Auth', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  // REFRESH TOKEN
   Future<Map<String, dynamic>> refreshToken() async {
     try {
       AppLogger.debug('Refreshing token', tag: 'Auth');
@@ -143,13 +175,11 @@ class AuthService {
     }
   }
 
+  // FORGOT PASSWORD
   Future<Map<String, dynamic>> forgotPassword(String email) async {
     try {
       AppLogger.debug('Forgot password request: $email', tag: 'Auth');
-      final data = await _apiService.post(
-        '/auth/forgot-password',
-        data: {'email': email},
-      );
+      final data = await _apiService.post('/auth/forgot-password', data: {'email': email});
       return data;
     } catch (e, st) {
       AppLogger.error('Forgot password failed', tag: 'Auth', error: e, stackTrace: st);
@@ -157,16 +187,11 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>> resetPassword(
-    String token,
-    String newPassword,
-  ) async {
+  // RESET PASSWORD
+  Future<Map<String, dynamic>> resetPassword(String token, String newPassword) async {
     try {
       AppLogger.debug('Resetting password', tag: 'Auth');
-      final data = await _apiService.post(
-        '/auth/reset-password',
-        data: {'token': token, 'newPassword': newPassword},
-      );
+      final data = await _apiService.post('/auth/reset-password', data: {'token': token, 'newPassword': newPassword});
       return data;
     } catch (e, st) {
       AppLogger.error('Password reset failed', tag: 'Auth', error: e, stackTrace: st);

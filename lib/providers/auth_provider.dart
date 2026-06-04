@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+
 import '../data/repositories/auth_repository.dart';
 import '../data/models/user_model.dart';
+import '../data/models/dto/update_profile_request.dart';
+import '../data/models/dto/user_profile.dart';
 import '../data/models/dto/send_otp_request.dart';
 import '../core/utils/app_logger.dart';
 
@@ -9,6 +12,7 @@ class AuthProvider extends ChangeNotifier {
 
   AuthProvider(this._authRepository);
 
+  // ----- Auth State -----
   User? _user;
   bool _isLoading = false;
   String? _error;
@@ -16,6 +20,13 @@ class AuthProvider extends ChangeNotifier {
   String? _successMessage;
   String? _lastOtpRequestStatus;
 
+  // ----- Profile State -----
+  UserProfile? _profile;
+  bool _profileLoading = false;
+  String? _profileError;
+  String? _profileSuccessMessage;
+
+  // ----- Getters -----
   User? get user => _user;
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -24,6 +35,25 @@ class AuthProvider extends ChangeNotifier {
   String? get lastOtpRequestStatus => _lastOtpRequestStatus;
   bool get isAuthenticated => _user != null;
 
+  UserProfile? get profile => _profile;
+  bool get profileLoading => _profileLoading;
+  String? get profileError => _profileError;
+  String? get profileSuccessMessage => _profileSuccessMessage;
+
+  // ----- Helper Methods -----
+  void _setLoading(bool value) {
+    _isLoading = value;
+  }
+
+  void _setError(String message) {
+    _error = message;
+  }
+
+  void _clearError() {
+    _error = null;
+  }
+
+  // ----- Auth Actions -----
   void resetAuthState() {
     _phone = null;
     _successMessage = null;
@@ -33,7 +63,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// SEND OTP
+  // SEND OTP
   Future<bool> continueWithPhone(String phoneRaw) async {
     final validationError = SendOtpRequest.validatePhone(phoneRaw);
     if (validationError != null) {
@@ -59,7 +89,7 @@ class AuthProvider extends ChangeNotifier {
         return true;
       } else {
         _lastOtpRequestStatus = 'failed';
-        _setError("Unable to send OTP");
+        _setError('Unable to send OTP');
         return false;
       }
     } catch (e) {
@@ -68,7 +98,6 @@ class AuthProvider extends ChangeNotifier {
       if (rawError.startsWith('Exception: ')) {
         rawError = rawError.substring('Exception: '.length);
       }
-
       String errorMessage = rawError;
       if (errorMessage.contains('Connection refused') || errorMessage.contains('SocketException')) {
         errorMessage = "Unable to send OTP";
@@ -81,7 +110,6 @@ class AuthProvider extends ChangeNotifier {
       } else if (errorMessage.isEmpty || errorMessage == "null") {
         errorMessage = "Something went wrong";
       }
-
       AppLogger.error('API failures: $errorMessage', tag: 'Auth');
       _setError(errorMessage);
       return false;
@@ -91,24 +119,22 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// VERIFY OTP
+  // VERIFY OTP AND LOGIN
   Future<bool> verifyOtpAndLogin(String phone, String otp) async {
     if (otp.length != 6) {
-      _setError("Please enter complete OTP");
+      _setError('Please enter complete OTP');
       notifyListeners();
       return false;
     }
-
     _setLoading(true);
     _clearError();
     notifyListeners();
-
     try {
       _user = await _authRepository.verifyOtp(phone, otp);
       _clearError();
       return true;
     } catch (e) {
-      _setError("Invalid OTP");
+      _setError(e.toString().contains('Exception:') ? e.toString().replaceAll('Exception: ', '') : 'Invalid OTP');
       return false;
     } finally {
       _setLoading(false);
@@ -116,33 +142,43 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// LOGOUT
+  // LOGOUT
   Future<void> logout() async {
     _setLoading(true);
     _clearError();
     notifyListeners();
-
     try {
       await _authRepository.logout();
       _user = null;
     } catch (e) {
-      _setError("Logout failed");
+      _setError('Logout failed');
     } finally {
       _setLoading(false);
       notifyListeners();
     }
   }
 
-  ///HELPERS
-  void _setLoading(bool value) {
-    _isLoading = value;
-  }
-
-  void _setError(String message) {
-    _error = message;
-  }
-
-  void _clearError() {
-    _error = null;
+  // UPDATE USER PROFILE
+  Future<void> updateUserProfile({String? name, String? email}) async {
+    _profileLoading = true;
+    _profileError = null;
+    _profileSuccessMessage = null;
+    notifyListeners();
+    try {
+      final request = UpdateProfileRequest(name: name?.trim(), email: email?.trim());
+      if ((request.name == null || request.name!.isEmpty) && (request.email == null || request.email!.isEmpty)) {
+        throw Exception('No changes to update');
+      }
+      final updated = await _authRepository.updateUserProfile(request);
+      _profile = updated;
+      _profileSuccessMessage = 'Profile updated successfully';
+      AppLogger.info('Profile update successful', tag: 'Auth');
+    } catch (e) {
+      _profileError = e.toString();
+      AppLogger.error('Profile update error: $_profileError', tag: 'Auth');
+    } finally {
+      _profileLoading = false;
+      notifyListeners();
+    }
   }
 }
