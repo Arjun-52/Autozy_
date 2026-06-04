@@ -2,6 +2,7 @@ import 'package:autozy/features/navigation/main_screen.dart';
 import 'package:autozy/features/notification/notification_screen.dart';
 import 'package:autozy/features/vehicles/screens/edit_vehicle_screen.dart';
 import 'package:autozy/features/profile/screens/saved_address_screen.dart';
+import 'package:autozy/features/auth/screens/area_selection_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,6 +17,7 @@ import '../../features/booking/screens/order_success_screen.dart';
 import '../../features/inspection/screens/inspection_done_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/invoices_screen.dart';
+import '../../features/profile/screens/subscriptions_screen.dart';
 
 class AppGoRouter {
   static final GoRouter router = GoRouter(
@@ -42,6 +44,11 @@ class AppGoRouter {
           final phone = state.uri.queryParameters['phone'] ?? '1234567890';
           return OtpScreen(phone: phone);
         },
+      ),
+      GoRoute(
+        path: '/select-area',
+        name: 'selectArea',
+        builder: (context, state) => const AreaSelectionScreen(),
       ),
 
       // Main navigation
@@ -166,6 +173,11 @@ class AppGoRouter {
         name: 'inspectionDone',
         builder: (context, state) => const InspectionDoneScreen(),
       ),
+      GoRoute(
+        path: '/subscriptions',
+        name: 'subscriptions',
+        builder: (context, state) => const SubscriptionsScreen(),
+      ),
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(child: Text('Page not found: ${state.uri.toString()}')),
@@ -235,5 +247,7 @@ class AppRoutes {
   static const String editProfile = '/edit-profile';
   static const String invoices = '/invoices';
   static const String notifications = '/notifications';
+  static const String selectArea = '/select-area';
   static const String savedAddress = '/saved-address';
+  static const String subscriptions = '/subscriptions';
 }

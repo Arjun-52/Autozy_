@@ -2,36 +2,29 @@ class Plan {
   final String id;
   final String name;
   final String description;
-  final double price;
-  final String duration;
-  final List<String> features;
-  final bool isActive;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final bool? isActive;
+  final String? createdAt;
+  final PlanFeatures? features;
 
   Plan({
     required this.id,
     required this.name,
     required this.description,
-    required this.price,
-    required this.duration,
-    required this.features,
-    required this.isActive,
-    required this.createdAt,
-    required this.updatedAt,
+    this.isActive,
+    this.createdAt,
+    this.features,
   });
 
   factory Plan.fromJson(Map<String, dynamic> json) {
     return Plan(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
-      price: (json['price'] ?? 0).toDouble(),
-      duration: json['duration'] ?? '',
-      features: List<String>.from(json['features'] ?? []),
-      isActive: json['isActive'] ?? true,
-      createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
-      updatedAt: DateTime.parse(json['updatedAt'] ?? DateTime.now().toIso8601String()),
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      isActive: json['isActive'] as bool? ?? json['is_active'] as bool? ?? true,
+      createdAt: json['createdAt'] as String? ?? json['created_at'] as String?,
+      features: json['features'] != null
+          ? PlanFeatures.fromJson(json['features'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -40,12 +33,9 @@ class Plan {
       'id': id,
       'name': name,
       'description': description,
-      'price': price,
-      'duration': duration,
-      'features': features,
       'isActive': isActive,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt,
+      'features': features?.toJson(),
     };
   }
 
@@ -53,23 +43,45 @@ class Plan {
     String? id,
     String? name,
     String? description,
-    double? price,
-    String? duration,
-    List<String>? features,
     bool? isActive,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    String? createdAt,
+    PlanFeatures? features,
   }) {
     return Plan(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
-      price: price ?? this.price,
-      duration: duration ?? this.duration,
-      features: features ?? this.features,
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      features: features ?? this.features,
     );
+  }
+}
+
+class PlanFeatures {
+  final int? internal;
+  final int? waterWash;
+  final int? washesPerMonth;
+
+  PlanFeatures({
+    this.internal,
+    this.waterWash,
+    this.washesPerMonth,
+  });
+
+  factory PlanFeatures.fromJson(Map<String, dynamic> json) {
+    return PlanFeatures(
+      internal: json['internal'] as int? ?? json['internal_cleaning'] as int?,
+      waterWash: json['waterWash'] as int? ?? json['water_wash'] as int? ?? json['waterWashCount'] as int?,
+      washesPerMonth: json['washes_per_month'] as int? ?? json['washesPerMonth'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'internal': internal,
+      'waterWash': waterWash,
+      'washesPerMonth': washesPerMonth,
+    };
   }
 }

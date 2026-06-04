@@ -113,7 +113,7 @@ class _OtpScreenState extends State<OtpScreen> {
                             .verifyOtpAndLogin(widget.phone, otpProvider.otp);
 
                         if (success && context.mounted) {
-                          context.go('/home');
+                          context.go('/select-area');
                         }
                       },
               ),

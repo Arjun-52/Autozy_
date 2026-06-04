@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/plan_provider.dart';
 import '../widgets/plan_card.dart';
 
 class PlansScreen extends StatefulWidget {
@@ -11,13 +13,159 @@ class PlansScreen extends StatefulWidget {
 }
 
 class _PlansScreenState extends State<PlansScreen> {
-  int selectedPlan = 1;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PlanProvider>().fetchPlans();
+    });
+  }
+
+  String _getPriceForPlan(String name) {
+    switch (name.toUpperCase()) {
+      case 'BASIC':
+        return '₹499';
+      case 'STANDARD':
+        return '₹799';
+      case 'REGULAR_CLEANING':
+        return '₹699';
+      case 'REGULAR_WATER_WASH':
+        return '₹899';
+      case 'INTERNAL_CLEANING':
+        return '₹399';
+      case 'PREMIUM':
+        return '₹1,299';
+      default:
+        return '₹499';
+    }
+  }
+
+  Widget _getPlanIcon(String name, bool isSelected) {
+    String assetPath = 'assets/images/basic.svg';
+    switch (name.toUpperCase()) {
+      case 'BASIC':
+        assetPath = 'assets/images/basic.svg';
+        break;
+      case 'STANDARD':
+        assetPath = 'assets/images/Star.svg';
+        break;
+      case 'PREMIUM':
+        assetPath = 'assets/images/ranking.svg';
+        break;
+      case 'REGULAR_CLEANING':
+        assetPath = 'assets/images/Lightning.svg';
+        break;
+      case 'REGULAR_WATER_WASH':
+        assetPath = 'assets/images/view_plans.svg';
+        break;
+      case 'INTERNAL_CLEANING':
+        assetPath = 'assets/images/basic.svg';
+        break;
+    }
+    return Center(
+      child: SvgPicture.asset(
+        assetPath,
+        height: 20,
+        width: 20,
+      ),
+    );
+  }
+
+  String _getCleanErrorMessage(String? error) {
+    if (error == null) return '';
+    final lower = error.toLowerCase();
+    if (lower.contains('socketexception') || lower.contains('network') || lower.contains('failed host')) {
+      return 'Unable to load plans';
+    }
+    if (lower.contains('401') || lower.contains('unauthorized') || lower.contains('session expired')) {
+      return 'Session expired';
+    }
+    return 'Something went wrong';
+  }
+
+  Widget _buildEmptyState(PlanProvider provider) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.assignment_outlined, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            const Text(
+              "No Plans Available",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              "Subscription plans are currently unavailable.",
+              style: TextStyle(color: Colors.grey),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () => provider.fetchPlans(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xffF4C430),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text("Retry", style: TextStyle(color: Colors.black)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(PlanProvider provider, String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 64, color: Colors.redAccent),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () => provider.fetchPlans(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xffF4C430),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text("Retry", style: TextStyle(color: Colors.black)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final planProvider = context.watch<PlanProvider>();
+    final plans = planProvider.plans;
+    final isLoading = planProvider.isLoading;
+    final error = planProvider.error;
+    final selectedPlan = planProvider.selectedPlan;
+
+    // Auto-select first plan if selection is empty and list is not empty
+    if (selectedPlan == null && plans.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && planProvider.selectedPlan == null) {
+          planProvider.selectPlan(plans.first);
+        }
+      });
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
-
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -36,135 +184,84 @@ class _PlansScreenState extends State<PlansScreen> {
           ),
         ),
       ),
-
       body: Column(
         children: [
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  /// BASIC PLAN
-                  PlanCard(
-                    title: "Basic",
-                    price: "₹499",
-                    icon: Container(
-                      height: 36,
-                      width: 36,
-                      decoration: BoxDecoration(
-                        color: selectedPlan == 0
-                            ? const Color(0xFFFFC107) // selected
-                            : const Color(0xFFFFECBC), // not selected
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          'assets/images/basic.svg',
-                          height: 20,
-                          width: 20,
-                        ),
-                      ),
+            child: RefreshIndicator(
+              onRefresh: () => planProvider.refreshPlans(),
+              child: () {
+                if (isLoading && plans.isEmpty) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xffF4C430),
                     ),
-                    features: [
-                      {"title": "Daily exterior wash", "isSelected": true},
-                      {"title": "Dashboard wipe", "isSelected": true},
-                      {"title": "Feature number three", "isSelected": true},
-                    ],
-                    isSelected: selectedPlan == 0,
-                    onTap: () {
-                      setState(() {
-                        selectedPlan = 0;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 16),
+                  );
+                }
 
-                  /// STANDARD PLAN
-                  PlanCard(
-                    title: "Standard",
-                    price: "₹799",
-                    icon: Container(
-                      height: 36,
-                      width: 36,
-                      decoration: BoxDecoration(
-                        color: selectedPlan == 1
-                            ? const Color(0xFFFFC107) // selected (dark yellow)
-                            : const Color(
-                                0xFFFFECBC,
-                              ), // not selected (light yellow)
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          'assets/images/Star.svg',
-                          height: 20,
-                          width: 20,
-                        ),
-                      ),
+                if (error != null) {
+                  return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: _buildErrorState(planProvider, _getCleanErrorMessage(error)),
                     ),
-                    isPopular: true,
-                    features: [
-                      {"title": "Everything in Basic", "isSelected": true},
-                      {"title": "Interior vacuum (weekly)", "isSelected": true},
-                      {"title": "Tyre dressing (weekly)", "isSelected": true},
-                      {"title": "Priority Support", "isSelected": true},
-                    ],
-                    isSelected: selectedPlan == 1,
-                    onTap: () {
-                      setState(() {
-                        selectedPlan = 1;
-                      });
-                    },
-                  ),
+                  );
+                }
 
-                  const SizedBox(height: 16),
-
-                  /// PREMIUM PLAN
-                  PlanCard(
-                    title: "Premium",
-                    price: "₹1,299",
-                    icon: Container(
-                      height: 36,
-                      width: 36,
-                      decoration: BoxDecoration(
-                        color: selectedPlan == 2
-                            ? const Color(0xFFFFC107) // selected (dark yellow)
-                            : const Color(
-                                0xFFFFECBC,
-                              ), // not selected (light yellow)
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: SvgPicture.asset(
-                          'assets/images/ranking.svg',
-                          height: 20,
-                          width: 20,
-                        ),
-                      ),
+                if (plans.isEmpty) {
+                  return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: _buildEmptyState(planProvider),
                     ),
-                    features: [
-                      {"title": "Everything in Standard", "isSelected": true},
+                  );
+                }
+
+                return ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(16),
+                  itemCount: plans.length,
+                  itemBuilder: (context, index) {
+                    final plan = plans[index];
+                    final isSelected = selectedPlan?.id == plan.id;
+                    final price = _getPriceForPlan(plan.name);
+                    final isPopular = plan.name.toUpperCase() == 'STANDARD';
+
+                    // Build features map
+                    final planFeatures = <Map<String, dynamic>>[
                       {
-                        "title": "Full interior clean (bi-weekly)",
-                        "isSelected": true,
+                        "title": "Washes Per Month: ${plan.features?.washesPerMonth ?? 0}",
+                        "isSelected": (plan.features?.washesPerMonth ?? 0) > 0,
                       },
-                      {"title": "AC vent cleaning", "isSelected": true},
                       {
-                        "title": "Ceramic spray coating (monthly)",
-                        "isSelected": true,
+                        "title": "Internal Cleaning Count: ${plan.features?.internal ?? 0}",
+                        "isSelected": (plan.features?.internal ?? 0) > 0,
                       },
-                      {"title": "Dedicated detailer", "isSelected": true},
-                    ],
-                    isSelected: selectedPlan == 2,
-                    onTap: () {
-                      setState(() {
-                        selectedPlan = 2;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 100),
-                ],
-              ),
+                      {
+                        "title": "Water Wash Count: ${plan.features?.waterWash ?? 0}",
+                        "isSelected": (plan.features?.waterWash ?? 0) > 0,
+                      },
+                    ];
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: PlanCard(
+                        title: plan.name,
+                        price: price,
+                        description: plan.description,
+                        features: planFeatures,
+                        isSelected: isSelected,
+                        isPopular: isPopular,
+                        icon: _getPlanIcon(plan.name, isSelected),
+                        onTap: () {
+                          planProvider.selectPlan(plan);
+                        },
+                      ),
+                    );
+                  },
+                );
+              }(),
             ),
           ),
 
@@ -180,9 +277,11 @@ class _PlansScreenState extends State<PlansScreen> {
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              onPressed: () {
-                context.pushNamed('bookSlot');
-              },
+              onPressed: selectedPlan != null
+                  ? () {
+                      context.pushNamed('bookSlot');
+                    }
+                  : null,
               child: const Text(
                 "Continue to Slot Selection",
                 style: TextStyle(
@@ -194,22 +293,6 @@ class _PlansScreenState extends State<PlansScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget buildPlanIcon(String path, bool isSelected) {
-    return Container(
-      height: 36,
-      width: 36,
-      decoration: BoxDecoration(
-        color: isSelected
-            ? const Color(0xFFFFC107) // selected
-            : const Color(0xFFFFECBC), // not selected
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Center(
-        child: Image.asset(path, height: 20, width: 20, fit: BoxFit.contain),
       ),
     );
   }

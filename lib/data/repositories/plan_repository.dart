@@ -1,5 +1,7 @@
+import '../../core/utils/app_logger.dart';
 import '../services/api_service.dart';
 import '../models/plan_model.dart';
+import '../models/dto/plan_response.dart';
 
 class PlanRepository {
   final ApiService _apiService;
@@ -8,14 +10,32 @@ class PlanRepository {
 
   Future<List<Plan>> getPlans() async {
     try {
-      final data = await _apiService.get('/plans');
-
-      final List<dynamic> plans = data['plans'];
-      return plans.map((plan) => Plan.fromJson(plan)).toList();
-    } catch (e) {
+      AppLogger.info('Plans requested', tag: 'Plans');
+      final data = await _apiService.get('/api/v1/plans');
+      print('RAW PLANS RESPONSE: $data');
+      final response = PlanResponse.fromJson(data);
+      final list = response.plans ?? [];
+      AppLogger.info('Plans loaded count: ${list.length}', tag: 'Plans');
+      return list;
+    } catch (e, st) {
+      AppLogger.error('API failure: Failed to fetch subscription plans', tag: 'Plans', error: e, stackTrace: st);
       rethrow;
     }
   }
+
+  Future<List<dynamic>> getPricing() async {
+    try {
+      AppLogger.info('Pricing list requested', tag: 'Plans');
+      final data = await _apiService.get('/api/v1/pricing');
+      final list = data['data'] as List<dynamic>? ?? [];
+      AppLogger.info('Pricing loaded count: ${list.length}', tag: 'Plans');
+      return list;
+    } catch (e, st) {
+      AppLogger.error('API failure: Failed to fetch plan pricing list', tag: 'Plans', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
 
   Future<Plan> getPlanById(String planId) async {
     try {

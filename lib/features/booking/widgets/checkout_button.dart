@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/services/navigation_service.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/subscription_provider.dart';
 
 class CheckoutButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -8,6 +9,9 @@ class CheckoutButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final subProvider = context.watch<SubscriptionProvider>();
+    final isLoading = subProvider.isLoading;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 60),
 
@@ -23,18 +27,18 @@ class CheckoutButton extends StatelessWidget {
             ),
           ),
 
-          onPressed: () {
-            NavigationService.navigateToNamed(context, 'payment');
-          },
+          onPressed: isLoading ? null : onPressed,
 
-          child: const Text(
-            "Proceed to Payment",
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          child: isLoading
+              ? const CircularProgressIndicator(color: Colors.black)
+              : const Text(
+                  "Proceed to Payment",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
         ),
       ),
     );

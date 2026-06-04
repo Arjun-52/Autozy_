@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class PlanCard extends StatelessWidget {
   final String title;
   final String price;
+  final String? description;
   final List<Map<String, dynamic>> features;
   final bool isPopular;
   final bool isSelected;
@@ -13,6 +14,7 @@ class PlanCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.price,
+    this.description,
     required this.features,
     required this.isSelected,
     required this.icon,
@@ -71,60 +73,81 @@ class PlanCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    /// ICON CONTAINER
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFFFFCB2F)
-                            : const Color(0xFFFFECBC),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: icon,
-                    ),
-
-                    const SizedBox(width: 12),
-
-                    /// TITLE + PRICE
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
+                Expanded(
+                  child: Row(
+                    children: [
+                      /// ICON CONTAINER
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFFFFCB2F)
+                              : const Color(0xFFFFECBC),
+                          borderRadius: BorderRadius.circular(14),
                         ),
+                        child: icon,
+                      ),
 
-                        const SizedBox(height: 4),
+                      const SizedBox(width: 12),
 
-                        Row(
+                      /// TITLE + PRICE
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              price,
+                              title,
                               style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            const Text(
-                              " /month",
-                              style: TextStyle(
-                                color: Color(0xFF7E8392),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
+
+                            const SizedBox(height: 4),
+
+                            Row(
+                              children: [
+                                Text(
+                                  price,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const Text(
+                                  " /month",
+                                  style: TextStyle(
+                                    color: Color(0xFF7E8392),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            if (description != null && description!.isNotEmpty) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                description!,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF7E8392),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ),
+                            ],
                           ],
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                    ],
+                  ),
                 ),
+                const SizedBox(width: 12),
 
                 /// SELECTED CHECK CIRCLE
                 Container(

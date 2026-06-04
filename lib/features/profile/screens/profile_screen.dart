@@ -163,6 +163,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               MenuTile(
                 icon: SvgPicture.asset(
+                  'assets/images/view_plans.svg',
+                  height: 24,
+                  width: 24,
+                  fit: BoxFit.contain,
+                ),
+                title: "My Subscriptions",
+                onTap: () => context.pushNamed('subscriptions'),
+              ),
+              MenuTile(
+                icon: SvgPicture.asset(
                   'assets/images/notification.svg',
                   height: 24,
                   width: 24,

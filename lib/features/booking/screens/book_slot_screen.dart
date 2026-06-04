@@ -5,6 +5,8 @@ import 'package:autozy/features/booking/widgets/info_box.dart';
 import 'package:autozy/features/booking/widgets/section_title.dart';
 import 'package:autozy/features/booking/widgets/time_slot_list.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/subscription_provider.dart';
 
 class BookSlotScreen extends StatefulWidget {
   const BookSlotScreen({super.key});
@@ -16,6 +18,23 @@ class BookSlotScreen extends StatefulWidget {
 class _BookSlotScreenState extends State<BookSlotScreen> {
   int selectedDate = 0;
   int selectedTime = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateSelectedSlot();
+    });
+  }
+
+  void _updateSelectedSlot() {
+    if (mounted) {
+      final slotTitle = times[selectedTime]["title"] ?? 'Morning';
+      final slotType = slotTitle.toUpperCase() == 'MORNING' ? 'MORNING' : 'EVENING';
+      context.read<SubscriptionProvider>().selectSlotType(slotType);
+    }
+  }
+
   Future<void> pickDate() async {
     final today = DateTime.now();
 
@@ -40,6 +59,9 @@ class _BookSlotScreenState extends State<BookSlotScreen> {
 
     if (picked != null) {
       print("Selected: $picked");
+      if (mounted) {
+        context.read<SubscriptionProvider>().selectDate(picked);
+      }
     }
   }
 
@@ -82,6 +104,7 @@ class _BookSlotScreenState extends State<BookSlotScreen> {
               setState(() {
                 selectedDate = index;
               });
+              _updateSelectedSlot();
             },
             onCalendarTap: pickDate,
           ),
@@ -101,6 +124,7 @@ class _BookSlotScreenState extends State<BookSlotScreen> {
                 setState(() {
                   selectedTime = index;
                 });
+                _updateSelectedSlot();
               },
             ),
           ),

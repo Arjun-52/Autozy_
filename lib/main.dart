@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'core/services/navigation_service.dart';
 
 import 'core/constants/colors.dart';
 import 'core/router/go_router.dart';
@@ -12,6 +13,8 @@ import 'data/repositories/vehicle_repository.dart';
 import 'data/repositories/plan_repository.dart';
 import 'data/repositories/booking_repository.dart';
 import 'data/repositories/inspection_repository.dart';
+import 'data/repositories/area_repository.dart';
+import 'data/repositories/subscription_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'providers/auth_provider.dart';
@@ -20,6 +23,8 @@ import 'providers/plan_provider.dart';
 import 'providers/booking_provider.dart';
 import 'providers/inspection_provider.dart';
 import 'providers/otp_provider.dart';
+import 'providers/area_provider.dart';
+import 'providers/subscription_provider.dart';
 
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -103,6 +108,14 @@ class _AutozyAppState extends State<AutozyApp> {
         Provider<InspectionRepository>(
           create: (context) => InspectionRepository(context.read<ApiService>()),
         ),
+        
+        Provider<AreaRepository>(
+          create: (context) => AreaRepository(context.read<ApiService>()),
+        ),
+
+        Provider<SubscriptionRepository>(
+          create: (context) => SubscriptionRepository(context.read<ApiService>()),
+        ),
 
         /// PROVIDERS
         ChangeNotifierProvider<OtpProvider>(create: (_) => OtpProvider()),
@@ -129,9 +142,20 @@ class _AutozyAppState extends State<AutozyApp> {
           create: (context) =>
               InspectionProvider(context.read<InspectionRepository>()),
         ),
+        
+        ChangeNotifierProvider<AreaProvider>(
+          create: (context) =>
+              AreaProvider(context.read<AreaRepository>()),
+        ),
+
+        ChangeNotifierProvider<SubscriptionProvider>(
+          create: (context) =>
+              SubscriptionProvider(context.read<SubscriptionRepository>()),
+        ),
       ],
 
       child: MaterialApp.router(
+        scaffoldMessengerKey: NavigationService.scaffoldMessengerKey,
         title: 'Autozy',
         debugShowCheckedModeBanner: false,
         routerConfig: AppGoRouter.router,
