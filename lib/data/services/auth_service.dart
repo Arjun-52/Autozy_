@@ -1,3 +1,4 @@
+// Auth Service handling authentication related API calls
 import '../../core/utils/app_logger.dart';
 import '../models/dto/send_otp_response.dart';
 import '../models/dto/logout_response.dart';
@@ -14,20 +15,24 @@ class AuthService {
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       AppLogger.debug('Attempting login: $email', tag: 'Auth');
-      await Future.delayed(const Duration(seconds: 1));
-      final mockResponse = {
-        'success': true,
-        'message': 'Login successful',
-        'token': 'mock_jwt_token_12345',
-        'user': {
-          'id': '1',
-          'name': 'Test User',
-          'email': email,
-          'phone': '+91XXXXXXXXXX',
-        },
+      final requestBody = {
+        'email': email,
+        'password': password,
       };
-      AppLogger.info('Login successful (mock)', tag: 'Auth');
-      return mockResponse;
+      final responseData = await _apiService.post('/api/v1/auth/login', data: requestBody);
+      
+      AppLogger.info('Raw login response: $responseData', tag: 'Auth');
+
+      final accessToken = responseData['accessToken'] ??
+          (responseData['data'] != null ? responseData['data']['accessToken'] : null) ??
+          responseData['token'] ?? '';
+          
+      if (accessToken.isNotEmpty) {
+        _apiService.setAuthToken(accessToken);
+        AppLogger.info('Stored login token in ApiService', tag: 'Auth');
+      }
+
+      return responseData;
     } catch (e, st) {
       AppLogger.error('Login failed', tag: 'Auth', error: e, stackTrace: st);
       rethrow;
@@ -47,6 +52,7 @@ class AuthService {
           'password': password,
         },
       );
+      // Store received token
       _apiService.setAuthToken(data['token']);
       AppLogger.info('Registration successful', tag: 'Auth');
       return data;
@@ -63,17 +69,19 @@ class AuthService {
       final requestBody = {'phone': phone.trim()};
       final responseData = await _apiService.post('/api/v1/auth/send-otp', data: requestBody);
       final response = SendOtpResponse.fromJson(responseData);
-      AppLogger.info('Request success', tag: 'Auth');
-      AppLogger.info('Success message received: ${response.data?.message}', tag: 'Auth');
+      AppLogger.info('OTP request success', tag: 'Auth');
+      AppLogger.info('Message: ${response.data?.message}', tag: 'Auth');
       return response;
     } catch (e, st) {
-      AppLogger.error('API failures: OTP send failed', tag: 'Auth', error: e, stackTrace: st);
+      AppLogger.error('OTP send failed', tag: 'Auth', error: e, stackTrace: st);
       rethrow;
     }
   }
 
   // VERIFY OTP
   Future<Map<String, dynamic>> verifyOtp(String phone, String otp) async {
+    print('ENTERED AuthService.verifyOtp');
+    print('VERIFY OTP API CALLED');
     try {
       AppLogger.debug('Verifying OTP for: $phone', tag: 'Auth');
       final requestBody = {
@@ -81,23 +89,44 @@ class AuthService {
         'otp': otp,
         'deviceId': 'autozy_flutter_device',
       };
+      
       final responseData = await _apiService.post('/api/v1/auth/verify-otp', data: requestBody);
-      final accessToken = responseData['accessToken'] ?? (responseData['data'] != null ? responseData['data']['accessToken'] : null) ?? '';
-      final refreshToken = responseData['refreshToken'] ?? (responseData['data'] != null ? responseData['data']['refreshToken'] : null) ?? '';
+      
+      // Log raw API response before parsing
+      AppLogger.info('Raw verify-otp response: $responseData', tag: 'Auth');
+      print('VERIFY OTP RESPONSE: $responseData');
+
+      final accessToken = responseData['accessToken'] ??
+          (responseData['data'] != null ? responseData['data']['accessToken'] : null) ?? '';
+      final refreshToken = responseData['refreshToken'] ??
+          (responseData['data'] != null ? responseData['data']['refreshToken'] : null) ?? '';
+          
+      print('ACCESS TOKEN = $accessToken');
+      print('REFRESH TOKEN = $refreshToken');
+
       if (accessToken.isNotEmpty) {
         _apiService.setAuthToken(accessToken);
+        AppLogger.info('Stored real backend accessToken: $accessToken', tag: 'Auth');
       }
+      if (refreshToken.isNotEmpty) {
+        AppLogger.info('Received real backend refreshToken: $refreshToken', tag: 'Auth');
+      }
+
       final normalizedResponse = {
         'success': responseData['success'] ?? true,
         'message': responseData['message'] ?? 'OTP verified successfully',
         'token': accessToken,
         'refreshToken': refreshToken,
-        'user': responseData['user'] ?? (responseData['data'] != null ? responseData['data']['user'] : null) ?? {
-          'id': '1',
-          'name': 'Test User',
-          'email': 'test@example.com',
-          'phone': phone,
-        },
+        'user': responseData['user'] ??
+            (responseData['data'] != null ? responseData['data']['user'] : null) ??
+            {
+              'id': responseData['userId'] ?? '1',
+              'name': 'User',
+              'email': '',
+              'phone': phone,
+              'createdAt': DateTime.now().toIso8601String(),
+              'updatedAt': DateTime.now().toIso8601String(),
+            },
       };
       return normalizedResponse;
     } catch (e, st) {

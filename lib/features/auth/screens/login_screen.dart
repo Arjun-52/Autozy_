@@ -132,6 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ? null
                       : () async {
                           print('LOGIN BUTTON PRESSED');
+                          print(StackTrace.current);
                           final success = await context
                               .read<AuthProvider>()
                               .continueWithPhone(phoneController.text);

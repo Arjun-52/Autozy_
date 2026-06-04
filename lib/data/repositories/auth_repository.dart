@@ -81,6 +81,16 @@ class AuthRepository {
     }
   }
 
+  // GET USER PROFILE
+  Future<UserProfile> getUserProfile() async {
+    try {
+      final response = await _authService.getUserProfile();
+      return response.data!;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // UPDATE USER PROFILE
   Future<UserProfile> updateUserProfile(UpdateProfileRequest request) async {
     try {

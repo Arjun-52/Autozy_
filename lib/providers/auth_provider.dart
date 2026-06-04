@@ -132,6 +132,8 @@ class AuthProvider extends ChangeNotifier {
     try {
       _user = await _authRepository.verifyOtp(phone, otp);
       _clearError();
+      // Fetch user profile immediately after login to sync count and state
+      await fetchUserProfile();
       return true;
     } catch (e) {
       _setError(e.toString().contains('Exception:') ? e.toString().replaceAll('Exception: ', '') : 'Invalid OTP');
@@ -150,10 +152,29 @@ class AuthProvider extends ChangeNotifier {
     try {
       await _authRepository.logout();
       _user = null;
+      _profile = null;
     } catch (e) {
       _setError('Logout failed');
     } finally {
       _setLoading(false);
+      notifyListeners();
+    }
+  }
+
+  // FETCH USER PROFILE
+  Future<void> fetchUserProfile() async {
+    _profileLoading = true;
+    _profileError = null;
+    _profileSuccessMessage = null;
+    notifyListeners();
+    try {
+      _profile = await _authRepository.getUserProfile();
+      AppLogger.info('Profile user profile fetched successfully', tag: 'Auth');
+    } catch (e) {
+      _profileError = e.toString();
+      AppLogger.error('Profile fetch error: $_profileError', tag: 'Auth');
+    } finally {
+      _profileLoading = false;
       notifyListeners();
     }
   }

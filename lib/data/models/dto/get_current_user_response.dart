@@ -16,7 +16,7 @@ class GetCurrentUserResponse {
 
   Map<String, dynamic> toJson() => {
         'success': success,
-        'data': data?.toJson(),
+        'data': data?.toJson(), 
         'timestamp': timestamp,
       };
 }

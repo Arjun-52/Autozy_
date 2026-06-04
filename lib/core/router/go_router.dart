@@ -1,5 +1,6 @@
 import 'package:autozy/features/navigation/main_screen.dart';
 import 'package:autozy/features/notification/notification_screen.dart';
+import 'package:autozy/features/vehicles/screens/edit_vehicle_screen.dart';
 import 'package:autozy/features/profile/screens/saved_address_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -110,6 +111,14 @@ class AppGoRouter {
         name: 'addVehicle',
         builder: (context, state) => const AddVehicleScreen(),
       ),
+      GoRoute(
+        path: '/edit-vehicle/:id',
+        name: 'editVehicle',
+        builder: (context, state) {
+          final id = state.pathParameters['id'];
+          return EditVehicleScreen(vehicleId: id!);
+        },
+      ),
 
       // Booking flow
       GoRoute(
@@ -216,6 +225,7 @@ class AppRoutes {
   static const String plans = '/home/plans';
   static const String profile = '/home/profile';
   static const String addVehicle = '/add-vehicle';
+  static const String editVehicle = '/edit-vehicle';
   static const String bookSlot = '/book-slot';
   static const String checkout = '/checkout';
   static const String payment = '/payment';

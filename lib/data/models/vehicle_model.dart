@@ -1,40 +1,69 @@
 class Vehicle {
   final String id;
   final String userId;
-  final String name;
-  final String number;
-  final String type;
+  final String vehicleNumber;
   final String brand;
   final String model;
-  final String? imageUrl;
+  final String sizeCategory;
+  final double parkingLocationLat;
+  final double parkingLocationLng;
+  final String parkingNotes;
+  final String? pillarNumber;
+  final String? keyHandoverType;
+  final bool parkingLotAvailable;
+  final bool securityPermissionRequired;
+  final bool isActive;
   final DateTime createdAt;
-  final DateTime updatedAt;
+
+  // Legacy field compatibility
+  String get name => '$brand $model';
+  String get number => vehicleNumber;
+  String get type => sizeCategory;
+  String? get imageUrl => null;
+  DateTime get updatedAt => createdAt;
 
   Vehicle({
     required this.id,
     required this.userId,
-    required this.name,
-    required this.number,
-    required this.type,
+    required this.vehicleNumber,
     required this.brand,
     required this.model,
-    this.imageUrl,
+    required this.sizeCategory,
+    required this.parkingLocationLat,
+    required this.parkingLocationLng,
+    required this.parkingNotes,
+    this.pillarNumber,
+    this.keyHandoverType,
+    required this.parkingLotAvailable,
+    required this.securityPermissionRequired,
+    required this.isActive,
     required this.createdAt,
-    required this.updatedAt,
   });
 
   factory Vehicle.fromJson(Map<String, dynamic> json) {
+    // Handle double conversion safely (in case they come as int or String)
+    double parseDouble(dynamic val) {
+      if (val == null) return 0.0;
+      if (val is num) return val.toDouble();
+      return double.tryParse(val.toString()) ?? 0.0;
+    }
+
     return Vehicle(
       id: json['id'] ?? '',
-      userId: json['userId'] ?? '',
-      name: json['name'] ?? '',
-      number: json['number'] ?? '',
-      type: json['type'] ?? '',
+      userId: json['userId'] ?? json['user_id'] ?? '',
+      vehicleNumber: json['vehicleNumber'] ?? json['vehicle_number'] ?? json['number'] ?? '',
       brand: json['brand'] ?? '',
       model: json['model'] ?? '',
-      imageUrl: json['imageUrl'],
-      createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
-      updatedAt: DateTime.parse(json['updatedAt'] ?? DateTime.now().toIso8601String()),
+      sizeCategory: json['sizeCategory'] ?? json['size_category'] ?? json['type'] ?? '',
+      parkingLocationLat: parseDouble(json['parkingLocationLat'] ?? json['parking_location_lat']),
+      parkingLocationLng: parseDouble(json['parkingLocationLng'] ?? json['parking_location_lng']),
+      parkingNotes: json['parkingNotes'] ?? json['parking_notes'] ?? '',
+      pillarNumber: json['pillarNumber'] ?? json['pillar_number'],
+      keyHandoverType: json['keyHandoverType'] ?? json['key_handover_type'],
+      parkingLotAvailable: json['parkingLotAvailable'] ?? json['parking_lot_available'] ?? false,
+      securityPermissionRequired: json['securityPermissionRequired'] ?? json['security_permission_required'] ?? false,
+      isActive: json['isActive'] ?? json['is_active'] ?? true,
+      createdAt: DateTime.parse(json['createdAt'] ?? json['created_at'] ?? DateTime.now().toIso8601String()),
     );
   }
 
@@ -42,40 +71,67 @@ class Vehicle {
     return {
       'id': id,
       'userId': userId,
-      'name': name,
-      'number': number,
-      'type': type,
+      'user_id': userId,
+      'vehicleNumber': vehicleNumber,
+      'vehicle_number': vehicleNumber,
       'brand': brand,
       'model': model,
-      'imageUrl': imageUrl,
+      'sizeCategory': sizeCategory,
+      'size_category': sizeCategory,
+      'parkingLocationLat': parkingLocationLat,
+      'parking_location_lat': parkingLocationLat,
+      'parkingLocationLng': parkingLocationLng,
+      'parking_location_lng': parkingLocationLng,
+      'parkingNotes': parkingNotes,
+      'parking_notes': parkingNotes,
+      'pillarNumber': pillarNumber,
+      'pillar_number': pillarNumber,
+      'keyHandoverType': keyHandoverType,
+      'key_handover_type': keyHandoverType,
+      'parkingLotAvailable': parkingLotAvailable,
+      'parking_lot_available': parkingLotAvailable,
+      'securityPermissionRequired': securityPermissionRequired,
+      'security_permission_required': securityPermissionRequired,
+      'isActive': isActive,
+      'is_active': isActive,
       'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'created_at': createdAt.toIso8601String(),
     };
   }
 
   Vehicle copyWith({
     String? id,
     String? userId,
-    String? name,
-    String? number,
-    String? type,
+    String? vehicleNumber,
     String? brand,
     String? model,
-    String? imageUrl,
+    String? sizeCategory,
+    double? parkingLocationLat,
+    double? parkingLocationLng,
+    String? parkingNotes,
+    String? pillarNumber,
+    String? keyHandoverType,
+    bool? parkingLotAvailable,
+    bool? securityPermissionRequired,
+    bool? isActive,
     DateTime? createdAt,
-    DateTime? updatedAt,
   }) {
     return Vehicle(
       id: id ?? this.id,
       userId: userId ?? this.userId,
-      name: name ?? this.name,
-      number: number ?? this.number,
-      type: type ?? this.type,
+      vehicleNumber: vehicleNumber ?? this.vehicleNumber,
       brand: brand ?? this.brand,
       model: model ?? this.model,
-      imageUrl: imageUrl ?? this.imageUrl,
+      sizeCategory: sizeCategory ?? this.sizeCategory,
+      parkingLocationLat: parkingLocationLat ?? this.parkingLocationLat,
+      parkingLocationLng: parkingLocationLng ?? this.parkingLocationLng,
+      parkingNotes: parkingNotes ?? this.parkingNotes,
+      pillarNumber: pillarNumber ?? this.pillarNumber,
+      keyHandoverType: keyHandoverType ?? this.keyHandoverType,
+      parkingLotAvailable: parkingLotAvailable ?? this.parkingLotAvailable,
+      securityPermissionRequired: securityPermissionRequired ?? this.securityPermissionRequired,
+      isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }

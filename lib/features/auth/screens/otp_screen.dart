@@ -103,6 +103,8 @@ class _OtpScreenState extends State<OtpScreen> {
                 onPressed: authProvider.isLoading
                     ? null
                     : () async {
+                        print('OTP SUBMIT PRESSED');
+                        print(StackTrace.current);
                         ScaffoldMessenger.of(context).clearSnackBars();
                         final otpProvider = context.read<OtpProvider>();
 

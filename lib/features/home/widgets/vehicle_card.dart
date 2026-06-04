@@ -1,23 +1,87 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+import '../../../providers/vehicle_provider.dart';
 
 class VehicleCard extends StatelessWidget {
   const VehicleCard({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final vehicleProvider = context.watch<VehicleProvider>();
+    final vehicles = vehicleProvider.vehicles;
+
+    if (vehicles.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF161616).withValues(alpha: 0.12),
+              blurRadius: 13,
+              spreadRadius: 0,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            SvgPicture.asset(
+              'assets/images/car2.svg',
+              height: 40,
+              width: 40,
+              colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              "No vehicles registered",
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "Register your vehicle to manage services",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey.shade600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () {
+                context.pushNamed('vehicles');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFFCB2F),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                "Add Vehicle",
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+            )
+          ],
+        ),
+      );
+    }
+
+    final vehicle = vehicles.first;
+
     return Container(
       width: double.infinity,
-
       padding: const EdgeInsets.all(16),
-
       decoration: BoxDecoration(
         color: Colors.white,
-
         borderRadius: BorderRadius.circular(16),
-
         border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
-
         boxShadow: [
           BoxShadow(
             color: const Color(0xFF161616).withValues(alpha: 0.12),
@@ -27,7 +91,6 @@ class VehicleCard extends StatelessWidget {
           ),
         ],
       ),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -46,28 +109,27 @@ class VehicleCard extends StatelessWidget {
                   width: 20,
                 ),
               ),
-
               const SizedBox(width: 12),
-
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Hyundai Creta",
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                  ),
-                  Text(
-                    "TS 01 AB 1234",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff7E8392),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${vehicle.brand} ${vehicle.model}",
+                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                     ),
-                  ),
-                ],
+                    Text(
+                      "${vehicle.vehicleNumber} • ${vehicle.sizeCategory}",
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff7E8392),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-
-              const Spacer(),
+              const SizedBox(width: 8),
 
               /// STATUS
               Container(
@@ -88,8 +150,8 @@ class VehicleCard extends StatelessWidget {
                       width: 16,
                       height: 16,
                     ),
-                    SizedBox(width: 4),
-                    Text(
+                    const SizedBox(width: 4),
+                    const Text(
                       "Cleaned",
                       style: TextStyle(
                         color: Color(0xFF008847),
@@ -102,7 +164,6 @@ class VehicleCard extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 14),
 
           /// MESSAGE BOX
@@ -117,7 +178,6 @@ class VehicleCard extends StatelessWidget {
               style: TextStyle(fontSize: 12),
             ),
           ),
-
           const SizedBox(height: 10),
 
           /// WARNING TEXT

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../../core/utils/app_logger.dart';
 
@@ -150,12 +149,16 @@ class ApiService {
 
       try {
         final errorData = json.decode(response.body);
-        message = errorData['message'] ?? message;
+        if (errorData['errors'] is List && (errorData['errors'] as List).isNotEmpty) {
+          message = (errorData['errors'] as List).join(', ');
+        } else {
+          message = errorData['message'] ?? message;
+        }
       } catch (e) {
         message = 'Error $statusCode: ${response.body}';
       }
 
-      throw Exception('Error $statusCode: $message');
+      throw Exception(message);
     }
   }
 
