@@ -6,12 +6,16 @@ class MenuTile extends StatelessWidget {
   final VoidCallback? onTap;
   final bool showBadge;
 
+  /// When greater than 0, a count pill is shown instead of the plain dot.
+  final int badgeCount;
+
   const MenuTile({
     super.key,
     required this.icon,
     required this.title,
     this.onTap,
     this.showBadge = false,
+    this.badgeCount = 0,
   });
 
   @override
@@ -45,7 +49,35 @@ class MenuTile extends StatelessWidget {
                   child: icon,
                 ),
 
-                if (showBadge)
+                if (badgeCount > 0)
+                  Positioned(
+                    right: -6,
+                    top: -6,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFC68A00),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.white, width: 1.5),
+                      ),
+                      child: Center(
+                        child: Text(
+                          badgeCount > 9 ? '9+' : '$badgeCount',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            height: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                else if (showBadge)
                   Positioned(
                     right: 0,
                     top: 0,

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/router/navigation_helper.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/notification_provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -20,6 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AuthProvider>().fetchUserProfile();
+      context.read<NotificationProvider>().fetchUnreadCount();
     });
   }
 
@@ -179,9 +181,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   fit: BoxFit.contain,
                 ),
                 title: "Notifications",
-                showBadge: true,
-                onTap: () {
-                  context.push('/notifications');
+                badgeCount: context.watch<NotificationProvider>().unreadCount,
+                onTap: () async {
+                  await context.push('/notifications');
+                  if (context.mounted) {
+                    context.read<NotificationProvider>().fetchUnreadCount();
+                  }
                 },
               ),
               const SizedBox(height: 20),
