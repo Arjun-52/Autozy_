@@ -183,6 +183,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
               MenuTile(
+                icon: const Icon(
+                  Icons.confirmation_number_outlined,
+                  size: 24,
+                  color: Colors.black87,
+                ),
+                title: "My Support Tickets",
+                onTap: () {
+                  context.push('/tickets');
+                },
+              ),
+              MenuTile(
                 icon: SvgPicture.asset(
                   'assets/images/notification.svg',
                   height: 24,

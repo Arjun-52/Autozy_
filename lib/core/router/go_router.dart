@@ -22,6 +22,8 @@ import '../../features/profile/screens/service_history_screen.dart';
 import '../../features/profile/screens/service_calendar_screen.dart';
 import '../../features/profile/screens/addon_bookings_screen.dart';
 import '../../features/booking/screens/book_addon_screen.dart';
+import '../../features/profile/screens/tickets_screen.dart';
+import '../../features/profile/screens/ticket_details_screen.dart';
 
 class AppGoRouter {
   static final GoRouter router = GoRouter(
@@ -207,6 +209,19 @@ class AppGoRouter {
         path: '/book-addon',
         name: 'bookAddon',
         builder: (context, state) => const BookAddonScreen(),
+      ),
+      GoRoute(
+        path: '/tickets',
+        name: 'tickets',
+        builder: (context, state) => const TicketsScreen(),
+      ),
+      GoRoute(
+        path: '/ticket-details/:id',
+        name: 'ticketDetails',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return TicketDetailsScreen(ticketId: id);
+        },
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

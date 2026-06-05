@@ -30,6 +30,8 @@ import 'providers/daily_service_provider.dart';
 import 'providers/daily_calendar_provider.dart';
 import 'data/repositories/addon_repository.dart';
 import 'providers/addon_booking_provider.dart';
+import 'data/repositories/ticket_repository.dart';
+import 'providers/ticket_provider.dart';
 
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -130,6 +132,10 @@ class _AutozyAppState extends State<AutozyApp> {
           create: (context) => AddonRepository(context.read<ApiService>()),
         ),
 
+        Provider<TicketRepository>(
+          create: (context) => TicketRepository(context.read<ApiService>()),
+        ),
+
         /// PROVIDERS
         ChangeNotifierProvider<OtpProvider>(create: (_) => OtpProvider()),
 
@@ -179,6 +185,11 @@ class _AutozyAppState extends State<AutozyApp> {
         ChangeNotifierProvider<AddonBookingProvider>(
           create: (context) =>
               AddonBookingProvider(context.read<AddonRepository>()),
+        ),
+
+        ChangeNotifierProvider<TicketProvider>(
+          create: (context) =>
+              TicketProvider(context.read<TicketRepository>()),
         ),
       ],
 
