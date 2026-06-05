@@ -52,24 +52,26 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   Widget build(BuildContext context) {
     final vehicleProvider = context.watch<VehicleProvider>();
 
-    return Container(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 20,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-      ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 20,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
         ),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25),
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             /// HEADER
             Row(
               children: [
@@ -162,7 +164,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   hint: const Text("Select Size"),
                   isExpanded: true,
                   icon: const Icon(Icons.keyboard_arrow_down),
-                  items: ["SMALL", "MEDIUM", "LARGE"]
+                  items: ["HATCHBACK", "SEDAN", "SUV", "PREMIUM"]
                       .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                       .toList(),
                   onChanged: (value) {
@@ -430,8 +432,9 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   /// FIELD WITH FOCUS BORDER EFFECT
   Widget buildField({

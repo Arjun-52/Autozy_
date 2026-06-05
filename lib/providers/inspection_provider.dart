@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
+import '../../core/utils/app_logger.dart';
+import '../data/models/dto/upload_image_response.dart';
 import '../data/repositories/inspection_repository.dart';
 import '../../data/models/booking_model.dart';
 
@@ -11,7 +14,31 @@ class InspectionProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
 
+  // Image Upload State
+  String? _uploadedImageUrl;
+  String? _uploadedImageKey;
+  String _uploadStatus = 'initial'; // 'initial', 'uploading', 'success', 'error'
+  String? _uploadError;
+
+  // Multiple Image Upload State
+  List<UploadedImageModel> _uploadedImagesList = [];
+  List<String> _uploadedImageUrls = [];
+  List<String> _uploadedImageKeys = [];
+  String _multipleUploadStatus = 'initial'; // 'initial', 'uploading', 'success', 'error'
+  String? _multipleUploadError;
+
   InspectionProvider(this._inspectionRepository);
+
+  List<UploadedImageModel> get uploadedImagesList => _uploadedImagesList;
+  List<String> get uploadedImageUrls => _uploadedImageUrls;
+  List<String> get uploadedImageKeys => _uploadedImageKeys;
+  String get multipleUploadStatus => _multipleUploadStatus;
+  String? get multipleUploadError => _multipleUploadError;
+
+  String? get uploadedImageUrl => _uploadedImageUrl;
+  String? get uploadedImageKey => _uploadedImageKey;
+  String get uploadStatus => _uploadStatus;
+  String? get uploadError => _uploadError;
 
   List<Booking> get inspections => _inspections;
   List<Booking> get upcomingInspections => _upcomingInspections;
@@ -232,5 +259,82 @@ class InspectionProvider extends ChangeNotifier {
 
   void _clearError() {
     _error = null;
+  }
+
+  Future<bool> uploadImage(File file) async {
+    _uploadStatus = 'uploading';
+    _uploadError = null;
+    notifyListeners();
+    AppLogger.info('Upload started inside provider for: ${file.path}', tag: 'Upload');
+
+    try {
+      final data = await _inspectionRepository.uploadImage(file);
+      _uploadedImageUrl = data.url;
+      _uploadedImageKey = data.key;
+      _uploadStatus = 'success';
+      AppLogger.info('Upload response received in provider: URL=${data.url}, Key=${data.key}', tag: 'Upload');
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _uploadStatus = 'error';
+      _uploadError = e.toString();
+      AppLogger.error('Upload failed inside provider: $e', tag: 'Upload');
+      notifyListeners();
+      return false;
+    }
+  }
+
+  void resetUpload() {
+    _uploadedImageUrl = null;
+    _uploadedImageKey = null;
+    _uploadStatus = 'initial';
+    _uploadError = null;
+    notifyListeners();
+  }
+
+  Future<bool> uploadMultipleImages(List<File> files) async {
+    if (files.isEmpty) {
+      _multipleUploadStatus = 'error';
+      _multipleUploadError = 'Empty selection: No files selected for upload';
+      notifyListeners();
+      return false;
+    }
+    if (files.length > 5) {
+      _multipleUploadStatus = 'error';
+      _multipleUploadError = 'Maximum image limit exceeded: You cannot upload more than 5 images';
+      notifyListeners();
+      return false;
+    }
+
+    _multipleUploadStatus = 'uploading';
+    _multipleUploadError = null;
+    notifyListeners();
+    AppLogger.info('Multiple upload started inside provider for: ${files.length} images', tag: 'Upload');
+
+    try {
+      final data = await _inspectionRepository.uploadMultipleImages(files);
+      _uploadedImagesList = data;
+      _uploadedImageUrls = data.map((img) => img.url).toList();
+      _uploadedImageKeys = data.map((img) => img.key).toList();
+      _multipleUploadStatus = 'success';
+      AppLogger.info('Multiple upload response received in provider. Count: ${data.length}', tag: 'Upload');
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _multipleUploadStatus = 'error';
+      _multipleUploadError = e.toString();
+      AppLogger.error('Multiple upload failed inside provider: $e', tag: 'Upload');
+      notifyListeners();
+      return false;
+    }
+  }
+
+  void resetMultipleUpload() {
+    _uploadedImagesList = [];
+    _uploadedImageUrls = [];
+    _uploadedImageKeys = [];
+    _multipleUploadStatus = 'initial';
+    _multipleUploadError = null;
+    notifyListeners();
   }
 }

@@ -257,25 +257,84 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
   }
 
   Widget buildField({required String label, required Widget child, required FocusNode? focusNode}) {
-    return StatefulBuilder(
-      builder: (context, setState) {
-        focusNode?.addListener(() => setState(() {}));
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: focusNode != null && focusNode.hasFocus ? const Color(0xFFF6C431) : Colors.grey.shade300,
-              width: 1.5,
-            ),
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-            child,
-          ]),
-        );
-      },
+    return BorderFocusField(
+      label: label,
+      focusNode: focusNode,
+      child: child,
+    );
+  }
+}
+
+class BorderFocusField extends StatefulWidget {
+  final String label;
+  final Widget child;
+  final FocusNode? focusNode;
+
+  const BorderFocusField({
+    super.key,
+    required this.label,
+    required this.child,
+    required this.focusNode,
+  });
+
+  @override
+  State<BorderFocusField> createState() => _BorderFocusFieldState();
+}
+
+class _BorderFocusFieldState extends State<BorderFocusField> {
+  bool _hasFocus = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.focusNode?.addListener(_onFocusChange);
+    _hasFocus = widget.focusNode?.hasFocus ?? false;
+  }
+
+  @override
+  void didUpdateWidget(covariant BorderFocusField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.focusNode != widget.focusNode) {
+      oldWidget.focusNode?.removeListener(_onFocusChange);
+      widget.focusNode?.addListener(_onFocusChange);
+      _hasFocus = widget.focusNode?.hasFocus ?? false;
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.focusNode?.removeListener(_onFocusChange);
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    final newFocus = widget.focusNode?.hasFocus ?? false;
+    if (_hasFocus != newFocus) {
+      setState(() {
+        _hasFocus = newFocus;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: _hasFocus ? const Color(0xFFF6C431) : Colors.grey.shade300,
+          width: 1.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(widget.label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          widget.child,
+        ],
+      ),
     );
   }
 }

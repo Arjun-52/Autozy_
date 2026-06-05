@@ -90,7 +90,12 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              const PremiumServicesCard(),
+              GestureDetector(
+                onTap: () {
+                  context.pushNamed('bookAddon');
+                },
+                child: const PremiumServicesCard(),
+              ),
 
               const SizedBox(height: 32),
 

@@ -172,6 +172,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () => context.pushNamed('subscriptions'),
               ),
               MenuTile(
+                icon: const Icon(
+                  Icons.shopping_bag_outlined,
+                  size: 24,
+                  color: Colors.black87,
+                ),
+                title: "My Add-on Bookings",
+                onTap: () {
+                  context.push('/addon-bookings');
+                },
+              ),
+              MenuTile(
                 icon: SvgPicture.asset(
                   'assets/images/notification.svg',
                   height: 24,

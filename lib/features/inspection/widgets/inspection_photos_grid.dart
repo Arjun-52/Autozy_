@@ -3,6 +3,8 @@ import 'package:autozy/features/inspection/widgets/inspection_photo_item.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/inspection_provider.dart';
 import 'dart:io';
 
 class InspectionPhotosGrid extends StatefulWidget {
@@ -25,21 +27,46 @@ class _InspectionPhotosGridState extends State<InspectionPhotosGrid> {
   ];
 
   Future<void> _capturePhoto(int index) async {
-    debugPrint("--- Camera process started for: ${photos[index].label} ---");
+    final ImageSource? source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Take Photo (Camera)'),
+                onTap: () => Navigator.pop(context, ImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choose from Gallery'),
+                onTap: () => Navigator.pop(context, ImageSource.gallery),
+              ),
+            ],
+          ),
+        );
+      },
+    );
 
-    try {
-      // Check permission status
+    if (source == null) return;
+
+    debugPrint("--- Image selection started for: ${photos[index].label} from $source ---");
+
+    if (source == ImageSource.camera) {
       var status = await Permission.camera.status;
-      debugPrint("Permission status (Initial check): $status");
-
       if (status.isDenied) {
-        debugPrint("Camera permission is denied. Requesting permission...");
         status = await Permission.camera.request();
-        debugPrint("Permission status (After request): $status");
       }
 
       if (status.isPermanentlyDenied) {
-        debugPrint("Camera permission permanently denied. Guiding user to app settings.");
         if (mounted) {
           showDialog(
             context: context,
@@ -68,7 +95,6 @@ class _InspectionPhotosGridState extends State<InspectionPhotosGrid> {
       }
 
       if (status.isDenied) {
-        debugPrint("Camera permission denied by user.");
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -79,29 +105,50 @@ class _InspectionPhotosGridState extends State<InspectionPhotosGrid> {
         }
         return;
       }
+    }
 
-      if (status.isGranted || status.isLimited) {
-        debugPrint("Camera permission is granted. Attempting to open device camera...");
-        final XFile? image = await _picker.pickImage(
-          source: ImageSource.camera,
-          imageQuality: 70,
-        );
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        imageQuality: 70,
+      );
 
-        if (image != null) {
-          debugPrint("Image captured successfully. Path: ${image.path}");
+      if (image != null) {
+        setState(() {
+          photos[index].imageFile = File(image.path);
+          photos[index].uploadStatus = 'uploading';
+          photos[index].error = null;
+        });
+
+        debugPrint("Image selected. Path: ${image.path}. Upload started...");
+        final provider = context.read<InspectionProvider>();
+        final success = await provider.uploadImage(File(image.path));
+
+        if (success) {
+          debugPrint("Image uploaded successfully. URL: ${provider.uploadedImageUrl}");
           setState(() {
-            photos[index].imageFile = File(image.path);
+            photos[index].uploadStatus = 'success';
+            photos[index].url = provider.uploadedImageUrl;
+            photos[index].key = provider.uploadedImageKey;
           });
         } else {
-          debugPrint("Capture cancelled: User closed camera without taking a photo.");
+          debugPrint("Image upload failed: ${provider.uploadError}");
+          setState(() {
+            photos[index].uploadStatus = 'error';
+            photos[index].error = provider.uploadError;
+          });
         }
       }
     } catch (e) {
-      debugPrint("Capture failed: Error opening camera: $e");
+      debugPrint("Action failed: Error selecting/uploading image: $e");
+      setState(() {
+        photos[index].uploadStatus = 'error';
+        photos[index].error = e.toString();
+      });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Error opening camera: $e"),
+            content: Text("Error: $e"),
             backgroundColor: Colors.red,
           ),
         );

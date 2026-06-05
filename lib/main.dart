@@ -25,6 +25,11 @@ import 'providers/inspection_provider.dart';
 import 'providers/otp_provider.dart';
 import 'providers/area_provider.dart';
 import 'providers/subscription_provider.dart';
+import 'data/repositories/daily_service_repository.dart';
+import 'providers/daily_service_provider.dart';
+import 'providers/daily_calendar_provider.dart';
+import 'data/repositories/addon_repository.dart';
+import 'providers/addon_booking_provider.dart';
 
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -117,6 +122,14 @@ class _AutozyAppState extends State<AutozyApp> {
           create: (context) => SubscriptionRepository(context.read<ApiService>()),
         ),
 
+        Provider<DailyServiceRepository>(
+          create: (context) => DailyServiceRepository(context.read<ApiService>()),
+        ),
+
+        Provider<AddonRepository>(
+          create: (context) => AddonRepository(context.read<ApiService>()),
+        ),
+
         /// PROVIDERS
         ChangeNotifierProvider<OtpProvider>(create: (_) => OtpProvider()),
 
@@ -151,6 +164,21 @@ class _AutozyAppState extends State<AutozyApp> {
         ChangeNotifierProvider<SubscriptionProvider>(
           create: (context) =>
               SubscriptionProvider(context.read<SubscriptionRepository>()),
+        ),
+
+        ChangeNotifierProvider<DailyServiceProvider>(
+          create: (context) =>
+              DailyServiceProvider(context.read<DailyServiceRepository>()),
+        ),
+
+        ChangeNotifierProvider<DailyCalendarProvider>(
+          create: (context) =>
+              DailyCalendarProvider(context.read<DailyServiceRepository>()),
+        ),
+
+        ChangeNotifierProvider<AddonBookingProvider>(
+          create: (context) =>
+              AddonBookingProvider(context.read<AddonRepository>()),
         ),
       ],
 

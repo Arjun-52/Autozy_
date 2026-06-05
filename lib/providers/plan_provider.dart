@@ -44,7 +44,7 @@ class PlanProvider extends ChangeNotifier {
     if (_pricings.isEmpty) return null;
     final normalizedSize = vehicleSize.trim().toUpperCase();
 
-    // Map frontend vehicle sizes (SMALL, MEDIUM, LARGE) to backend pricing sizes (HATCHBACK, SEDAN, SUV)
+    // Map frontend legacy vehicle sizes (SMALL, MEDIUM, LARGE) to backend pricing sizes (HATCHBACK, SEDAN, SUV)
     String mappedSize = normalizedSize;
     if (normalizedSize == 'SMALL') {
       mappedSize = 'HATCHBACK';
@@ -54,12 +54,15 @@ class PlanProvider extends ChangeNotifier {
       mappedSize = 'SUV';
     }
 
-    // 1. Try to find match with plan_id, vehicle_size, and area_id
+    // 1. Try to find match with plan_id, vehicle_size, and area_id (handling both snake_case and camelCase keys)
     if (areaId != null) {
       for (var p in _pricings) {
-        if (p['plan_id'] == planId &&
-            p['vehicle_size']?.toString().toUpperCase() == mappedSize &&
-            p['area_id'] == areaId) {
+        final pPlanId = p['plan_id'] ?? p['planId'];
+        final pVehicleSize = p['vehicle_size'] ?? p['vehicleSize'];
+        final pAreaId = p['area_id'] ?? p['areaId'];
+        if (pPlanId == planId &&
+            pVehicleSize?.toString().toUpperCase() == mappedSize &&
+            pAreaId == areaId) {
           return p['id'] as String?;
         }
       }
@@ -68,9 +71,12 @@ class PlanProvider extends ChangeNotifier {
     // 2. Try to find match with plan_id, vehicle_size, and city_id
     if (cityId != null) {
       for (var p in _pricings) {
-        if (p['plan_id'] == planId &&
-            p['vehicle_size']?.toString().toUpperCase() == mappedSize &&
-            p['city_id'] == cityId) {
+        final pPlanId = p['plan_id'] ?? p['planId'];
+        final pVehicleSize = p['vehicle_size'] ?? p['vehicleSize'];
+        final pCityId = p['city_id'] ?? p['cityId'];
+        if (pPlanId == planId &&
+            pVehicleSize?.toString().toUpperCase() == mappedSize &&
+            pCityId == cityId) {
           return p['id'] as String?;
         }
       }
@@ -78,8 +84,10 @@ class PlanProvider extends ChangeNotifier {
 
     // 3. Fallback to match with plan_id, vehicle_size
     for (var p in _pricings) {
-      if (p['plan_id'] == planId &&
-          p['vehicle_size']?.toString().toUpperCase() == mappedSize) {
+      final pPlanId = p['plan_id'] ?? p['planId'];
+      final pVehicleSize = p['vehicle_size'] ?? p['vehicleSize'];
+      if (pPlanId == planId &&
+          pVehicleSize?.toString().toUpperCase() == mappedSize) {
         return p['id'] as String?;
       }
     }

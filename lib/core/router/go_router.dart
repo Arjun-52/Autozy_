@@ -18,6 +18,10 @@ import '../../features/inspection/screens/inspection_done_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/invoices_screen.dart';
 import '../../features/profile/screens/subscriptions_screen.dart';
+import '../../features/profile/screens/service_history_screen.dart';
+import '../../features/profile/screens/service_calendar_screen.dart';
+import '../../features/profile/screens/addon_bookings_screen.dart';
+import '../../features/booking/screens/book_addon_screen.dart';
 
 class AppGoRouter {
   static final GoRouter router = GoRouter(
@@ -178,6 +182,32 @@ class AppGoRouter {
         name: 'subscriptions',
         builder: (context, state) => const SubscriptionsScreen(),
       ),
+      GoRoute(
+        path: '/service-history/:vehicleId',
+        name: 'serviceHistory',
+        builder: (context, state) {
+          final vehicleId = state.pathParameters['vehicleId']!;
+          return ServiceHistoryScreen(vehicleId: vehicleId);
+        },
+      ),
+      GoRoute(
+        path: '/service-calendar/:vehicleId',
+        name: 'serviceCalendar',
+        builder: (context, state) {
+          final vehicleId = state.pathParameters['vehicleId']!;
+          return ServiceCalendarScreen(vehicleId: vehicleId);
+        },
+      ),
+      GoRoute(
+        path: '/addon-bookings',
+        name: 'addonBookings',
+        builder: (context, state) => const AddonBookingsScreen(),
+      ),
+      GoRoute(
+        path: '/book-addon',
+        name: 'bookAddon',
+        builder: (context, state) => const BookAddonScreen(),
+      ),
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(child: Text('Page not found: ${state.uri.toString()}')),
@@ -250,4 +280,9 @@ class AppRoutes {
   static const String selectArea = '/select-area';
   static const String savedAddress = '/saved-address';
   static const String subscriptions = '/subscriptions';
+  static const String serviceHistory = '/service-history';
+  static const String serviceCalendar = '/service-calendar';
+  static const String addonBookings = '/addon-bookings';
+  static const String bookAddon = '/book-addon';
 }
+

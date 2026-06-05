@@ -316,20 +316,73 @@ class _VehicleScreenState extends State<VehicleScreen> {
                                               ],
                                             ),
                                           ),
-                                          const SizedBox(height: 10),
-                                          GestureDetector(
-                                            onTap: vehicleProvider.isLoading
-                                                ? null
-                                                : () => deleteVehicle(vehicle.id),
-                                            child: Opacity(
-                                              opacity: vehicleProvider.isLoading ? 0.5 : 1.0,
-                                              child: SvgPicture.asset(
-                                                'assets/images/bin.svg',
-                                                height: 24,
-                                                width: 24,
-                                              ),
-                                            ),
-                                          ),
+                                           const SizedBox(height: 10),
+                                           Row(
+                                             mainAxisSize: MainAxisSize.min,
+                                             children: [
+                                               GestureDetector(
+                                                 onTap: () {
+                                                   context.push('/service-history/${vehicle.id}');
+                                                 },
+                                                 child: const Row(
+                                                   children: [
+                                                     Icon(
+                                                       Icons.history,
+                                                       size: 16,
+                                                       color: Color(0xFFC68A00),
+                                                     ),
+                                                     SizedBox(width: 4),
+                                                     Text(
+                                                       "History",
+                                                       style: TextStyle(
+                                                         color: Color(0xFFC68A00),
+                                                         fontSize: 12,
+                                                         fontWeight: FontWeight.w600,
+                                                       ),
+                                                     ),
+                                                   ],
+                                                 ),
+                                               ),
+                                               const SizedBox(width: 14),
+                                               GestureDetector(
+                                                 onTap: () {
+                                                   context.push('/service-calendar/${vehicle.id}');
+                                                 },
+                                                 child: const Row(
+                                                   children: [
+                                                     Icon(
+                                                       Icons.calendar_month,
+                                                       size: 16,
+                                                       color: Color(0xFFC68A00),
+                                                     ),
+                                                     SizedBox(width: 4),
+                                                     Text(
+                                                       "Calendar",
+                                                       style: TextStyle(
+                                                         color: Color(0xFFC68A00),
+                                                         fontSize: 12,
+                                                         fontWeight: FontWeight.w600,
+                                                       ),
+                                                     ),
+                                                   ],
+                                                 ),
+                                               ),
+                                               const SizedBox(width: 14),
+                                               GestureDetector(
+                                                 onTap: vehicleProvider.isLoading
+                                                     ? null
+                                                     : () => deleteVehicle(vehicle.id),
+                                                 child: Opacity(
+                                                   opacity: vehicleProvider.isLoading ? 0.5 : 1.0,
+                                                   child: SvgPicture.asset(
+                                                     'assets/images/bin.svg',
+                                                     height: 20,
+                                                     width: 20,
+                                                   ),
+                                                 ),
+                                               ),
+                                             ],
+                                           ),
                                         ],
                                       ),
                                     ],

@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../core/utils/app_logger.dart';
 
+import '../../core/network/api_config.dart';
+
 class ApiService {
-  static const String apiBaseUrl = 'http://192.168.10.64:3001';
-  static const String baseUrl = apiBaseUrl;
+  static String get baseUrl => ApiConfig.baseUrl;
   String? _authToken;
 
   void setAuthToken(String token) {
@@ -129,6 +130,64 @@ class ApiService {
             body: data != null ? json.encode(data) : null,
           )
           .timeout(const Duration(seconds: 10));
+
+      return _handleResponse(response);
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Map<String, dynamic>> postMultipart(
+    String endpoint, {
+    required String filePath,
+    required String fieldName,
+  }) async {
+    try {
+      final uri = Uri.parse('$baseUrl$endpoint');
+      final request = http.MultipartRequest('POST', uri);
+
+      final headers = _getHeaders();
+      headers.remove('Content-Type');
+      request.headers.addAll(headers);
+
+      final multipartFile = await http.MultipartFile.fromPath(
+        fieldName,
+        filePath,
+      );
+      request.files.add(multipartFile);
+
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 30));
+      final response = await http.Response.fromStream(streamedResponse);
+
+      return _handleResponse(response);
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Map<String, dynamic>> postMultipartMultiple(
+    String endpoint, {
+    required List<String> filePaths,
+    required String fieldName,
+  }) async {
+    try {
+      final uri = Uri.parse('$baseUrl$endpoint');
+      final request = http.MultipartRequest('POST', uri);
+
+      final headers = _getHeaders();
+      headers.remove('Content-Type');
+      request.headers.addAll(headers);
+
+      for (final path in filePaths) {
+        final multipartFile = await http.MultipartFile.fromPath(
+          fieldName,
+          path,
+        );
+        request.files.add(multipartFile);
+      }
+
+      final streamedResponse = await request.send().timeout(const Duration(seconds: 45));
+      final response = await http.Response.fromStream(streamedResponse);
 
       return _handleResponse(response);
     } catch (e) {

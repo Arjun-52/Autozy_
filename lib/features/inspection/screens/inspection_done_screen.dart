@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../widgets/inspection_success_card.dart';
 
 import '../widgets/inspection_photos_grid.dart';
+import '../widgets/multiple_photos_upload_widget.dart';
 import '../widgets/inspection_notice_card.dart';
 import '../widgets/inspection_home_button.dart';
 
@@ -49,6 +50,10 @@ class InspectionDoneScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             const InspectionPhotosGrid(),
+
+            const SizedBox(height: 20),
+
+            const MultiplePhotosUploadWidget(),
 
             const SizedBox(height: 20),
 

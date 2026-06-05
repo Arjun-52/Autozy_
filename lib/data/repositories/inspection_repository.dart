@@ -1,3 +1,7 @@
+import 'dart:io';
+import '../../core/utils/app_logger.dart';
+import '../models/dto/upload_image_response.dart';
+import '../models/dto/upload_multiple_images_response.dart';
 import '../services/api_service.dart';
 import 'package:autozy/data/models/booking_model.dart';
 
@@ -163,6 +167,58 @@ class InspectionRepository {
       final List<dynamic> history = data['inspections'];
       return history.map((item) => item as Map<String, dynamic>).toList();
     } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<UploadedImageModel> uploadImage(File imageFile) async {
+    try {
+      AppLogger.info('Image upload started: ${imageFile.path}', tag: 'Upload');
+      final data = await _apiService.postMultipart(
+        '/api/v1/upload/image',
+        filePath: imageFile.path,
+        fieldName: 'file',
+      );
+      final response = UploadImageResponse.fromJson(data);
+      if (response.success && response.data != null) {
+        AppLogger.info('Image upload completed successfully. Key: ${response.data!.key}', tag: 'Upload');
+        return response.data!;
+      } else {
+        AppLogger.error('Image upload failed: Invalid response', tag: 'Upload');
+        throw Exception('Failed to upload image: Invalid response');
+      }
+    } catch (e, st) {
+      AppLogger.error('API failure: Failed to upload image', tag: 'Upload', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  Future<List<UploadedImageModel>> uploadMultipleImages(List<File> imageFiles) async {
+    if (imageFiles.isEmpty) {
+      throw Exception('Empty selection: No files selected for upload');
+    }
+    if (imageFiles.length > 5) {
+      throw Exception('Maximum image limit exceeded: You cannot upload more than 5 images');
+    }
+
+    try {
+      AppLogger.info('Multiple image upload started. Count: ${imageFiles.length}', tag: 'Upload');
+      final filePaths = imageFiles.map((f) => f.path).toList();
+      final data = await _apiService.postMultipartMultiple(
+        '/api/v1/upload/images',
+        filePaths: filePaths,
+        fieldName: 'files',
+      );
+      final response = UploadMultipleImagesResponse.fromJson(data);
+      if (response.success) {
+        AppLogger.info('Multiple image upload completed successfully. Count: ${response.data.length}', tag: 'Upload');
+        return response.data;
+      } else {
+        AppLogger.error('Multiple image upload failed: Invalid response', tag: 'Upload');
+        throw Exception('Failed to upload multiple images: Invalid response');
+      }
+    } catch (e, st) {
+      AppLogger.error('API failure: Failed to upload multiple images', tag: 'Upload', error: e, stackTrace: st);
       rethrow;
     }
   }
