@@ -1,4 +1,5 @@
 // Auth Service handling authentication related API calls
+import '../../core/services/token_storage.dart';
 import '../../core/utils/app_logger.dart';
 import '../models/dto/send_otp_response.dart';
 import '../models/dto/logout_response.dart';
@@ -8,8 +9,9 @@ import 'api_service.dart';
 
 class AuthService {
   final ApiService _apiService;
+  final TokenStorage _tokenStorage;
 
-  AuthService(this._apiService);
+  AuthService(this._apiService, this._tokenStorage);
 
   // LOGIN
   Future<Map<String, dynamic>> login(String email, String password) async {
@@ -29,6 +31,7 @@ class AuthService {
           
       if (accessToken.isNotEmpty) {
         _apiService.setAuthToken(accessToken);
+        await _tokenStorage.saveTokens(accessToken: accessToken);
         AppLogger.info('Stored login token in ApiService', tag: 'Auth');
       }
 
@@ -106,6 +109,10 @@ class AuthService {
 
       if (accessToken.isNotEmpty) {
         _apiService.setAuthToken(accessToken);
+        await _tokenStorage.saveTokens(
+          accessToken: accessToken,
+          refreshToken: refreshToken.isNotEmpty ? refreshToken : null,
+        );
         AppLogger.info('Stored real backend accessToken: $accessToken', tag: 'Auth');
       }
       if (refreshToken.isNotEmpty) {
@@ -141,11 +148,13 @@ class AuthService {
       AppLogger.debug('Logout initiated', tag: 'Auth');
       final responseData = await _apiService.post('/api/v1/auth/logout');
       _apiService.clearAuthToken();
+      await _tokenStorage.clear();
       AppLogger.info('Logout success', tag: 'Auth');
       return LogoutResponse.fromJson(responseData);
     } catch (e, st) {
       AppLogger.error('Logout failed', tag: 'Auth', error: e, stackTrace: st);
       _apiService.clearAuthToken();
+      await _tokenStorage.clear();
       rethrow;
     }
   }
