@@ -3,9 +3,11 @@ import 'package:http/http.dart' as http;
 import '../../core/utils/app_logger.dart';
 
 class ApiService {
-  static const String apiBaseUrl = 'http://192.168.10.64:3001';
+  static const String apiBaseUrl = 'https://autozybackend.gyaanplant.co.in';
   static const String baseUrl = apiBaseUrl;
   String? _authToken;
+
+  bool get hasToken => _authToken != null && _authToken!.isNotEmpty;
 
   void setAuthToken(String token) {
     _authToken = token;
@@ -30,6 +32,16 @@ class ApiService {
     return headers;
   }
 
+  static const String _tag = 'API';
+
+  /// Logs an outgoing request. Body is only logged for write methods.
+  void _logRequest(String method, Uri uri, {dynamic data}) {
+    AppLogger.info('→ $method ${uri.toString()}', tag: _tag);
+    if (data != null) {
+      AppLogger.debug('  request body: ${json.encode(data)}', tag: _tag);
+    }
+  }
+
   Future<Map<String, dynamic>> get(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
@@ -38,6 +50,7 @@ class ApiService {
       final uri = Uri.parse(
         '$baseUrl$endpoint',
       ).replace(queryParameters: queryParameters);
+      _logRequest('GET', uri);
       final response = await http
           .get(uri, headers: _getHeaders())
           .timeout(const Duration(seconds: 10));
@@ -57,6 +70,7 @@ class ApiService {
       final uri = Uri.parse(
         '$baseUrl$endpoint',
       ).replace(queryParameters: queryParameters);
+      _logRequest('POST', uri, data: data);
       final response = await http
           .post(
             uri,
@@ -80,6 +94,7 @@ class ApiService {
       final uri = Uri.parse(
         '$baseUrl$endpoint',
       ).replace(queryParameters: queryParameters);
+      _logRequest('PUT', uri, data: data);
       final response = await http
           .put(
             uri,
@@ -102,6 +117,7 @@ class ApiService {
       final uri = Uri.parse(
         '$baseUrl$endpoint',
       ).replace(queryParameters: queryParameters);
+      _logRequest('DELETE', uri);
       final response = await http
           .delete(uri, headers: _getHeaders())
           .timeout(const Duration(seconds: 10));
@@ -122,6 +138,7 @@ class ApiService {
         '$baseUrl$endpoint',
       ).replace(queryParameters: queryParameters);
 
+      _logRequest('PATCH', uri, data: data);
       final response = await http
           .patch(
             uri,
@@ -137,14 +154,25 @@ class ApiService {
   }
 
   Map<String, dynamic> _handleResponse(http.Response response) {
+    final method = response.request?.method ?? '?';
+    final url = response.request?.url.toString() ?? '?';
+
     if (response.statusCode >= 200 && response.statusCode < 300) {
+      AppLogger.info(
+        '← ${response.statusCode} $method $url',
+        tag: _tag,
+      );
+      AppLogger.debug('  response body: ${response.body}', tag: _tag);
       if (response.body.isEmpty) {
         return {};
       }
       return json.decode(response.body);
     } else {
       final statusCode = response.statusCode;
-      print('HTTP ERROR BODY: ${response.body}');
+      AppLogger.error(
+        '← $statusCode $method $url — ${response.body}',
+        tag: _tag,
+      );
       String message = 'Something went wrong';
 
       try {
@@ -163,6 +191,7 @@ class ApiService {
   }
 
   Exception _handleError(dynamic error) {
+    AppLogger.error('Request failed', tag: _tag, error: error);
     if (error is Exception) {
       if (error.toString().contains('timeout')) {
         return Exception(

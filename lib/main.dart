@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/services/navigation_service.dart';
+import 'core/services/token_storage.dart';
 
 import 'core/constants/colors.dart';
 import 'core/router/go_router.dart';
@@ -15,6 +16,7 @@ import 'data/repositories/booking_repository.dart';
 import 'data/repositories/inspection_repository.dart';
 import 'data/repositories/area_repository.dart';
 import 'data/repositories/subscription_repository.dart';
+import 'data/repositories/notification_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'providers/auth_provider.dart';
@@ -25,6 +27,7 @@ import 'providers/inspection_provider.dart';
 import 'providers/otp_provider.dart';
 import 'providers/area_provider.dart';
 import 'providers/subscription_provider.dart';
+import 'providers/notification_provider.dart';
 
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -37,11 +40,27 @@ void main() async {
 
   FirebaseMessaging.onBackgroundMessage(_firebaseBackgroundHandler);
 
-  runApp(const AutozyApp());
+  // Restore any persisted session before the UI starts so the splash screen
+  // can route a logged-in user straight to home.
+  final apiService = ApiService();
+  final tokenStorage = TokenStorage();
+  final savedToken = await tokenStorage.getAccessToken();
+  if (savedToken != null && savedToken.isNotEmpty) {
+    apiService.setAuthToken(savedToken);
+  }
+
+  runApp(AutozyApp(apiService: apiService, tokenStorage: tokenStorage));
 }
 
 class AutozyApp extends StatefulWidget {
-  const AutozyApp({super.key});
+  final ApiService apiService;
+  final TokenStorage tokenStorage;
+
+  const AutozyApp({
+    super.key,
+    required this.apiService,
+    required this.tokenStorage,
+  });
 
   @override
   State<AutozyApp> createState() => _AutozyAppState();
@@ -82,10 +101,15 @@ class _AutozyAppState extends State<AutozyApp> {
     return MultiProvider(
       providers: [
         /// SERVICES
-        Provider<ApiService>(create: (_) => ApiService()),
+        Provider<ApiService>.value(value: widget.apiService),
+
+        Provider<TokenStorage>.value(value: widget.tokenStorage),
 
         Provider<AuthService>(
-          create: (context) => AuthService(context.read<ApiService>()),
+          create: (context) => AuthService(
+            context.read<ApiService>(),
+            context.read<TokenStorage>(),
+          ),
         ),
 
         /// REPOSITORIES
@@ -115,6 +139,10 @@ class _AutozyAppState extends State<AutozyApp> {
 
         Provider<SubscriptionRepository>(
           create: (context) => SubscriptionRepository(context.read<ApiService>()),
+        ),
+
+        Provider<NotificationRepository>(
+          create: (context) => NotificationRepository(context.read<ApiService>()),
         ),
 
         /// PROVIDERS
@@ -151,6 +179,11 @@ class _AutozyAppState extends State<AutozyApp> {
         ChangeNotifierProvider<SubscriptionProvider>(
           create: (context) =>
               SubscriptionProvider(context.read<SubscriptionRepository>()),
+        ),
+
+        ChangeNotifierProvider<NotificationProvider>(
+          create: (context) =>
+              NotificationProvider(context.read<NotificationRepository>()),
         ),
       ],
 
