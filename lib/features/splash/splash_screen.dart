@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../../data/services/api_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,7 +18,10 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     Timer(const Duration(seconds: 3), () {
-      context.go('/login');
+      if (!mounted) return;
+      // A restored token means the user is still logged in — skip the login screen.
+      final hasSession = context.read<ApiService>().hasToken;
+      context.go(hasSession ? '/home' : '/login');
     });
   }
 
