@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+import 'map_picker_screen.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../data/models/dto/add_vehicle_request.dart';
 import '../../../providers/vehicle_provider.dart';
@@ -19,6 +22,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   final notesController = TextEditingController();
 
   String? localError;
+  bool _isDetectingLocation = false;
+  String? _selectedAddress;
 
   final numberFocus = FocusNode();
   final latFocus = FocusNode();
@@ -34,6 +39,91 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     "Honda": ["City", "Civic"],
     "Toyota": ["Innova", "Fortuner"],
   };
+
+  @override
+  void initState() {
+    super.initState();
+    _determinePosition();
+  }
+
+  Future<void> _determinePosition() async {
+    if (mounted) {
+      setState(() {
+        _isDetectingLocation = true;
+      });
+    }
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        AppLogger.warning('Location services are disabled.', tag: 'Vehicles');
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          AppLogger.warning('Location permissions are denied.', tag: 'Vehicles');
+          return;
+        }
+      }
+      
+      if (permission == LocationPermission.deniedForever) {
+        AppLogger.warning('Location permissions are permanently denied.', tag: 'Vehicles');
+        return;
+      } 
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      
+      String address = "Coordinates captured successfully";
+      try {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          position.latitude,
+          position.longitude,
+        );
+        if (placemarks.isNotEmpty) {
+          Placemark place = placemarks.first;
+          List<String> parts = [];
+          if (place.name != null && place.name!.isNotEmpty && place.name != place.street) {
+            parts.add(place.name!);
+          }
+          if (place.street != null && place.street!.isNotEmpty) {
+            parts.add(place.street!);
+          }
+          if (place.subLocality != null && place.subLocality!.isNotEmpty) {
+            parts.add(place.subLocality!);
+          }
+          if (place.locality != null && place.locality!.isNotEmpty) {
+            parts.add(place.locality!);
+          }
+          if (parts.isNotEmpty) {
+            address = parts.join(', ');
+          }
+        }
+      } catch (geocodeErr) {
+        AppLogger.error('Geocoding error in auto-detect', error: geocodeErr);
+      }
+
+      if (mounted) {
+        setState(() {
+          latController.text = position.latitude.toString();
+          lngController.text = position.longitude.toString();
+          _selectedAddress = address;
+        });
+        AppLogger.info('Automatically captured GPS coordinates: ${position.latitude}, ${position.longitude}', tag: 'Vehicles');
+      }
+    } catch (e) {
+      AppLogger.error('Failed to get location automatically', tag: 'Vehicles', error: e);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isDetectingLocation = false;
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -178,34 +268,60 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
             const SizedBox(height: 12),
 
-            /// PARKING LATITUDE
+            /// PARKING LOCATION SELECTOR CARD
             buildField(
-              label: "Parking Latitude",
-              focusNode: latFocus,
-              child: TextField(
-                controller: latController,
-                focusNode: latFocus,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  hintText: "eg. 17.3850",
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            /// PARKING LONGITUDE
-            buildField(
-              label: "Parking Longitude",
-              focusNode: lngFocus,
-              child: TextField(
-                controller: lngController,
-                focusNode: lngFocus,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                decoration: const InputDecoration(
-                  hintText: "eg. 78.4867",
-                  border: InputBorder.none,
+              label: "Parking Location",
+              focusNode: null,
+              child: InkWell(
+                onTap: () async {
+                  final result = await Navigator.push<MapPickerResult>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MapPickerScreen(
+                        initialLat: double.tryParse(latController.text),
+                        initialLng: double.tryParse(lngController.text),
+                      ),
+                    ),
+                  );
+                  if (result != null) {
+                    setState(() {
+                      latController.text = result.latitude.toString();
+                      lngController.text = result.longitude.toString();
+                      _selectedAddress = result.address;
+                    });
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.map, color: Color(0xFFF6C431)),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _selectedAddress ?? (_isDetectingLocation ? "Detecting current location..." : "Tap to select parking location"),
+                              style: TextStyle(
+                                fontWeight: _selectedAddress != null ? FontWeight.w600 : FontWeight.normal,
+                                color: _selectedAddress != null ? Colors.black : Colors.grey.shade600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (_isDetectingLocation)
+                        const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFF6C431)),
+                        )
+                      else
+                        const Icon(Icons.chevron_right, color: Colors.grey),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -316,18 +432,15 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                           return;
                         }
 
-                        final lat = double.tryParse(latController.text.trim());
-                        final lng = double.tryParse(lngController.text.trim());
-
-                        if (lat == null) {
+                        if (_selectedAddress == null) {
                           setState(() {
-                            localError = "Please enter a valid latitude coordinate";
+                            localError = "Please select a parking location on the map";
                           });
-                          AppLogger.error('Validation failures: Invalid latitude value', tag: 'Vehicles');
+                          AppLogger.error('Validation failures: Parking location not selected', tag: 'Vehicles');
                           try {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text("Please enter a valid latitude coordinate"),
+                                content: Text("Please select a parking location on the map"),
                                 backgroundColor: Colors.redAccent,
                               ),
                             );
@@ -335,23 +448,27 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                           return;
                         }
 
-                        if (lng == null) {
+                        final lat = double.tryParse(latController.text.trim()) ?? 17.3850;
+                        final lng = double.tryParse(lngController.text.trim()) ?? 78.4867;
+
+                        // Capture values before async gap to avoid linter warnings
+                        final authProvider = context.read<AuthProvider>();
+                        final vehicleProv = context.read<VehicleProvider>();
+                        final navigator = Navigator.of(context);
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+                        // Check for existing active vehicle at this location
+                        final hasActive = await vehicleProv.hasActiveVehicleAtLocation(lat, lng);
+                        if (hasActive) {
                           setState(() {
-                            localError = "Please enter a valid longitude coordinate";
+                            localError = "This address already has an active vehicle registered. Please remove or deactivate the existing vehicle before proceeding.";
                           });
-                          AppLogger.error('Validation failures: Invalid longitude value', tag: 'Vehicles');
-                          try {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Please enter a valid longitude coordinate"),
-                                backgroundColor: Colors.redAccent,
-                              ),
-                            );
-                          } catch (_) {}
+                          scaffoldMessenger.showSnackBar(const SnackBar(
+                            content: Text("This address already has an active vehicle registered. Please remove or deactivate the existing vehicle before proceeding."),
+                            backgroundColor: Colors.redAccent,
+                          ));
                           return;
                         }
-
-
 
                         final request = AddVehicleRequest(
                           vehicleNumber: formattedNumber,
@@ -363,11 +480,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                           parkingNotes: notesController.text.trim(),
                         );
 
-                        // Capture values before async gap to avoid linter warnings
-                        final authProvider = context.read<AuthProvider>();
-                        final vehicleProv = context.read<VehicleProvider>();
-                        final navigator = Navigator.of(context);
-                        final scaffoldMessenger = ScaffoldMessenger.of(context);
+                        
 
                         final success = await vehicleProv.createVehicle(request: request);
 

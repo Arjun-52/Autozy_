@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../providers/subscription_provider.dart';
+import '../../../data/models/dto/subscription_list_response.dart';
 
 class SubscriptionDetailsScreen extends StatefulWidget {
   final String subscriptionId;
@@ -84,6 +85,182 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
       default:
         return const Color(0xFF616161);
     }
+  }
+
+  Widget _buildPaymentSummaryCard(SubscriptionModel sub) {
+    final subscriptionAmount = sub.planPricing?.price ?? 0;
+    final platformFee = sub.platformFee ?? 99;
+    final totalPaid = subscriptionAmount + platformFee;
+
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Payment Summary",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 12),
+          _HomeScreenDetailsRow(label: "Subscription Amount", value: "₹$subscriptionAmount"),
+          _HomeScreenDetailsRow(
+            label: "Platform Fee (Non-refundable)",
+            value: "₹$platformFee",
+          ),
+          const Divider(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Total Paid",
+                style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                "₹$totalPaid",
+                style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            "The platform fee is non-refundable and covers operational and processing costs.",
+            style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRefundStatusCard(SubscriptionModel sub) {
+    if (sub.refundStatus == null || sub.refundStatus!.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    Color badgeBgColor;
+    Color badgeBorderColor;
+    Color badgeTextColor;
+    String statusText;
+    String statusDesc;
+    IconData icon;
+
+    switch (sub.refundStatus!.toLowerCase()) {
+      case 'completed':
+        badgeBgColor = const Color(0xFFE8F8EF);
+        badgeBorderColor = Colors.green.shade300;
+        badgeTextColor = Colors.green;
+        statusText = "Completed";
+        statusDesc = "Your refund has been successfully processed.";
+        icon = Icons.check_circle;
+        break;
+      case 'failed':
+        badgeBgColor = const Color(0xFFFEE2E2);
+        badgeBorderColor = Colors.red.shade300;
+        badgeTextColor = Colors.red;
+        statusText = "Failed";
+        statusDesc = "We were unable to process your refund. Please contact support.";
+        icon = Icons.cancel;
+        break;
+      case 'processing':
+      default:
+        badgeBgColor = const Color(0xFFFFF9E6);
+        badgeBorderColor = Colors.amber.shade300;
+        badgeTextColor = const Color(0xFFD97706);
+        statusText = "Processing";
+        statusDesc = "Your refund has been initiated and is currently being processed.";
+        icon = Icons.hourglass_empty;
+        break;
+    }
+
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Refund Status Details",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Refund Status",
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 14, fontWeight: FontWeight.w500),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: badgeBgColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: badgeBorderColor),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(icon, color: badgeTextColor, size: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      statusText.toUpperCase(),
+                      style: TextStyle(color: badgeTextColor, fontWeight: FontWeight.bold, fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            statusDesc,
+            style: const TextStyle(fontSize: 13, color: Colors.black87),
+          ),
+          const Divider(height: 24),
+          const Text(
+            "Refund Summary",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87),
+          ),
+          const SizedBox(height: 8),
+          if (sub.refundAmount != null) ...[
+            _HomeScreenDetailsRow(label: "Refund Amount", value: "₹${sub.refundAmount}"),
+          ],
+          _HomeScreenDetailsRow(label: "Platform Fee (Non-refundable)", value: "₹${sub.platformFee ?? 99}"),
+          const Divider(height: 24),
+          if (sub.refundReason != null && sub.refundReason!.isNotEmpty) ...[
+            _HomeScreenDetailsRow(label: "REASON", value: sub.refundReason!),
+          ],
+          if (sub.refundInitiatedAt != null && sub.refundInitiatedAt!.isNotEmpty) ...[
+            _HomeScreenDetailsRow(label: "INITIATED AT", value: _formatDate(sub.refundInitiatedAt)),
+          ],
+          if (sub.refundCompletedAt != null && sub.refundCompletedAt!.isNotEmpty) ...[
+            _HomeScreenDetailsRow(label: "COMPLETED AT", value: _formatDate(sub.refundCompletedAt)),
+          ],
+        ],
+      ),
+    );
   }
 
   @override
@@ -201,6 +378,8 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
                   ],
                 ),
               ),
+              _buildPaymentSummaryCard(sub),
+              _buildRefundStatusCard(sub),
               if (sub.status.toUpperCase() != 'PAUSED') ...[
                 const SizedBox(height: 24),
                 SizedBox(

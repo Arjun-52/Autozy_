@@ -8,6 +8,7 @@ import '../../../providers/area_provider.dart';
 import '../../../providers/addon_booking_provider.dart';
 import '../../../data/models/dto/book_addon_request_model.dart';
 import '../../../data/models/dto/nearby_areas_response.dart';
+import '../../../data/models/vehicle_model.dart';
 
 class BookAddonScreen extends StatefulWidget {
   const BookAddonScreen({super.key});
@@ -160,6 +161,17 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
 
     if (_selectedVehicleId == null) {
       _showSnackBar("Please select a vehicle");
+      return;
+    }
+
+    final vehicleProvider = context.read<VehicleProvider>();
+    Vehicle? vehicle;
+    try {
+      vehicle = vehicleProvider.vehicles.firstWhere((v) => v.id == _selectedVehicleId);
+    } catch (_) {}
+
+    if (vehicle != null && (vehicle.status.toLowerCase() == 'pending' || vehicle.status.toLowerCase() == 'rejected')) {
+      _showSnackBar("Your vehicle is awaiting inspection approval. Services and subscriptions will be available once verification is completed.");
       return;
     }
 

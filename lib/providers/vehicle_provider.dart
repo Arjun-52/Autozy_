@@ -5,6 +5,7 @@ import '../data/models/vehicle_model.dart';
 import '../data/models/dto/add_vehicle_request.dart';
 import '../data/models/dto/update_vehicle_request.dart';
 
+
 class VehicleProvider extends ChangeNotifier {
   final VehicleRepository _vehicleRepository;
 
@@ -257,4 +258,21 @@ class VehicleProvider extends ChangeNotifier {
     _vehicles.clear();
     notifyListeners();
   }
+  /// Checks if there is an active (approved) vehicle at the given latitude and longitude.
+  Future<bool> hasActiveVehicleAtLocation(double lat, double lng) async {
+    // Ensure we have the latest vehicles data
+    if (_vehicles.isEmpty) {
+      await fetchVehicles(limit: 100, reset: true);
+    }
+    const double tolerance = 0.00001;
+    for (var v in _vehicles) {
+      if ((v.status == 'approved' || v.isActive) &&
+          (v.parkingLocationLat - lat).abs() < tolerance &&
+          (v.parkingLocationLng - lng).abs() < tolerance) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
+

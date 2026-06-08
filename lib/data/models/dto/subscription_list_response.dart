@@ -36,6 +36,12 @@ class SubscriptionModel {
   final VehicleModel? vehicle;
   final PlanPricingModel? planPricing;
   final CityModel? city;
+  final String? refundStatus;
+  final int? refundAmount;
+  final String? refundReason;
+  final String? refundInitiatedAt;
+  final String? refundCompletedAt;
+  final int? platformFee;
 
   SubscriptionModel({
     required this.id,
@@ -46,6 +52,12 @@ class SubscriptionModel {
     this.vehicle,
     this.planPricing,
     this.city,
+    this.refundStatus,
+    this.refundAmount,
+    this.refundReason,
+    this.refundInitiatedAt,
+    this.refundCompletedAt,
+    this.platformFee,
   });
 
   factory SubscriptionModel.fromJson(Map<String, dynamic> json) {
@@ -66,6 +78,12 @@ class SubscriptionModel {
       city: json['city'] != null
           ? CityModel.fromJson(json['city'] as Map<String, dynamic>)
           : null,
+      refundStatus: json['refundStatus'] as String? ?? json['refund_status'] as String?,
+      refundAmount: json['refundAmount'] as int? ?? json['refund_amount'] as int?,
+      refundReason: json['refundReason'] as String? ?? json['refund_reason'] as String?,
+      refundInitiatedAt: json['refundInitiatedAt'] as String? ?? json['refund_initiated_at'] as String?,
+      refundCompletedAt: json['refundCompletedAt'] as String? ?? json['refund_completed_at'] as String?,
+      platformFee: json['platformFee'] as int? ?? json['platform_fee'] as int? ?? 99,
     );
   }
 }

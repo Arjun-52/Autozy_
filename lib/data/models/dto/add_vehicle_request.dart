@@ -6,6 +6,7 @@ class AddVehicleRequest {
   final double parkingLocationLat;
   final double parkingLocationLng;
   final String parkingNotes;
+  final String status;
 
   AddVehicleRequest({
     required this.vehicleNumber,
@@ -15,6 +16,7 @@ class AddVehicleRequest {
     required this.parkingLocationLat,
     required this.parkingLocationLng,
     required this.parkingNotes,
+    this.status = 'pending',
   });
 
   Map<String, dynamic> toJson() {

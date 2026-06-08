@@ -14,6 +14,8 @@ class Vehicle {
   final bool securityPermissionRequired;
   final bool isActive;
   final DateTime createdAt;
+  final String status;
+  final String? rejectionReason;
 
   // Legacy field compatibility
   String get name => '$brand $model';
@@ -38,6 +40,8 @@ class Vehicle {
     required this.securityPermissionRequired,
     required this.isActive,
     required this.createdAt,
+    this.status = 'pending',
+    this.rejectionReason,
   });
 
   factory Vehicle.fromJson(Map<String, dynamic> json) {
@@ -64,6 +68,8 @@ class Vehicle {
       securityPermissionRequired: json['securityPermissionRequired'] ?? json['security_permission_required'] ?? false,
       isActive: json['isActive'] ?? json['is_active'] ?? true,
       createdAt: DateTime.parse(json['createdAt'] ?? json['created_at'] ?? DateTime.now().toIso8601String()),
+      status: json['status'] ?? 'pending',
+      rejectionReason: json['rejectionReason'] ?? json['rejection_reason'] ?? json['reason'],
     );
   }
 
@@ -96,6 +102,10 @@ class Vehicle {
       'is_active': isActive,
       'createdAt': createdAt.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
+      'status': status,
+      'rejectionReason': rejectionReason,
+      'rejection_reason': rejectionReason,
+      'reason': rejectionReason,
     };
   }
 
@@ -115,6 +125,8 @@ class Vehicle {
     bool? securityPermissionRequired,
     bool? isActive,
     DateTime? createdAt,
+    String? status,
+    String? rejectionReason,
   }) {
     return Vehicle(
       id: id ?? this.id,
@@ -132,6 +144,8 @@ class Vehicle {
       securityPermissionRequired: securityPermissionRequired ?? this.securityPermissionRequired,
       isActive: isActive ?? this.isActive,
       createdAt: createdAt ?? this.createdAt,
+      status: status ?? this.status,
+      rejectionReason: rejectionReason ?? this.rejectionReason,
     );
   }
 }

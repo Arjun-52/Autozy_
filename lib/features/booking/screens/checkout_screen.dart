@@ -10,6 +10,7 @@ import '../../../providers/area_provider.dart';
 import '../../../providers/plan_provider.dart';
 import '../../../providers/subscription_provider.dart';
 import '../../../../core/services/navigation_service.dart';
+import '../../../data/models/vehicle_model.dart';
 
 class CheckoutScreen extends StatelessWidget {
   final String day;
@@ -59,6 +60,11 @@ class CheckoutScreen extends StatelessWidget {
 
     if (vehicle == null || vehicleId == null) {
       _showSnackBar(context, 'Please select or add a vehicle first');
+      return;
+    }
+
+    if (vehicle.status.toLowerCase() == 'pending' || vehicle.status.toLowerCase() == 'rejected') {
+      _showSnackBar(context, "Your vehicle is awaiting inspection approval. Services and subscriptions will be available once verification is completed.");
       return;
     }
 

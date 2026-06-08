@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:geocoding/geocoding.dart';
+import 'map_picker_screen.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../data/models/dto/update_vehicle_request.dart';
 import '../../../providers/vehicle_provider.dart';
@@ -37,6 +39,9 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
   };
 
   bool _isLoading = false;
+  bool _isDetectingLocation = false;
+  String? _selectedAddress;
+  Vehicle? _vehicle;
 
   @override
   void initState() {
@@ -49,6 +54,7 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
     try {
       final provider = context.read<VehicleProvider>();
       final vehicle = await provider.getVehicleById(widget.vehicleId);
+      _vehicle = vehicle;
       // Populate fields
       numberController.text = vehicle.vehicleNumber ?? '';
       sizeController.text = vehicle.sizeCategory ?? '';
@@ -58,11 +64,151 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
       latController.text = vehicle.parkingLocationLat?.toString() ?? '';
       lngController.text = vehicle.parkingLocationLng?.toString() ?? '';
       notesController.text = vehicle.parkingNotes ?? '';
+      
+      String address = "Coordinates configured";
+      if (vehicle.parkingLocationLat != 0.0 && vehicle.parkingLocationLng != 0.0) {
+        try {
+          List<Placemark> placemarks = await placemarkFromCoordinates(
+            vehicle.parkingLocationLat,
+            vehicle.parkingLocationLng,
+          );
+          if (placemarks.isNotEmpty) {
+            Placemark place = placemarks.first;
+            List<String> parts = [];
+            if (place.name != null && place.name!.isNotEmpty && place.name != place.street) {
+              parts.add(place.name!);
+            }
+            if (place.street != null && place.street!.isNotEmpty) {
+              parts.add(place.street!);
+            }
+            if (place.subLocality != null && place.subLocality!.isNotEmpty) {
+              parts.add(place.subLocality!);
+            }
+            if (place.locality != null && place.locality!.isNotEmpty) {
+              parts.add(place.locality!);
+            }
+            if (parts.isNotEmpty) {
+              address = parts.join(', ');
+            }
+          }
+        } catch (geocodeErr) {
+          AppLogger.error('Geocoding error on loading vehicle', error: geocodeErr);
+        }
+      }
+      setState(() {
+        _selectedAddress = address;
+      });
     } catch (e) {
       AppLogger.error('Failed to load vehicle for edit', tag: 'Vehicles', error: e);
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  Widget _buildStatusBadge(String status) {
+    Color bgColor;
+    Color borderColor;
+    Color textColor;
+    IconData icon;
+    String text;
+
+    switch (status.toLowerCase()) {
+      case 'approved':
+        bgColor = const Color(0xFFE8F8EF);
+        borderColor = Colors.green.shade300;
+        textColor = Colors.green;
+        icon = Icons.check_circle;
+        text = "Approved";
+        break;
+      case 'rejected':
+        bgColor = const Color(0xFFFEE2E2);
+        borderColor = Colors.red.shade300;
+        textColor = Colors.red;
+        icon = Icons.cancel;
+        text = "Rejected";
+        break;
+      case 'pending':
+      default:
+        bgColor = const Color(0xFFFFF9E6);
+        borderColor = Colors.amber.shade300;
+        textColor = const Color(0xFFD97706);
+        icon = Icons.hourglass_empty;
+        text = "Inspection Pending";
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: borderColor,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: textColor,
+            size: 16,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRejectionReasonCard(String? reason) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFEF2F2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFFCA5A5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.red.shade800, size: 18),
+              const SizedBox(width: 6),
+              const Text(
+                "Status: Rejected",
+                style: TextStyle(
+                  color: Color(0xFF991B1B),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            "Reason:\n${reason ?? 'Vehicle verification failed. Please review your vehicle details.'}",
+            style: const TextStyle(
+              color: Color(0xFF991B1B),
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -98,6 +244,17 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
+                  if (_vehicle != null) ...[
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: _buildStatusBadge(_vehicle!.status),
+                    ),
+                    const SizedBox(height: 12),
+                    if (_vehicle!.status.toLowerCase() == 'rejected') ...[
+                      _buildRejectionReasonCard(_vehicle!.rejectionReason),
+                      const SizedBox(height: 16),
+                    ],
+                  ],
                   // Vehicle Number (read‑only, cannot change)
                   buildField(
                     label: "Vehicle Number",
@@ -161,27 +318,61 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  // LATITUDE
+                  // PARKING LOCATION SELECTOR CARD
                   buildField(
-                    label: "Parking Latitude",
-                    focusNode: latFocus,
-                    child: TextField(
-                      controller: latController,
-                      focusNode: latFocus,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(hintText: "eg. 17.3850", border: InputBorder.none),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  // LONGITUDE
-                  buildField(
-                    label: "Parking Longitude",
-                    focusNode: lngFocus,
-                    child: TextField(
-                      controller: lngController,
-                      focusNode: lngFocus,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(hintText: "eg. 78.4867", border: InputBorder.none),
+                    label: "Parking Location",
+                    focusNode: null,
+                    child: InkWell(
+                      onTap: () async {
+                        final result = await Navigator.push<MapPickerResult>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MapPickerScreen(
+                              initialLat: double.tryParse(latController.text),
+                              initialLng: double.tryParse(lngController.text),
+                            ),
+                          ),
+                        );
+                        if (result != null) {
+                          setState(() {
+                            latController.text = result.latitude.toString();
+                            lngController.text = result.longitude.toString();
+                            _selectedAddress = result.address;
+                          });
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.map, color: Color(0xFFF6C431)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    _selectedAddress ?? (_isDetectingLocation ? "Updating location..." : "Tap to select parking location"),
+                                    style: TextStyle(
+                                      fontWeight: _selectedAddress != null ? FontWeight.w600 : FontWeight.normal,
+                                      color: _selectedAddress != null ? Colors.black : Colors.grey.shade600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (_isDetectingLocation)
+                              const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFF6C431)),
+                              )
+                            else
+                              const Icon(Icons.chevron_right, color: Colors.grey),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -216,16 +407,12 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
                                 scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Vehicle size is required'), backgroundColor: Colors.redAccent));
                                 return;
                               }
-                              final lat = double.tryParse(latController.text.trim());
-                              final lng = double.tryParse(lngController.text.trim());
-                              if (lat == null) {
-                                scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Invalid latitude'), backgroundColor: Colors.redAccent));
+                              if (_selectedAddress == null) {
+                                scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Please select a parking location on the map'), backgroundColor: Colors.redAccent));
                                 return;
                               }
-                              if (lng == null) {
-                                scaffoldMessenger.showSnackBar(const SnackBar(content: Text('Invalid longitude'), backgroundColor: Colors.redAccent));
-                                return;
-                              }
+                              final lat = double.tryParse(latController.text.trim()) ?? 17.3850;
+                              final lng = double.tryParse(lngController.text.trim()) ?? 78.4867;
 
                               final request = UpdateVehicleRequest(
                                 brand: selectedMake,
