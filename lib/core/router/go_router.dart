@@ -1,3 +1,4 @@
+import '../../core/services/navigation_service.dart';
 import 'package:autozy/features/navigation/main_screen.dart';
 import 'package:autozy/features/notification/notification_screen.dart';
 import 'package:autozy/features/vehicles/screens/edit_vehicle_screen.dart';
@@ -18,6 +19,7 @@ import '../../features/inspection/screens/inspection_done_screen.dart';
 import '../../features/profile/screens/edit_profile_screen.dart';
 import '../../features/profile/screens/invoices_screen.dart';
 import '../../features/profile/screens/subscriptions_screen.dart';
+import '../../features/profile/screens/subscription_details_screen.dart';
 import '../../features/profile/screens/service_history_screen.dart';
 import '../../features/profile/screens/service_calendar_screen.dart';
 import '../../features/profile/screens/addon_bookings_screen.dart';
@@ -27,6 +29,7 @@ import '../../features/profile/screens/ticket_details_screen.dart';
 
 class AppGoRouter {
   static final GoRouter router = GoRouter(
+    navigatorKey: NavigationService.navigatorKey,
     initialLocation: '/splash',
     debugLogDiagnostics: true,
     routes: [
@@ -183,6 +186,14 @@ class AppGoRouter {
         path: '/subscriptions',
         name: 'subscriptions',
         builder: (context, state) => const SubscriptionsScreen(),
+      ),
+      GoRoute(
+        path: '/subscription-details/:id',
+        name: 'subscriptionDetails',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return SubscriptionDetailsScreen(subscriptionId: id);
+        },
       ),
       GoRoute(
         path: '/service-history/:vehicleId',

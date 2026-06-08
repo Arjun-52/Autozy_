@@ -5,6 +5,7 @@ import '../models/dto/send_otp_response.dart';
 import '../models/dto/logout_response.dart';
 import '../models/dto/update_profile_request.dart';
 import '../models/dto/user_profile_response.dart';
+import '../models/dto/home_dashboard_response.dart';
 import 'api_service.dart';
 
 class AuthService {
@@ -28,11 +29,17 @@ class AuthService {
       final accessToken = responseData['accessToken'] ??
           (responseData['data'] != null ? responseData['data']['accessToken'] : null) ??
           responseData['token'] ?? '';
+      final refreshToken = responseData['refreshToken'] ??
+          (responseData['data'] != null ? responseData['data']['refreshToken'] : null) ?? '';
           
       if (accessToken.isNotEmpty) {
         _apiService.setAuthToken(accessToken);
         await _tokenStorage.saveTokens(accessToken: accessToken);
         AppLogger.info('Stored login token in ApiService', tag: 'Auth');
+      }
+      if (refreshToken.isNotEmpty) {
+        _apiService.setRefreshToken(refreshToken);
+        AppLogger.info('Stored login refresh token in ApiService', tag: 'Auth');
       }
 
       return responseData;
@@ -116,7 +123,8 @@ class AuthService {
         AppLogger.info('Stored real backend accessToken: $accessToken', tag: 'Auth');
       }
       if (refreshToken.isNotEmpty) {
-        AppLogger.info('Received real backend refreshToken: $refreshToken', tag: 'Auth');
+        _apiService.setRefreshToken(refreshToken);
+        AppLogger.info('Stored real backend refreshToken in ApiService', tag: 'Auth');
       }
 
       final normalizedResponse = {
@@ -148,12 +156,14 @@ class AuthService {
       AppLogger.debug('Logout initiated', tag: 'Auth');
       final responseData = await _apiService.post('/api/v1/auth/logout');
       _apiService.clearAuthToken();
+      _apiService.clearRefreshToken();
       await _tokenStorage.clear();
       AppLogger.info('Logout success', tag: 'Auth');
       return LogoutResponse.fromJson(responseData);
     } catch (e, st) {
       AppLogger.error('Logout failed', tag: 'Auth', error: e, stackTrace: st);
       _apiService.clearAuthToken();
+      _apiService.clearRefreshToken();
       await _tokenStorage.clear();
       rethrow;
     }
@@ -202,13 +212,28 @@ class AuthService {
   Future<Map<String, dynamic>> refreshToken() async {
     try {
       AppLogger.debug('Refreshing token', tag: 'Auth');
-      final responseData = await _apiService.post('/auth/refresh-token');
-      _apiService.setAuthToken(responseData['token']);
-      AppLogger.info('Token refreshed', tag: 'Auth');
+      final storedRefreshToken = _apiService.refreshToken ?? '';
+      final responseData = await _apiService.post(
+        '/api/v1/auth/refresh',
+        data: {'refreshToken': storedRefreshToken},
+      );
+      final dataObj = responseData['data'] as Map<String, dynamic>?;
+      final newAccessToken = dataObj?['accessToken'] as String? ?? '';
+      final newRefreshToken = dataObj?['refreshToken'] as String? ?? '';
+      
+      if (newAccessToken.isNotEmpty) {
+        _apiService.setAuthToken(newAccessToken);
+      }
+      if (newRefreshToken.isNotEmpty) {
+        _apiService.setRefreshToken(newRefreshToken);
+      }
+      
+      AppLogger.info('Token refreshed successfully', tag: 'Auth');
       return responseData;
     } catch (e, st) {
       AppLogger.error('Token refresh failed', tag: 'Auth', error: e, stackTrace: st);
       _apiService.clearAuthToken();
+      _apiService.clearRefreshToken();
       rethrow;
     }
   }
@@ -233,6 +258,27 @@ class AuthService {
       return data;
     } catch (e, st) {
       AppLogger.error('Password reset failed', tag: 'Auth', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  // GET HOME DASHBOARD
+  Future<HomeDashboardResponse> getHomeDashboard() async {
+    try {
+      AppLogger.debug('Dashboard request start', tag: 'Auth');
+      final responseData = await _apiService.get('/api/v1/users/home');
+      AppLogger.info('Dashboard response received', tag: 'Auth');
+      final response = HomeDashboardResponse.fromJson(responseData);
+      
+      if (response.data != null) {
+        AppLogger.info('Subscriptions parsed: ${response.data!.subscriptions.length}', tag: 'Auth');
+        AppLogger.info('Services parsed: ${response.data!.todayServices.length}', tag: 'Auth');
+        AppLogger.info('Notifications parsed: ${response.data!.unreadNotifications}', tag: 'Auth');
+        AppLogger.info('Quick actions parsed: canPause=${response.data!.quickActions.canPause}, hasPendingPayment=${response.data!.quickActions.hasPendingPayment}, activeSubscriptionCount=${response.data!.quickActions.activeSubscriptionCount}', tag: 'Auth');
+      }
+      return response;
+    } catch (e, st) {
+      AppLogger.error('Dashboard fetch failed', tag: 'Auth', error: e, stackTrace: st);
       rethrow;
     }
   }

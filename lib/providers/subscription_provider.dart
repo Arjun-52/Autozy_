@@ -110,6 +110,62 @@ class SubscriptionProvider extends ChangeNotifier {
     _createdSubscription = null;
     _selectedDate = null;
     _selectedSlotType = null;
+    _subscriptionDetails = null;
+    _isDetailsLoading = false;
+    _detailsError = null;
     notifyListeners();
+  }
+
+  // Subscription Details
+  list_dto.SubscriptionModel? _subscriptionDetails;
+  bool _isDetailsLoading = false;
+  String? _detailsError;
+
+  list_dto.SubscriptionModel? get subscriptionDetails => _subscriptionDetails;
+  bool get isDetailsLoading => _isDetailsLoading;
+  String? get detailsError => _detailsError;
+
+  Future<void> fetchSubscriptionDetails(String subscriptionId) async {
+    _isDetailsLoading = true;
+    _detailsError = null;
+    notifyListeners();
+    AppLogger.info('Controller fetch started for subscriptionId: $subscriptionId', tag: 'Subscriptions');
+
+    try {
+      final subDetails = await _subscriptionRepository.getSubscriptionDetails(subscriptionId);
+      _subscriptionDetails = subDetails;
+      _detailsError = null;
+      AppLogger.info('Controller fetch success', tag: 'Subscriptions');
+      AppLogger.info('UI state updates: success', tag: 'Subscriptions');
+    } catch (e, st) {
+      _detailsError = e.toString();
+      AppLogger.error('Controller fetch failure', tag: 'Subscriptions', error: e, stackTrace: st);
+      AppLogger.info('UI state updates: error', tag: 'Subscriptions');
+    } finally {
+      _isDetailsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  bool _isPauseLoading = false;
+  bool get isPauseLoading => _isPauseLoading;
+
+  Future<bool> pauseSubscription(String subscriptionId) async {
+    _isPauseLoading = true;
+    notifyListeners();
+    try {
+      final success = await _subscriptionRepository.pauseSubscription(subscriptionId);
+      if (success) {
+        await fetchSubscriptionDetails(subscriptionId);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      AppLogger.error('Error pausing subscription: $e', tag: 'Subscriptions');
+      return false;
+    } finally {
+      _isPauseLoading = false;
+      notifyListeners();
+    }
   }
 }

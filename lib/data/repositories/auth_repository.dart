@@ -5,6 +5,7 @@ import '../models/dto/send_otp_response.dart';
 import '../models/dto/user_profile.dart';
 import '../models/dto/user_profile_response.dart';
 import '../models/dto/update_profile_request.dart';
+import '../models/dto/home_dashboard_response.dart';
 
 class AuthRepository {
   final AuthService _authService;
@@ -66,7 +67,8 @@ class AuthRepository {
   Future<User> refreshToken() async {
     try {
       final response = await _authService.refreshToken();
-      return User.fromJson(response['user']);
+      final userData = response['user'] ?? response['data']?['user'] ?? {};
+      return User.fromJson(userData);
     } catch (e) {
       rethrow;
     }
@@ -105,6 +107,15 @@ class AuthRepository {
   Future<void> resetPassword(String token, String newPassword) async {
     try {
       await _authService.resetPassword(token, newPassword);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  // GET HOME DASHBOARD
+  Future<HomeDashboardResponse> getHomeDashboard() async {
+    try {
+      return await _authService.getHomeDashboard();
     } catch (e) {
       rethrow;
     }

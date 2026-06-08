@@ -6,6 +6,7 @@ import '../data/models/dto/update_profile_request.dart';
 import '../data/models/dto/user_profile.dart';
 import '../data/models/dto/send_otp_request.dart';
 import '../core/utils/app_logger.dart';
+import '../core/router/go_router.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthRepository _authRepository;
@@ -201,5 +202,17 @@ class AuthProvider extends ChangeNotifier {
       _profileLoading = false;
       notifyListeners();
     }
+  }
+
+  // HANDLE SESSION EXPIRED
+  void handleSessionExpired() {
+    _user = null;
+    _profile = null;
+    _phone = null;
+    _successMessage = null;
+    _lastOtpRequestStatus = null;
+    _error = 'Session expired. Please log in again.';
+    notifyListeners();
+    AppGoRouter.router.go('/login');
   }
 }

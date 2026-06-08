@@ -23,22 +23,31 @@ class CheckoutScreen extends StatelessWidget {
     required this.time,
   });
 
+  void _showSnackBar(BuildContext context, String message) {
+    final rootContext = NavigationService.navigatorKey.currentContext;
+    if (rootContext == null) return;
+    try {
+      ScaffoldMessenger.of(rootContext).hideCurrentSnackBar();
+      ScaffoldMessenger.of(rootContext).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    } catch (e) {
+      debugPrint('Error showing SnackBar: $e');
+    }
+  }
+
   Future<void> _handleCheckout(BuildContext context) async {
     final vehicleProvider = context.read<VehicleProvider>();
     final areaProvider = context.read<AreaProvider>();
     final planProvider = context.read<PlanProvider>();
     final subscriptionProvider = context.read<SubscriptionProvider>();
 
-    final messenger = NavigationService.scaffoldMessengerKey.currentState;
-
     // Fetch vehicles dynamically if empty
     if (vehicleProvider.vehicles.isEmpty) {
       try {
         await vehicleProvider.fetchVehicles(page: 1, limit: 20, reset: true);
       } catch (e) {
-        messenger?.showSnackBar(
-          SnackBar(content: Text('Failed to load vehicles: $e')),
-        );
+        _showSnackBar(context, 'Failed to load vehicles: $e');
         return;
       }
     }
@@ -49,25 +58,18 @@ class CheckoutScreen extends StatelessWidget {
     final slotType = subscriptionProvider.selectedSlotType ?? 'MORNING';
 
     if (vehicle == null || vehicleId == null) {
-      messenger?.showSnackBar(
-        const SnackBar(content: Text('Please select or add a vehicle first')),
-      );
+      _showSnackBar(context, 'Please select or add a vehicle first');
       return;
     }
 
-
     if (areaId == null) {
-      messenger?.showSnackBar(
-        const SnackBar(content: Text('Please select a service area first')),
-      );
+      _showSnackBar(context, 'Please select a service area first');
       return;
     }
 
     final selectedPlan = planProvider.selectedPlan;
     if (selectedPlan == null) {
-      messenger?.showSnackBar(
-        const SnackBar(content: Text('Please select a subscription plan first')),
-      );
+      _showSnackBar(context, 'Please select a subscription plan first');
       return;
     }
 
@@ -76,9 +78,7 @@ class CheckoutScreen extends StatelessWidget {
       try {
         await planProvider.fetchPricing();
       } catch (e) {
-        messenger?.showSnackBar(
-          SnackBar(content: Text('Failed to load plan pricing list: $e')),
-        );
+        _showSnackBar(context, 'Failed to load plan pricing list: $e');
         return;
       }
     }
@@ -91,9 +91,7 @@ class CheckoutScreen extends StatelessWidget {
     );
 
     if (planPricingId == null) {
-      messenger?.showSnackBar(
-        SnackBar(content: Text('No pricing found for ${selectedPlan.name} with ${vehicle.brand} ${vehicle.model} (${vehicle.sizeCategory})')),
-      );
+      _showSnackBar(context, 'No pricing found for ${selectedPlan.name} with ${vehicle.brand} ${vehicle.model} (${vehicle.sizeCategory})');
       return;
     }
 
@@ -107,21 +105,17 @@ class CheckoutScreen extends StatelessWidget {
     );
 
     if (subscription != null) {
-      if (subscription.status == 'PENDING_INSPECTION') {
-        messenger?.showSnackBar(
-          const SnackBar(content: Text('Subscription created successfully. Inspection pending.')),
-        );
-      } else {
-        messenger?.showSnackBar(
-          const SnackBar(content: Text('Subscription created successfully.')),
-        );
+      if (context.mounted) {
+        if (subscription.status == 'PENDING_INSPECTION') {
+          _showSnackBar(context, 'Subscription created successfully. Inspection pending.');
+        } else {
+          _showSnackBar(context, 'Subscription created successfully.');
+        }
+        router.pushNamed('payment');
       }
-      router.pushNamed('payment');
     } else {
       final errorMsg = subscriptionProvider.error ?? 'Something went wrong';
-      messenger?.showSnackBar(
-        SnackBar(content: Text(errorMsg)),
-      );
+      _showSnackBar(context, errorMsg);
     }
   }
 

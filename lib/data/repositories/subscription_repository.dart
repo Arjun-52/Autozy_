@@ -3,6 +3,7 @@ import '../services/api_service.dart';
 import '../models/dto/create_subscription_request.dart';
 import '../models/dto/create_subscription_response.dart';
 import '../models/dto/subscription_list_response.dart' as list_dto;
+import '../models/dto/subscription_details_response.dart';
 
 class SubscriptionRepository {
   final ApiService _apiService;
@@ -44,6 +45,38 @@ class SubscriptionRepository {
       return list;
     } catch (e, st) {
       AppLogger.error('API failure: Failed to fetch subscriptions list', tag: 'Subscriptions', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  Future<list_dto.SubscriptionModel> getSubscriptionDetails(String subscriptionId) async {
+    try {
+      AppLogger.info('Subscription details requested. SubscriptionId: $subscriptionId', tag: 'Subscriptions');
+      final data = await _apiService.get('/api/v1/subscriptions/$subscriptionId');
+      final response = SubscriptionDetailsResponse.fromJson(data);
+      if (response.success && response.data != null) {
+        AppLogger.info('Subscription details loaded successfully. Status: ${response.data!.status}', tag: 'Subscriptions');
+        return response.data!;
+      } else {
+        throw Exception('Server returned success: false or empty subscription details data');
+      }
+    } catch (e, st) {
+      AppLogger.error('API failure: Failed to fetch subscription details', tag: 'Subscriptions', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  Future<bool> pauseSubscription(String subscriptionId) async {
+    try {
+      AppLogger.info('Pause subscription requested. SubscriptionId: $subscriptionId', tag: 'Subscriptions');
+      final data = await _apiService.post('/api/v1/subscriptions/$subscriptionId/pause');
+      if (data != null && data['success'] == true) {
+        AppLogger.info('Subscription paused successfully in repo.', tag: 'Subscriptions');
+        return true;
+      }
+      return false;
+    } catch (e, st) {
+      AppLogger.error('API failure: Failed to pause subscription', tag: 'Subscriptions', error: e, stackTrace: st);
       rethrow;
     }
   }

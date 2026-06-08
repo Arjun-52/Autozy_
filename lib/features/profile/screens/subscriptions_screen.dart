@@ -371,7 +371,12 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
             itemCount: subscriptions.length,
             itemBuilder: (context, index) {
               final sub = subscriptions[index];
-              return _buildSubscriptionCard(sub);
+              return GestureDetector(
+                onTap: () {
+                  context.push('/subscription-details/${sub.id}');
+                },
+                child: _buildSubscriptionCard(sub),
+              );
             },
           );
         }(),

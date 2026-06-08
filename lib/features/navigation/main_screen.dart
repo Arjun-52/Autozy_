@@ -33,12 +33,12 @@ class _MainScreenState extends State<MainScreen> {
     const PlansScreen(),
     const ProfileScreen(),
   ];
-
+ 
   void onTabTapped(int index) {
     // Drive tab changes through routing so UI always matches the URL.
     context.go('/home?initialIndex=$index');
   }
-
+ 
   @override
   Widget build(BuildContext context) {
     final currentIndex = widget.initialIndex;

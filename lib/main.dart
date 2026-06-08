@@ -36,6 +36,7 @@ import 'data/repositories/ticket_repository.dart';
 import 'providers/ticket_provider.dart';
 import 'providers/ticket_details_provider.dart';
 import 'providers/notification_provider.dart';
+import 'providers/home_provider.dart';
 
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -169,7 +170,17 @@ class _AutozyAppState extends State<AutozyApp> {
         ChangeNotifierProvider<OtpProvider>(create: (_) => OtpProvider()),
 
         ChangeNotifierProvider<AuthProvider>(
-          create: (context) => AuthProvider(context.read<AuthRepository>()),
+          create: (context) {
+            final apiService = context.read<ApiService>();
+            final authProvider = AuthProvider(context.read<AuthRepository>());
+            apiService.onSessionExpired = () {
+              authProvider.handleSessionExpired();
+            };
+            return authProvider;
+          },
+        ),
+        ChangeNotifierProvider<HomeProvider>(
+          create: (context) => HomeProvider(context.read<AuthRepository>()),
         ),
 
         ChangeNotifierProvider<VehicleProvider>(

@@ -175,13 +175,12 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                     final isAvailable = area.status?.toUpperCase() == 'AVAILABLE';
 
                     return GestureDetector(
-                      onTap: isAvailable
-                          ? () {
-                              setState(() {
-                                _locallySelectedArea = area;
-                              });
-                            }
-                          : null,
+                      onTap: () {
+                        setState(() {
+                          _locallySelectedArea = area;
+                        });
+                        context.read<AreaProvider>().fetchAreaDetails(area.id);
+                      },
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 12),
                         padding: const EdgeInsets.all(16),
@@ -292,34 +291,95 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                     topRight: Radius.circular(24),
                   ),
                 ),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: _locallySelectedArea == null
-                        ? null
-                        : () {
-                            areaProvider.selectArea(_locallySelectedArea!);
-                            context.go('/home');
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFF6C431),
-                      disabledBackgroundColor: Colors.grey.shade300,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (_locallySelectedArea != null && areaProvider.areaDetails != null && areaProvider.areaDetails!.id == _locallySelectedArea!.id) ...[
+                      const Text(
+                        "Area Details",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Area: ${areaProvider.areaDetails!.name}", style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                          Text("City: ${areaProvider.areaDetails!.city?.name ?? ''}", style: const TextStyle(fontSize: 13)),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("State: ${areaProvider.areaDetails!.city?.state ?? ''}", style: const TextStyle(fontSize: 13)),
+                          Text("Status: ${areaProvider.areaDetails!.status ?? ''}", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Radius: ${areaProvider.areaDetails!.radiusKm ?? ''} km", style: const TextStyle(fontSize: 13)),
+                          Text("Capacity: ${areaProvider.areaDetails!.maxCapacity ?? ''}", style: const TextStyle(fontSize: 13)),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Current Subscriptions: ${areaProvider.areaDetails!.currentSubscriptions ?? '0'}", style: const TextStyle(fontSize: 13)),
+                          Text("Onboarding Paused: ${areaProvider.areaDetails!.isOnboardingPaused ?? false}", style: const TextStyle(fontSize: 13)),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Active Status: ${areaProvider.areaDetails!.isActive ?? false}", style: const TextStyle(fontSize: 13)),
+                          Text("Coords: ${areaProvider.areaDetails!.centerLat ?? ''}, ${areaProvider.areaDetails!.centerLng ?? ''}", style: const TextStyle(fontSize: 13)),
+                        ],
+                      ),
+                      const Divider(height: 24),
+                    ],
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: ElevatedButton(
+                        onPressed: _locallySelectedArea == null || areaProvider.isLoading
+                            ? null
+                            : () {
+                                final isAvailable = _locallySelectedArea!.status?.toUpperCase() == 'AVAILABLE';
+                                if (isAvailable) {
+                                  areaProvider.selectArea(_locallySelectedArea!);
+                                  context.go('/home');
+                                } else {
+                                  areaProvider.joinWaitlist(_locallySelectedArea!.id, context);
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFF6C431),
+                          disabledBackgroundColor: Colors.grey.shade300,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: areaProvider.isLoading
+                            ? const CircularProgressIndicator(color: Colors.black)
+                            : Text(
+                                _locallySelectedArea == null
+                                    ? "Select an Area"
+                                    : (_locallySelectedArea!.status?.toUpperCase() == 'AVAILABLE'
+                                        ? "Confirm & Continue"
+                                        : "Join Waitlist"),
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
                       ),
                     ),
-                    child: Text(
-                      _locallySelectedArea == null
-                          ? "Select an Area"
-                          : "Confirm & Continue",
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
               ),
             ],

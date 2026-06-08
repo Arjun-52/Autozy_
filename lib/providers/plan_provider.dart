@@ -35,6 +35,22 @@ class PlanProvider extends ChangeNotifier {
     }
   }
 
+  bool _isSizeMatch(String? pricingSize, String selectedSize) {
+    if (pricingSize == null) return false;
+    final pSize = pricingSize.trim().toUpperCase();
+    final sSize = selectedSize.trim().toUpperCase();
+    if (pSize == sSize) return true;
+    const equivalents = {
+      'SMALL': 'HATCHBACK',
+      'HATCHBACK': 'SMALL',
+      'MEDIUM': 'SEDAN',
+      'SEDAN': 'MEDIUM',
+      'LARGE': 'SUV',
+      'SUV': 'LARGE',
+    };
+    return equivalents[sSize] == pSize;
+  }
+
   String? getPricingIdForPlanAndVehicle({
     required String planId,
     required String vehicleSize,
@@ -42,17 +58,6 @@ class PlanProvider extends ChangeNotifier {
     String? cityId,
   }) {
     if (_pricings.isEmpty) return null;
-    final normalizedSize = vehicleSize.trim().toUpperCase();
-
-    // Map frontend legacy vehicle sizes (SMALL, MEDIUM, LARGE) to backend pricing sizes (HATCHBACK, SEDAN, SUV)
-    String mappedSize = normalizedSize;
-    if (normalizedSize == 'SMALL') {
-      mappedSize = 'HATCHBACK';
-    } else if (normalizedSize == 'MEDIUM') {
-      mappedSize = 'SEDAN';
-    } else if (normalizedSize == 'LARGE') {
-      mappedSize = 'SUV';
-    }
 
     // 1. Try to find match with plan_id, vehicle_size, and area_id (handling both snake_case and camelCase keys)
     if (areaId != null) {
@@ -61,7 +66,7 @@ class PlanProvider extends ChangeNotifier {
         final pVehicleSize = p['vehicle_size'] ?? p['vehicleSize'];
         final pAreaId = p['area_id'] ?? p['areaId'];
         if (pPlanId == planId &&
-            pVehicleSize?.toString().toUpperCase() == mappedSize &&
+            _isSizeMatch(pVehicleSize?.toString(), vehicleSize) &&
             pAreaId == areaId) {
           return p['id'] as String?;
         }
@@ -75,7 +80,7 @@ class PlanProvider extends ChangeNotifier {
         final pVehicleSize = p['vehicle_size'] ?? p['vehicleSize'];
         final pCityId = p['city_id'] ?? p['cityId'];
         if (pPlanId == planId &&
-            pVehicleSize?.toString().toUpperCase() == mappedSize &&
+            _isSizeMatch(pVehicleSize?.toString(), vehicleSize) &&
             pCityId == cityId) {
           return p['id'] as String?;
         }
@@ -87,7 +92,7 @@ class PlanProvider extends ChangeNotifier {
       final pPlanId = p['plan_id'] ?? p['planId'];
       final pVehicleSize = p['vehicle_size'] ?? p['vehicleSize'];
       if (pPlanId == planId &&
-          pVehicleSize?.toString().toUpperCase() == mappedSize) {
+          _isSizeMatch(pVehicleSize?.toString(), vehicleSize)) {
         return p['id'] as String?;
       }
     }
