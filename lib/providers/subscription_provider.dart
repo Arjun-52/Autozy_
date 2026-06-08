@@ -150,11 +150,15 @@ class SubscriptionProvider extends ChangeNotifier {
   bool _isPauseLoading = false;
   bool get isPauseLoading => _isPauseLoading;
 
-  Future<bool> pauseSubscription(String subscriptionId) async {
+  Future<bool> pauseSubscription(String subscriptionId, {required String reason, String? customReason}) async {
     _isPauseLoading = true;
     notifyListeners();
     try {
-      final success = await _subscriptionRepository.pauseSubscription(subscriptionId);
+      final success = await _subscriptionRepository.pauseSubscription(
+        subscriptionId,
+        reason: reason,
+        customReason: customReason,
+      );
       if (success) {
         await fetchSubscriptionDetails(subscriptionId);
         return true;

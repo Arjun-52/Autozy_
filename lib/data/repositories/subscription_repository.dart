@@ -66,10 +66,14 @@ class SubscriptionRepository {
     }
   }
 
-  Future<bool> pauseSubscription(String subscriptionId) async {
+  Future<bool> pauseSubscription(String subscriptionId, {required String reason, String? customReason}) async {
     try {
-      AppLogger.info('Pause subscription requested. SubscriptionId: $subscriptionId', tag: 'Subscriptions');
-      final data = await _apiService.post('/api/v1/subscriptions/$subscriptionId/pause');
+      AppLogger.info('Pause subscription requested. SubscriptionId: $subscriptionId, Reason: $reason', tag: 'Subscriptions');
+      final payload = {
+        'reason': reason,
+        if (customReason != null && customReason.isNotEmpty) 'customReason': customReason,
+      };
+      final data = await _apiService.post('/api/v1/subscriptions/$subscriptionId/pause', data: payload);
       if (data != null && data['success'] == true) {
         AppLogger.info('Subscription paused successfully in repo.', tag: 'Subscriptions');
         return true;

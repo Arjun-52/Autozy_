@@ -21,6 +21,15 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   final lngController = TextEditingController(text: "78.4867");
   final notesController = TextEditingController();
 
+  // Address controllers
+  final flatController = TextEditingController();
+  final buildingController = TextEditingController();
+  final localityController = TextEditingController();
+  final landmarkController = TextEditingController();
+  final cityController = TextEditingController();
+  final stateController = TextEditingController();
+  final pincodeController = TextEditingController();
+
   String? localError;
   bool _isDetectingLocation = false;
   String? _selectedAddress;
@@ -131,6 +140,14 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     latController.dispose();
     lngController.dispose();
     notesController.dispose();
+    // Dispose address controllers
+    flatController.dispose();
+    buildingController.dispose();
+    localityController.dispose();
+    landmarkController.dispose();
+    cityController.dispose();
+    stateController.dispose();
+    pincodeController.dispose();
     numberFocus.dispose();
     latFocus.dispose();
     lngFocus.dispose();
@@ -342,6 +359,86 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               ),
             ),
 
+            // ADDRESS FIELDS
+            buildField(
+              label: "Flat / House No",
+              focusNode: null,
+              child: TextField(
+                controller: flatController,
+                decoration: const InputDecoration(
+                  hintText: "e.g., 401",
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            buildField(
+              label: "Building / Apartment",
+              focusNode: null,
+              child: TextField(
+                controller: buildingController,
+                decoration: const InputDecoration(
+                  hintText: "e.g., Sky Heights",
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            buildField(
+              label: "Street / Locality",
+              focusNode: null,
+              child: TextField(
+                controller: localityController,
+                decoration: const InputDecoration(
+                  hintText: "e.g., Madhapur",
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            buildField(
+              label: "Landmark (Optional)",
+              focusNode: null,
+              child: TextField(
+                controller: landmarkController,
+                decoration: const InputDecoration(
+                  hintText: "e.g., Near Metro",
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            buildField(
+              label: "City",
+              focusNode: null,
+              child: TextField(
+                controller: cityController,
+                decoration: const InputDecoration(
+                  hintText: "e.g., Hyderabad",
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            buildField(
+              label: "State",
+              focusNode: null,
+              child: TextField(
+                controller: stateController,
+                decoration: const InputDecoration(
+                  hintText: "e.g., Telangana",
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+            buildField(
+              label: "Pincode",
+              focusNode: null,
+              child: TextField(
+                controller: pincodeController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  hintText: "e.g., 500081",
+                  border: InputBorder.none,
+                ),
+              ),
+            ),
+
             const SizedBox(height: 20),
 
             if (localError != null) ...[
@@ -416,21 +513,43 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                           } catch (_) {}
                           return;
                         }
-                        if (selectedSize == null) {
-                          setState(() {
-                            localError = "Vehicle size is required";
-                          });
-                          AppLogger.error('Validation failures: Vehicle size is required', tag: 'Vehicles');
-                          try {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Vehicle size is required"),
-                                backgroundColor: Colors.redAccent,
-                              ),
-                            );
-                          } catch (_) {}
-                          return;
-                        }
+                         if (selectedSize == null) {
+                           setState(() {
+                             localError = "Vehicle size is required";
+                           });
+                           AppLogger.error('Validation failures: Vehicle size is required', tag: 'Vehicles');
+                           try {
+                             ScaffoldMessenger.of(context).showSnackBar(
+                               const SnackBar(
+                                 content: Text("Vehicle size is required"),
+                                 backgroundColor: Colors.redAccent,
+                               ),
+                             );
+                           } catch (_) {}
+                           return;
+                         }
+
+                         // Validate address fields (all required except landmark)
+                         if (flatController.text.trim().isEmpty ||
+                             buildingController.text.trim().isEmpty ||
+                             localityController.text.trim().isEmpty ||
+                             cityController.text.trim().isEmpty ||
+                             stateController.text.trim().isEmpty ||
+                             pincodeController.text.trim().isEmpty) {
+                           setState(() {
+                             localError = "All address fields are required";
+                           });
+                           AppLogger.error('Validation failures: Address fields required', tag: 'Vehicles');
+                           try {
+                             ScaffoldMessenger.of(context).showSnackBar(
+                               const SnackBar(
+                                 content: Text("All address fields are required"),
+                                 backgroundColor: Colors.redAccent,
+                               ),
+                             );
+                           } catch (_) {}
+                           return;
+                         }
 
                         if (_selectedAddress == null) {
                           setState(() {
@@ -478,6 +597,14 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                           parkingLocationLat: lat,
                           parkingLocationLng: lng,
                           parkingNotes: notesController.text.trim(),
+                          // Address fields
+                          flatNo: flatController.text.trim(),
+                          building: buildingController.text.trim(),
+                          locality: localityController.text.trim(),
+                          landmark: landmarkController.text.trim(),
+                          city: cityController.text.trim(),
+                          state: stateController.text.trim(),
+                          pincode: pincodeController.text.trim(),
                         );
 
                         
