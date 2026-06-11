@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_svg/svg.dart';
 import 'map_picker_screen.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../data/models/dto/update_vehicle_request.dart';
@@ -252,6 +254,38 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
                     const SizedBox(height: 12),
                     if (_vehicle!.status.toLowerCase() == 'rejected') ...[
                       _buildRejectionReasonCard(_vehicle!.rejectionReason),
+                      const SizedBox(height: 16),
+                    ],
+                    // Vehicle Image
+                    if (_vehicle!.imageUrl != null && _vehicle!.imageUrl!.isNotEmpty) ...[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: CachedNetworkImage(
+                          imageUrl: _vehicle!.imageUrl!,
+                          height: 200,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => SizedBox(
+                            height: 200,
+                            child: Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor)),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            height: 200,
+                            color: Colors.grey.shade200,
+                            child: Center(child: SvgPicture.asset('assets/images/car2.svg')),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ] else ...[
+                      Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(child: SvgPicture.asset('assets/images/car2.svg')),
+                      ),
                       const SizedBox(height: 16),
                     ],
                   ],

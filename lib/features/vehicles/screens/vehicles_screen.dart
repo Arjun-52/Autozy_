@@ -2,6 +2,7 @@ import 'package:autozy/features/vehicles/widgets/add_vehicle_button.dart';
 import 'add_vehicle_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/auth_provider.dart';
@@ -326,7 +327,7 @@ class _VehicleScreenState extends State<VehicleScreen> {
                                     children: [
                                       Row(
                                         children: [
-                                          /// ICON
+                                          /// ICON / Vehicle Photo
                                           Container(
                                             width: 55,
                                             height: 55,
@@ -334,15 +335,22 @@ class _VehicleScreenState extends State<VehicleScreen> {
                                               color: const Color(0xFFF6C431),
                                               borderRadius: BorderRadius.circular(14),
                                             ),
-                                            child: Center(
-                                              child: SizedBox(
-                                                height: 24,
-                                                width: 24,
-                                                child: SvgPicture.asset(
-                                                  'assets/images/car2.svg',
-                                                  fit: BoxFit.contain,
-                                                ),
-                                              ),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(14),
+                                              child: vehicle.imageUrl != null && vehicle.imageUrl!.isNotEmpty
+                                                  ? CachedNetworkImage(
+                                                      imageUrl: vehicle.imageUrl!,
+                                                      fit: BoxFit.cover,
+                                                      placeholder: (context, url) => const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
+                                                      errorWidget: (context, url, error) => Padding(
+                                                        padding: const EdgeInsets.all(8.0),
+                                                        child: SvgPicture.asset('assets/images/car2.svg'),
+                                                      ),
+                                                    )
+                                                  : Padding(
+                                                      padding: const EdgeInsets.all(12.0),
+                                                      child: SvgPicture.asset('assets/images/car2.svg'),
+                                                    ),
                                             ),
                                           ),
 

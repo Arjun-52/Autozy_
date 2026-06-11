@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../providers/subscription_provider.dart';
@@ -250,6 +251,29 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Container(
+                width: 64,
+                height: 64,
+                margin: const EdgeInsets.only(right: 12),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: sub.vehicle?.photoUrl != null && sub.vehicle!.photoUrl!.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: sub.vehicle!.photoUrl!,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
+                          errorWidget: (context, url, error) => Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: SvgPicture.asset('assets/images/car2.svg'),
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: SvgPicture.asset('assets/images/car2.svg'),
+                        ),
+                ),
+              ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

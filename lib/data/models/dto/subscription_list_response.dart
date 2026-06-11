@@ -93,12 +93,14 @@ class VehicleModel {
   final String brand;
   final String model;
   final String vehicleNumber;
+  final String? photoUrl;
 
   VehicleModel({
     required this.id,
     required this.brand,
     required this.model,
     required this.vehicleNumber,
+    this.photoUrl,
   });
 
   factory VehicleModel.fromJson(Map<String, dynamic> json) {
@@ -107,6 +109,7 @@ class VehicleModel {
       brand: json['brand'] as String? ?? '',
       model: json['model'] as String? ?? '',
       vehicleNumber: json['vehicleNumber'] as String? ?? json['vehicle_number'] as String? ?? '',
+      photoUrl: json['photoUrl'] as String? ?? json['photo_url'] as String? ?? json['vehiclePhotoUrl'] as String? ?? json['vehicle_photo_url'] as String? ?? json['imageUrl'] as String? ?? json['image_url'] as String?,
     );
   }
 }

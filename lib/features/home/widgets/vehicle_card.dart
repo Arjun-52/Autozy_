@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../providers/vehicle_provider.dart';
@@ -98,15 +99,28 @@ class VehicleCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                width: 56,
+                height: 56,
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFCB2F),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: SvgPicture.asset(
-                  'assets/images/car2.svg',
-                  height: 20,
-                  width: 20,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: vehicleProvider.vehicles.isNotEmpty && vehicleProvider.vehicles.first.imageUrl != null && vehicleProvider.vehicles.first.imageUrl!.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: vehicleProvider.vehicles.first.imageUrl!,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
+                          errorWidget: (context, url, error) => Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: SvgPicture.asset('assets/images/car2.svg'),
+                          ),
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: SvgPicture.asset('assets/images/car2.svg'),
+                        ),
                 ),
               ),
               const SizedBox(width: 12),
