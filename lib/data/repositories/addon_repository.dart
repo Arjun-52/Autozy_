@@ -3,6 +3,7 @@ import '../services/api_service.dart';
 import '../models/dto/my_addon_bookings_response.dart';
 import '../models/dto/book_addon_request_model.dart';
 import '../models/dto/book_addon_response_model.dart';
+import '../models/dto/addon_service_model.dart';
 
 class AddonRepository {
   final ApiService _apiService;
@@ -54,6 +55,18 @@ class AddonRepository {
       return response;
     } catch (e, st) {
       AppLogger.error('Errors: Failed to book add-on service', tag: 'Addons', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  Future<List<AddonServiceModel>> getAddonServices() async {
+    try {
+      AppLogger.info('Requesting list of add-on services', tag: 'Addons');
+      final data = await _apiService.get('/api/v1/addons/services');
+      final List<dynamic> list = data['data'] as List<dynamic>? ?? [];
+      return list.map((e) => AddonServiceModel.fromJson(e as Map<String, dynamic>)).toList();
+    } catch (e, st) {
+      AppLogger.error('Failed to fetch add-on services', tag: 'Addons', error: e, stackTrace: st);
       rethrow;
     }
   }

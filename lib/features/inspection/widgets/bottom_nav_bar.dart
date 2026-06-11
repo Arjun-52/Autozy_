@@ -39,7 +39,7 @@ class BottomNavBar extends StatelessWidget {
           ),
           label: "Vehicles",
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.access_time), label: "Plans"),
+        BottomNavigationBarItem(icon: Icon(Icons.access_time), label: "Add-ons"),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),
           label: "Profile",

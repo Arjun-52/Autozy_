@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
+
 import '../../core/utils/app_logger.dart';
 import '../services/api_service.dart';
 import '../models/vehicle_model.dart';
@@ -46,21 +49,21 @@ class VehicleRepository {
       AppLogger.info('Vehicle request started', tag: 'Vehicles');
       
       final reqBody = request.toJson();
-      print('CREATE VEHICLE REQUEST BODY: $reqBody');
+      debugPrint('🚗 Add Vehicle Request: ${jsonEncode(reqBody)}');
 
       final data = await _apiService.post(
         '/api/v1/vehicles',
         data: reqBody,
       );
       
-      print('CREATE VEHICLE RESPONSE DATA: $data');
+      debugPrint('🚗 Add Vehicle Response: ${jsonEncode(data)}');
 
       final response = AddVehicleResponse.fromJson(data);
       AppLogger.info('Vehicle creation success. Created vehicle ID: ${response.data?.id}', tag: 'Vehicles');
       return response;
     } catch (e, st) {
-      print('REPOSITORY CREATE VEHICLE EXCEPTION: $e');
-      print(st);
+      debugPrint('REPOSITORY CREATE VEHICLE EXCEPTION: $e');
+      debugPrint(st.toString());
       AppLogger.error('API failures: Vehicle creation failed', tag: 'Vehicles', error: e, stackTrace: st);
       rethrow;
     }

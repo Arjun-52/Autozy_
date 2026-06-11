@@ -6,12 +6,21 @@ import '../../../core/services/navigation_service.dart';
 import '../../../providers/vehicle_provider.dart';
 import '../../../providers/area_provider.dart';
 import '../../../providers/addon_booking_provider.dart';
+import '../../../providers/addon_service_provider.dart';
+import '../../../core/utils/price_utils.dart';
 import '../../../data/models/dto/book_addon_request_model.dart';
 import '../../../data/models/dto/nearby_areas_response.dart';
 import '../../../data/models/vehicle_model.dart';
 
 class BookAddonScreen extends StatefulWidget {
-  const BookAddonScreen({super.key});
+  final String? preselectedServiceId;
+  final String? preselectedServiceName;
+
+  const BookAddonScreen({
+    super.key,
+    this.preselectedServiceId,
+    this.preselectedServiceName,
+  });
 
   @override
   State<BookAddonScreen> createState() => _BookAddonScreenState();
@@ -27,27 +36,7 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
 
-  // Add-on Services static options matching backend ID format
-  final List<Map<String, String>> _addonServices = [
-    {
-      'id': 'a29699e8-8830-42ab-822f-239da02eab42',
-      'name': 'Deep Interior Cleaning',
-      'description': 'Thorough cleaning of seats, mats, and dashboard.',
-      'price': '₹1,499'
-    },
-    {
-      'id': '8d5845d5-1f22-4e08-ad5b-318c3f3abe01',
-      'name': 'Machine Wax Polish',
-      'description': 'Premium wax coating for extra shine.',
-      'price': '₹999'
-    },
-    {
-      'id': '7e325e1b-be73-4335-8b74-dc7d81f17109',
-      'name': 'Engine Bay Cleaning',
-      'description': 'Safe cleaning of engine compartment.',
-      'price': '₹999'
-    },
-  ];
+  // Services will be provided by AddonServiceProvider when available
 
   @override
   void initState() {
@@ -60,6 +49,12 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
       if (areaProvider.selectedArea?.cityId != null) {
         setState(() {
           _selectedCityId = areaProvider.selectedArea!.cityId;
+        });
+      }
+      // If opened with a preselected service, set it
+      if (widget.preselectedServiceId != null) {
+        setState(() {
+          _selectedAddonServiceId = widget.preselectedServiceId;
         });
       }
     });
@@ -442,71 +437,87 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
 
             // Addon Service Selection
             _buildSectionHeader("Select Add-on Service"),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _addonServices.length,
-              itemBuilder: (context, index) {
-                final service = _addonServices[index];
-                final isSelected = _selectedAddonServiceId == service['id'];
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedAddonServiceId = service['id'];
-                    });
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xffFFFDF0) : Colors.white,
-                      border: Border.all(
-                        color: isSelected ? AppColors.brandYellow : Colors.transparent,
-                        width: 1.5,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                service['name']!,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                service['description']!,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          service['price']!,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xffC68A00),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+            Builder(builder: (context) {
+              final svcProvider = context.watch<AddonServiceProvider>();
+              if (svcProvider.isLoading) {
+                return const Center(child: CircularProgressIndicator(color: Color(0xffF4C430)));
+              }
+
+              final services = svcProvider.services;
+              if (services.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Text('No add-on services available'),
                 );
-              },
-            ),
+              }
+
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: services.length,
+                itemBuilder: (context, index) {
+                  final service = services[index];
+                  final isSelected = _selectedAddonServiceId == service.id;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedAddonServiceId = service.id;
+                      });
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: isSelected ? const Color(0xffFFFDF0) : Colors.white,
+                        border: Border.all(
+                          color: isSelected ? AppColors.brandYellow : Colors.transparent,
+                          width: 1.5,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  service.name,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                if (service.description != null)
+                                  Text(
+                                    service.description!,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            formatCurrency(service.price),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xffC68A00),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            }),
             const SizedBox(height: 12),
 
             // City Selection

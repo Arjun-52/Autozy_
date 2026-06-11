@@ -1,5 +1,6 @@
 import 'package:autozy/features/profile/screens/profile_screen.dart';
 import 'package:autozy/features/vehicles/screens/vehicles_screen.dart';
+import 'package:autozy/features/addons/screens/addons_screen.dart';
 import 'package:flutter/material.dart';
 import '../screens/home_screen.dart';
 
@@ -16,7 +17,7 @@ class _HomeBottomNavState extends State<HomeBottomNav> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const VehicleScreen(),
-    const Center(child: Text("Plans Screen")),
+    const AddonsScreen(),
     const Center(child: Text("Profile Screen")),
     const ProfileScreen(),
   ];
@@ -49,8 +50,8 @@ class _HomeBottomNavState extends State<HomeBottomNav> {
             label: "Vehicles",
           ),
           const BottomNavigationBarItem(
-            icon: Icon(Icons.access_time),
-            label: "Plans",
+            icon: Icon(Icons.extension_outlined),
+            label: "Add-ons",
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),

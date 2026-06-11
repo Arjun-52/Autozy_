@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/addon_booking_provider.dart';
 import '../../../data/models/dto/my_addon_bookings_response.dart';
+import '../../../core/utils/price_utils.dart';
 
 class AddonBookingsScreen extends StatefulWidget {
   const AddonBookingsScreen({super.key});
@@ -195,7 +196,7 @@ class _AddonBookingsScreenState extends State<AddonBookingsScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                booking.amount != null ? "₹${booking.amount!.toStringAsFixed(2)}" : "₹0.00",
+                formatCurrency(booking.amount, fractionDigits: 2),
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,

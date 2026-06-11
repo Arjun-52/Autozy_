@@ -26,8 +26,8 @@ class AppStrings {
   static const String vehicleNumber = 'Vehicle Number';
   static const String vehicleType = 'Vehicle Type';
   
-  // Plans
-  static const String plans = 'Plans';
+  // Plans / Add-ons label
+  static const String plans = 'Add-ons';
   static const String selectPlan = 'Select Plan';
   static const String basic = 'Basic';
   static const String standard = 'Standard';

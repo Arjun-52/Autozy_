@@ -28,10 +28,13 @@ class _LoginScreenState extends State<LoginScreen> {
     final authProvider = context.watch<AuthProvider>();
 
     if (authProvider.error != null) {
+      // Capture the error string immediately to avoid a null-check
+      // inside the scheduled callback if provider state changes.
+      final errMsg = authProvider.error;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(authProvider.error!)));
+        if (errMsg != null && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errMsg)));
+        }
       });
     }
 

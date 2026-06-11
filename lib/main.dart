@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'core/services/navigation_service.dart';
 import 'core/services/token_storage.dart';
@@ -32,6 +33,7 @@ import 'providers/daily_service_provider.dart';
 import 'providers/daily_calendar_provider.dart';
 import 'data/repositories/addon_repository.dart';
 import 'providers/addon_booking_provider.dart';
+import 'providers/addon_service_provider.dart';
 import 'data/repositories/ticket_repository.dart';
 import 'providers/ticket_provider.dart';
 import 'providers/ticket_details_provider.dart';
@@ -176,6 +178,10 @@ class _AutozyAppState extends State<AutozyApp> {
             apiService.onSessionExpired = () {
               authProvider.handleSessionExpired();
             };
+            // If we have an auth token restored from storage, try restoring the session
+            if (apiService.hasToken) {
+              Future.microtask(() => authProvider.restoreSession());
+            }
             return authProvider;
           },
         ),
@@ -226,6 +232,9 @@ class _AutozyAppState extends State<AutozyApp> {
           create: (context) =>
               AddonBookingProvider(context.read<AddonRepository>()),
         ),
+        ChangeNotifierProvider<AddonServiceProvider>(
+          create: (context) => AddonServiceProvider(context.read<AddonRepository>()),
+        ),
 
         ChangeNotifierProvider<TicketProvider>(
           create: (context) =>
@@ -243,11 +252,13 @@ class _AutozyAppState extends State<AutozyApp> {
         ),
       ],
 
-      child: MaterialApp.router(
+      child: GetMaterialApp.router(
         scaffoldMessengerKey: NavigationService.scaffoldMessengerKey,
         title: 'Autozy',
         debugShowCheckedModeBanner: false,
-        routerConfig: AppGoRouter.router,
+        routerDelegate: AppGoRouter.router.routerDelegate,
+        routeInformationParser: AppGoRouter.router.routeInformationParser,
+        routeInformationProvider: AppGoRouter.router.routeInformationProvider,
 
         ///  THEME
         theme: ThemeData(

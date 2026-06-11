@@ -254,7 +254,7 @@ class InvoicesScreen extends StatelessWidget {
           } else if (index == 1) {
             context.go('/home/vehicles');
           } else if (index == 2) {
-            context.go('/home/plans');
+            context.go('/home/addons');
           } else if (index == 3) {
             context.go('/home/profile');
           }
@@ -283,7 +283,7 @@ class InvoicesScreen extends StatelessWidget {
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.access_time),
-            label: "Plans",
+            label: "Add-ons",
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),

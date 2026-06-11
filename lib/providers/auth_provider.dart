@@ -13,6 +13,20 @@ class AuthProvider extends ChangeNotifier {
 
   AuthProvider(this._authRepository);
 
+  /// Attempts to restore a logged-in user from an existing auth token.
+  /// Used on app startup when a token is present in storage.
+  Future<void> restoreSession() async {
+    try {
+      final restoredUser = await _authRepository.refreshToken();
+      _user = restoredUser;
+      // Fetch profile to sync additional state
+      await fetchUserProfile();
+    } catch (e) {
+      AppLogger.error('Session restore failed: $e', tag: 'Auth');
+    }
+    notifyListeners();
+  }
+
   // ----- Auth State -----
   User? _user;
   bool _isLoading = false;

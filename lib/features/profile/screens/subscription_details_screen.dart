@@ -386,10 +386,10 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: subProvider.isPauseLoading
-                        ? null
-                        : () async {
-                            final success = await subProvider.pauseSubscription(sub.id);
+                onPressed: subProvider.isPauseLoading
+                  ? null
+                  : () async {
+                    final success = await subProvider.pauseSubscription(sub.id, reason: 'user_requested');
                             if (success && context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(

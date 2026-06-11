@@ -26,6 +26,7 @@ import '../../features/profile/screens/addon_bookings_screen.dart';
 import '../../features/booking/screens/book_addon_screen.dart';
 import '../../features/profile/screens/tickets_screen.dart';
 import '../../features/profile/screens/ticket_details_screen.dart';
+import '../../features/plans/screens/plans_screen.dart';
 
 class AppGoRouter {
   static final GoRouter router = GoRouter(
@@ -83,8 +84,8 @@ class AppGoRouter {
                 const MainScreen(key: ValueKey('home-1'), initialIndex: 1),
           ),
           GoRoute(
-            path: 'plans',
-            name: 'plans',
+            path: 'addons',
+            name: 'addons',
             builder: (context, state) =>
                 const MainScreen(key: ValueKey('home-2'), initialIndex: 2),
           ),
@@ -102,6 +103,13 @@ class AppGoRouter {
         path: '/notifications',
         name: 'notifications',
         builder: (context, state) => const NotificationScreen(),
+      ),
+
+      // Plans route (Explore -> View Plans)
+      GoRoute(
+        path: '/plans',
+        name: 'plans',
+        builder: (context, state) => const PlansScreen(),
       ),
 
       // Profile routes
@@ -219,7 +227,12 @@ class AppGoRouter {
       GoRoute(
         path: '/book-addon',
         name: 'bookAddon',
-        builder: (context, state) => const BookAddonScreen(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final serviceId = extra?['serviceId'] as String?;
+          final serviceName = extra?['serviceName'] as String?;
+          return BookAddonScreen(preselectedServiceId: serviceId, preselectedServiceName: serviceName);
+        },
       ),
       GoRoute(
         path: '/tickets',
@@ -290,7 +303,7 @@ class AppRoutes {
   static const String otp = '/otp';
   static const String home = '/home';
   static const String vehicles = '/home/vehicles';
-  static const String plans = '/home/plans';
+  static const String addons = '/home/addons';
   static const String profile = '/home/profile';
   static const String addVehicle = '/add-vehicle';
   static const String editVehicle = '/edit-vehicle';

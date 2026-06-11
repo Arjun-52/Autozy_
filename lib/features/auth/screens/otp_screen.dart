@@ -23,17 +23,21 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
+  late OtpProvider _otpProvider;
   @override
   void initState() {
     super.initState();
+    // Cache provider reference to safely use in dispose()
+    _otpProvider = context.read<OtpProvider>();
     Future.microtask(() {
-      context.read<OtpProvider>().startTimer();
+      _otpProvider.startTimer();
     });
   }
 
   @override
   void dispose() {
-    context.read<OtpProvider>().disposeTimer();
+    // Use cached provider reference instead of looking it up during dispose
+    _otpProvider.disposeTimer();
     super.dispose();
   }
 
@@ -42,11 +46,13 @@ class _OtpScreenState extends State<OtpScreen> {
     final authProvider = context.watch<AuthProvider>();
 
     if (authProvider.error != null) {
+      // Capture the error string immediately to avoid null-check issues
+      final errMsg = authProvider.error;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(authProvider.error!)));
+        if (errMsg != null && mounted) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errMsg)));
+        }
       });
     }
 

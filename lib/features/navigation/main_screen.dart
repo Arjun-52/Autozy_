@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/home/screens/home_screen.dart';
 import '../../features/vehicles/screens/vehicles_screen.dart';
-import '../../features/plans/screens/plans_screen.dart';
+import '../../features/addons/screens/addons_screen.dart';
 
 class MainScreen extends StatefulWidget {
   final int initialIndex;
@@ -30,7 +30,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> screens = [
     const HomeScreen(),
     const VehicleScreen(),
-    const PlansScreen(),
+    const AddonsScreen(),
     const ProfileScreen(),
   ];
  
@@ -83,7 +83,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.access_time),
-            label: "Plans",
+            label: "Add-ons",
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
