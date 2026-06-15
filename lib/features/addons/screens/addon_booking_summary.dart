@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import '../controllers/addon_booking_controller.dart';
 import '../../../core/router/go_router.dart';
 import '../../../providers/vehicle_provider.dart';
 import '../../../providers/area_provider.dart';
+import '../../../providers/addon_booking_provider.dart';
 import '../../../core/utils/price_utils.dart';
 import '../../../core/services/navigation_service.dart';
 
@@ -56,6 +58,9 @@ class AddonBookingSummaryScreen extends StatelessWidget {
                             final vehicleId = vehicle?.id ?? '';
                             final success = await controller.bookAddon(vehicleId: vehicleId, cityId: cityId);
                             if (success) {
+                              if (context.mounted) {
+                                context.read<AddonBookingProvider>().fetchBookings(isRefresh: true);
+                              }
                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                 final messenger = NavigationService.scaffoldMessengerKey.currentState;
                                 messenger?.showSnackBar(const SnackBar(content: Text('Add-on booked successfully.'), backgroundColor: Colors.green));

@@ -37,13 +37,25 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
   Color _getStatusBgColor(String status) {
     switch (status.toUpperCase()) {
       case 'PENDING_INSPECTION':
+      case 'PENDING':
         return const Color(0xFFFFFDE7); // Yellowish light
+      case 'APPROVED':
       case 'ACTIVE':
         return const Color(0xFFE8F8EF); // Greenish light
       case 'PAUSED':
         return const Color(0xFFFFF3E0); // Orangish light
+      case 'REJECTED':
       case 'CANCELLED':
         return const Color(0xFFFFEBEE); // Reddish light
+      case 'REFUND_INITIATED':
+      case 'REFUND_PROCESSING':
+      case 'PROCESSING':
+        return const Color(0xFFFFF3E0); // Orangish light
+      case 'REFUND_COMPLETED':
+      case 'REFUNDED':
+      case 'REFUND_SUCCESS':
+      case 'COMPLETED':
+        return const Color(0xFFE0F2F1); // Tealish light
       case 'EXPIRED':
       default:
         return const Color(0xFFEEEEEE); // Greyish light
@@ -53,13 +65,25 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
   Color _getStatusTextColor(String status) {
     switch (status.toUpperCase()) {
       case 'PENDING_INSPECTION':
+      case 'PENDING':
         return const Color(0xFFF57F17);
+      case 'APPROVED':
       case 'ACTIVE':
         return const Color(0xFF2E7D32);
       case 'PAUSED':
         return const Color(0xFFEF6C00);
+      case 'REJECTED':
       case 'CANCELLED':
         return const Color(0xFFC62828);
+      case 'REFUND_INITIATED':
+      case 'REFUND_PROCESSING':
+      case 'PROCESSING':
+        return const Color(0xFFE65100);
+      case 'REFUND_COMPLETED':
+      case 'REFUNDED':
+      case 'REFUND_SUCCESS':
+      case 'COMPLETED':
+        return const Color(0xFF004D40);
       case 'EXPIRED':
       default:
         return const Color(0xFF616161);
@@ -69,13 +93,27 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
   String _getStatusText(String status) {
     switch (status.toUpperCase()) {
       case 'PENDING_INSPECTION':
+      case 'PENDING':
         return 'Pending Inspection';
+      case 'APPROVED':
+        return 'Approved';
       case 'ACTIVE':
         return 'Active';
       case 'PAUSED':
         return 'Paused';
+      case 'REJECTED':
+        return 'Rejected';
       case 'CANCELLED':
         return 'Cancelled';
+      case 'REFUND_INITIATED':
+      case 'REFUND_PROCESSING':
+      case 'PROCESSING':
+        return 'Refund Initiated';
+      case 'REFUND_COMPLETED':
+      case 'REFUNDED':
+      case 'REFUND_SUCCESS':
+      case 'COMPLETED':
+        return 'Refund Completed';
       case 'EXPIRED':
         return 'Expired';
       default:

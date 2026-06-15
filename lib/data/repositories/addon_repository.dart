@@ -59,10 +59,21 @@ class AddonRepository {
     }
   }
 
-  Future<List<AddonServiceModel>> getAddonServices() async {
+  Future<List<AddonServiceModel>> getAddonServices({
+    String? cityId,
+    String? vehicleSize,
+  }) async {
     try {
-      AppLogger.info('Requesting list of add-on services', tag: 'Addons');
-      final data = await _apiService.get('/api/v1/addons/services');
+      AppLogger.info('Requesting list of add-on services for cityId: $cityId, vehicleSize: $vehicleSize', tag: 'Addons');
+      final queryParams = <String, dynamic>{};
+      if (cityId != null) queryParams['cityId'] = cityId;
+      if (vehicleSize != null) queryParams['vehicleSize'] = vehicleSize;
+
+      final data = await _apiService.get(
+        '/api/v1/addons/services',
+        queryParameters: queryParams,
+        sendAuth: false,
+      );
       final List<dynamic> list = data['data'] as List<dynamic>? ?? [];
       return list.map((e) => AddonServiceModel.fromJson(e as Map<String, dynamic>)).toList();
     } catch (e, st) {

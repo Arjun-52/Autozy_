@@ -63,27 +63,88 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
 
   Color _getStatusBgColor(String status) {
     switch (status.toUpperCase()) {
+      case 'PENDING_INSPECTION':
+      case 'PENDING':
+        return const Color(0xFFFFFDE7); // Yellowish light
+      case 'APPROVED':
       case 'ACTIVE':
-        return const Color(0xFFE8F8EF);
+        return const Color(0xFFE8F8EF); // Greenish light
       case 'PAUSED':
-        return const Color(0xFFFFF3E0);
+        return const Color(0xFFFFF3E0); // Orangish light
+      case 'REJECTED':
       case 'CANCELLED':
-        return const Color(0xFFFFEBEE);
+        return const Color(0xFFFFEBEE); // Reddish light
+      case 'REFUND_INITIATED':
+      case 'REFUND_PROCESSING':
+      case 'PROCESSING':
+        return const Color(0xFFFFF3E0); // Orangish light
+      case 'REFUND_COMPLETED':
+      case 'REFUNDED':
+      case 'REFUND_SUCCESS':
+      case 'COMPLETED':
+        return const Color(0xFFE0F2F1); // Tealish light
+      case 'EXPIRED':
       default:
-        return const Color(0xFFEEEEEE);
+        return const Color(0xFFEEEEEE); // Greyish light
     }
   }
 
   Color _getStatusTextColor(String status) {
     switch (status.toUpperCase()) {
+      case 'PENDING_INSPECTION':
+      case 'PENDING':
+        return const Color(0xFFF57F17);
+      case 'APPROVED':
       case 'ACTIVE':
         return const Color(0xFF2E7D32);
       case 'PAUSED':
         return const Color(0xFFEF6C00);
+      case 'REJECTED':
       case 'CANCELLED':
         return const Color(0xFFC62828);
+      case 'REFUND_INITIATED':
+      case 'REFUND_PROCESSING':
+      case 'PROCESSING':
+        return const Color(0xFFE65100);
+      case 'REFUND_COMPLETED':
+      case 'REFUNDED':
+      case 'REFUND_SUCCESS':
+      case 'COMPLETED':
+        return const Color(0xFF004D40);
+      case 'EXPIRED':
       default:
         return const Color(0xFF616161);
+    }
+  }
+
+  String _getStatusText(String status) {
+    switch (status.toUpperCase()) {
+      case 'PENDING_INSPECTION':
+      case 'PENDING':
+        return 'Pending Inspection';
+      case 'APPROVED':
+        return 'Approved';
+      case 'ACTIVE':
+        return 'Active';
+      case 'PAUSED':
+        return 'Paused';
+      case 'REJECTED':
+        return 'Rejected';
+      case 'CANCELLED':
+        return 'Cancelled';
+      case 'REFUND_INITIATED':
+      case 'REFUND_PROCESSING':
+      case 'PROCESSING':
+        return 'Refund Initiated';
+      case 'REFUND_COMPLETED':
+      case 'REFUNDED':
+      case 'REFUND_SUCCESS':
+      case 'COMPLETED':
+        return 'Refund Completed';
+      case 'EXPIRED':
+        return 'Expired';
+      default:
+        return status;
     }
   }
 
@@ -263,6 +324,74 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
     );
   }
 
+  Widget _buildRejectionReasonCard(String? reason) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFEF2F2),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFFCA5A5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.red.shade800, size: 20),
+              const SizedBox(width: 8),
+              const Text(
+                "Subscription Rejected",
+                style: TextStyle(
+                  color: Color(0xFF991B1B),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Reason:\n${reason ?? 'Vehicle verification failed. Please review your vehicle details or contact support.'}",
+            style: const TextStyle(
+              color: Color(0xFF991B1B),
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInspectionNoticeCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFFDE7),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFFFF59D)),
+      ),
+      child: const Row(
+        children: [
+          Icon(Icons.info_outline, color: Color(0xFFF57F17)),
+          SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              "Your subscription is pending inspection. Cleaning services will start immediately once the vehicle is approved by our inspector.",
+              style: TextStyle(
+                color: Color(0xFF5D4037),
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final subProvider = context.watch<SubscriptionProvider>();
@@ -325,6 +454,14 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (sub.status.toUpperCase() == 'REJECTED') ...[
+                _buildRejectionReasonCard(sub.refundReason),
+                const SizedBox(height: 16),
+              ],
+              if (sub.status.toUpperCase() == 'PENDING_INSPECTION' || sub.status.toUpperCase() == 'PENDING') ...[
+                _buildInspectionNoticeCard(),
+                const SizedBox(height: 16),
+              ],
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -356,7 +493,7 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
                             border: Border.all(color: _getStatusTextColor(sub.status)),
                           ),
                           child: Text(
-                            sub.status.toUpperCase(),
+                            _getStatusText(sub.status),
                             style: TextStyle(color: _getStatusTextColor(sub.status), fontWeight: FontWeight.bold, fontSize: 11),
                           ),
                         )

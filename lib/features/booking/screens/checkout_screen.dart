@@ -63,10 +63,6 @@ class CheckoutScreen extends StatelessWidget {
       return;
     }
 
-    if (vehicle.status.toLowerCase() == 'pending' || vehicle.status.toLowerCase() == 'rejected') {
-      _showSnackBar(context, "Your vehicle is awaiting inspection approval. Services and subscriptions will be available once verification is completed.");
-      return;
-    }
 
     if (areaId == null) {
       _showSnackBar(context, 'Please select a service area first');

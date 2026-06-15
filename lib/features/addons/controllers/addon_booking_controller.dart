@@ -54,6 +54,7 @@ class AddonBookingController extends GetxController {
         scheduledSlotStart: fmtTime(TimeOfDay(hour: start.hour, minute: start.minute)),
         scheduledSlotEnd: fmtTime(TimeOfDay(hour: end.hour, minute: end.minute)),
         cityId: cityId,
+        pricingId: a.pricingId,
       );
 
       final resp = await _repo.bookAddonService(request);

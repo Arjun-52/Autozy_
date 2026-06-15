@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'addon_datetime_selection.dart';
 import '../../../providers/addon_service_provider.dart';
 import '../../../core/utils/price_utils.dart';
+import '../../../data/models/dto/addon_service_model.dart';
  
 import '../../../providers/vehicle_provider.dart';
 import '../../../providers/area_provider.dart';
@@ -23,9 +24,29 @@ class _AddonsScreenState extends State<AddonsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AddonServiceProvider>().fetchServices();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final vehicleProvider = context.read<VehicleProvider>();
+      if (vehicleProvider.vehicles.isEmpty) {
+        await vehicleProvider.fetchVehicles(page: 1, limit: 20, reset: true);
+      }
+      _fetchAddonServices();
     });
+  }
+
+  void _fetchAddonServices() {
+    final areaProvider = context.read<AreaProvider>();
+    final vehicleProvider = context.read<VehicleProvider>();
+    final cityId = areaProvider.selectedArea?.cityId;
+    final vehicleSize = vehicleProvider.vehicles.isNotEmpty
+        ? vehicleProvider.vehicles.first.sizeCategory
+        : null;
+
+    if (cityId != null && vehicleSize != null) {
+      context.read<AddonServiceProvider>().fetchServices(
+            cityId: cityId,
+            vehicleSize: vehicleSize,
+          );
+    }
   }
 
   @override
@@ -48,17 +69,87 @@ class _AddonsScreenState extends State<AddonsScreen> {
   }
 
   Widget _buildBody(AddonServiceProvider provider) {
+    final areaProvider = context.watch<AreaProvider>();
+    final vehicleProvider = context.watch<VehicleProvider>();
+    final cityId = areaProvider.selectedArea?.cityId;
+
+    if (cityId == null) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24.0),
+          child: Text(
+            'Please select a service area first to view available add-ons.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 15, color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
+    if (vehicleProvider.vehicles.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Please add a vehicle to view available add-ons.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 15, color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => context.pushNamed('addVehicle'),
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xffC68A00)),
+                child: const Text('Add Vehicle', style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     if (provider.isLoading) {
       return const Center(child: CircularProgressIndicator(color: Color(0xffF4C430)));
     }
 
     if (provider.error != null) {
-      return Center(child: Text(provider.error!));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text(
+                provider.error!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.red, fontSize: 14),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _fetchAddonServices,
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xffC68A00)),
+              child: const Text('Retry', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      );
     }
 
     final services = provider.services;
     if (services.isEmpty) {
-      return Center(child: Text('No add-on services available'));
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24.0),
+          child: Text(
+            'No add-on services available for your vehicle size and location.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 15, color: Colors.grey),
+          ),
+        ),
+      );
     }
 
     return ListView.builder(
@@ -69,8 +160,11 @@ class _AddonsScreenState extends State<AddonsScreen> {
         final bookingProvider = context.watch<AddonBookingProvider>();
         return InkWell(
           onTap: () {
-            // Navigate to book screen with selected service
-            context.push('/book-addon', extra: {'serviceId': s.id, 'serviceName': s.name});
+            context.push('/book-addon', extra: {
+              'serviceId': s.id,
+              'serviceName': s.name,
+              'pricingId': s.pricingId,
+            });
           },
           child: Container(
             margin: const EdgeInsets.only(bottom: 12),
@@ -88,6 +182,19 @@ class _AddonsScreenState extends State<AddonsScreen> {
                         const SizedBox(height: 6),
                         Text(s.description!, style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
                       ],
+                      if (s.estimatedDuration != null) ...[
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            const Icon(Icons.access_time, size: 14, color: Colors.grey),
+                            const SizedBox(width: 4),
+                            Text(
+                              "${s.estimatedDuration} mins",
+                              style: const TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -100,8 +207,6 @@ class _AddonsScreenState extends State<AddonsScreen> {
                       style: const TextStyle(color: Color(0xffC68A00), fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 6),
-                    // Quick one-tap purchase button. Uses existing AddonBookingProvider to perform booking.
-                    // Show booking progress while a booking is in progress to prevent duplicate taps
                     bookingProvider.isBooking
                         ? Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -119,10 +224,9 @@ class _AddonsScreenState extends State<AddonsScreen> {
                             ),
                           )
                         : TextButton(
-                                onPressed: () {
-                                  // Open date/time selection screen via Navigator to keep app routing consistent
-                                  Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddonDateTimeSelectionScreen(service: s)));
-                                },
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddonDateTimeSelectionScreen(service: s)));
+                            },
                             style: TextButton.styleFrom(
                               foregroundColor: Colors.white,
                               backgroundColor: const Color(0xffC68A00),
@@ -148,81 +252,4 @@ class _AddonsScreenState extends State<AddonsScreen> {
     });
   }
 
-  void _handleQuickBuy(BuildContext context, String serviceId) async {
-    final vehicleProvider = context.read<VehicleProvider>();
-    final areaProvider = context.read<AreaProvider>();
-    final addonBookingProvider = context.read<AddonBookingProvider>();
-
-    // Ensure prerequisites: vehicle and selected area (city)
-    if (vehicleProvider.vehicles.isEmpty) {
-      _showGlobalSnack('Please add a vehicle before purchasing add-ons', background: Colors.red);
-      return;
-    }
-
-    final cityId = areaProvider.selectedArea?.cityId;
-    if (cityId == null) {
-      _showGlobalSnack('Please select an area before purchasing add-ons', background: Colors.red);
-      return;
-    }
-
-    // Build a minimal booking request using current time as scheduled slot.
-    final vehicleId = vehicleProvider.vehicles.first.id;
-    final now = DateTime.now();
-    final end = now.add(const Duration(hours: 1));
-    String _fmtDate(DateTime d) => '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
-    String _fmtTime(TimeOfDay t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}:00';
-
-    final request = BookAddonRequestModel(
-      vehicleId: vehicleId,
-      addonServiceId: serviceId,
-      scheduledDate: _fmtDate(now),
-      scheduledSlotStart: _fmtTime(TimeOfDay(hour: now.hour, minute: now.minute)),
-      scheduledSlotEnd: _fmtTime(TimeOfDay(hour: end.hour, minute: end.minute)),
-      cityId: cityId,
-    );
-
-    // Confirmation dialog before making API call
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Confirm Purchase'),
-          content: const Text('Are you sure you want to purchase this add-on?'),
-          actions: [
-            TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancel')),
-            ElevatedButton(onPressed: () => Navigator.of(context).pop(true), child: const Text('Confirm')),
-          ],
-        );
-      },
-    );
-
-    if (confirmed != true) return;
-
-    try {
-      final success = await addonBookingProvider.bookAddon(request);
-      if (success) {
-        _showGlobalSnack('Add-on purchased successfully', background: Colors.green);
-        // Refresh add-on list and bookings
-        try {
-          context.read<AddonServiceProvider>().fetchServices();
-        } catch (_) {}
-        try {
-          addonBookingProvider.fetchBookings(isRefresh: true);
-        } catch (_) {}
-        // Refresh dashboard data if present
-        try {
-          context.read<HomeProvider>().fetchDashboard();
-        } catch (_) {}
-        // Navigate to My Add-on Bookings page
-        if (context.mounted) context.push('/addon-bookings');
-      } else {
-        final err = addonBookingProvider.bookingError ?? 'Failed to book add-on';
-        _showGlobalSnack(err, background: Colors.red);
-      }
-    } catch (e) {
-      var msg = e.toString();
-      if (msg.contains('Exception:')) msg = msg.replaceAll('Exception: ', '');
-      _showGlobalSnack(msg, background: Colors.red);
-    }
-  }
 }

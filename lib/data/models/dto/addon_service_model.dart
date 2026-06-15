@@ -1,29 +1,28 @@
-class AddonServiceModel {
+class AddOnService {
   final String id;
   final String name;
   final String? description;
+  final int? estimatedDuration;
   final double? price;
+  final String? pricingId;
 
-  AddonServiceModel({
+  AddOnService({
     required this.id,
     required this.name,
     this.description,
+    this.estimatedDuration,
     this.price,
+    this.pricingId,
   });
 
-  factory AddonServiceModel.fromJson(Map<String, dynamic> json) {
-    return AddonServiceModel(
+  factory AddOnService.fromJson(Map<String, dynamic> json) {
+    return AddOnService(
       id: json['id']?.toString() ?? '',
       name: json['name']?.toString() ?? '',
       description: json['description']?.toString(),
-      // Try multiple common fields for price to be resilient to backend field name variations
-      price: (() {
-        final keys = ['price', 'amount', 'cost', 'service_price', 'servicePrice'];
-        for (final k in keys) {
-          if (json[k] != null) return double.tryParse(json[k].toString());
-        }
-        return null;
-      })(),
+      estimatedDuration: json['estimatedDuration'] as int? ?? json['estimated_duration'] as int?,
+      price: json['price'] != null ? double.tryParse(json['price'].toString()) : null,
+      pricingId: json['pricingId']?.toString() ?? json['pricing_id']?.toString(),
     );
   }
 
@@ -33,7 +32,11 @@ class AddonServiceModel {
       'name': name,
     };
     if (description != null) map['description'] = description;
+    if (estimatedDuration != null) map['estimatedDuration'] = estimatedDuration;
     if (price != null) map['price'] = price;
+    if (pricingId != null) map['pricingId'] = pricingId;
     return map;
   }
 }
+
+typedef AddonServiceModel = AddOnService;

@@ -16,13 +16,16 @@ class AddonServiceProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  Future<void> fetchServices() async {
+  Future<void> fetchServices({String? cityId, String? vehicleSize}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      final fetched = await _repository.getAddonServices();
+      final fetched = await _repository.getAddonServices(
+        cityId: cityId,
+        vehicleSize: vehicleSize,
+      );
       _services = fetched;
       AppLogger.info('Add-on services loaded: ${_services.length}', tag: 'Addons');
     } catch (e) {

@@ -34,13 +34,13 @@ class ApiService {
     AppLogger.debug('Refresh token cleared', tag: 'ApiService');
   }
 
-  Map<String, String> _getHeaders() {
+  Map<String, String> _getHeaders({bool sendAuth = true}) {
     final headers = <String, String>{
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     };
 
-    if (_authToken != null) {
+    if (sendAuth && _authToken != null) {
       headers['Authorization'] = 'Bearer $_authToken';
     }
 
@@ -131,13 +131,14 @@ class ApiService {
   Future<Map<String, dynamic>> get(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
+    bool sendAuth = true,
   }) async {
     final uri = Uri.parse(
       '$baseUrl$endpoint',
     ).replace(queryParameters: queryParameters);
     _logRequest('GET', uri);
     return _executeRequestWithRetry(endpoint, () async {
-      return await http.get(uri, headers: _getHeaders()).timeout(const Duration(seconds: 10));
+      return await http.get(uri, headers: _getHeaders(sendAuth: sendAuth)).timeout(const Duration(seconds: 10));
     });
   }
 

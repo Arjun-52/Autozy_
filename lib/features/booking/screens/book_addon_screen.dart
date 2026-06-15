@@ -15,11 +15,13 @@ import '../../../data/models/vehicle_model.dart';
 class BookAddonScreen extends StatefulWidget {
   final String? preselectedServiceId;
   final String? preselectedServiceName;
+  final String? preselectedPricingId;
 
   const BookAddonScreen({
     super.key,
     this.preselectedServiceId,
     this.preselectedServiceName,
+    this.preselectedPricingId,
   });
 
   @override
@@ -198,6 +200,14 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
       return;
     }
 
+    String? pricingId;
+    try {
+      final services = context.read<AddonServiceProvider>().services;
+      final svc = services.firstWhere((s) => s.id == _selectedAddonServiceId);
+      pricingId = svc.pricingId;
+    } catch (_) {}
+    pricingId ??= widget.preselectedPricingId;
+
     final request = BookAddonRequestModel(
       vehicleId: _selectedVehicleId!,
       addonServiceId: _selectedAddonServiceId!,
@@ -205,6 +215,7 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
       scheduledSlotStart: _formatTime(_startTime!),
       scheduledSlotEnd: _formatTime(_endTime!),
       cityId: _selectedCityId!,
+      pricingId: pricingId,
     );
 
     final provider = context.read<AddonBookingProvider>();

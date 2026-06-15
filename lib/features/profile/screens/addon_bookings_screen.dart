@@ -341,7 +341,7 @@ class _AddonBookingsScreenState extends State<AddonBookingsScreen> {
             Icon(Icons.shopping_bag_outlined, size: 70, color: Colors.grey.shade400),
             const SizedBox(height: 16),
             const Text(
-              "No add-on bookings found",
+              "No bookings found",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,

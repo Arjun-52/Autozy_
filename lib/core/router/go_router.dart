@@ -231,7 +231,12 @@ class AppGoRouter {
           final extra = state.extra as Map<String, dynamic>?;
           final serviceId = extra?['serviceId'] as String?;
           final serviceName = extra?['serviceName'] as String?;
-          return BookAddonScreen(preselectedServiceId: serviceId, preselectedServiceName: serviceName);
+          final pricingId = extra?['pricingId'] as String?;
+          return BookAddonScreen(
+            preselectedServiceId: serviceId,
+            preselectedServiceName: serviceName,
+            preselectedPricingId: pricingId,
+          );
         },
       ),
       GoRoute(

@@ -10,7 +10,7 @@ import '../../features/home/screens/home_screen.dart';
 import '../../features/vehicles/screens/vehicles_screen.dart';
 import '../../features/addons/screens/addons_screen.dart';
 
-class MainScreen extends StatefulWidget {
+class MainScreen extends StatefulWidget { 
   final int initialIndex;
   final bool showPlanActiveCard;
   final String? screen;

@@ -99,6 +99,63 @@ class PlanProvider extends ChangeNotifier {
     return null;
   }
 
+  int? getPriceForPlanAndVehicle({
+    required String planId,
+    required String vehicleSize,
+    String? areaId,
+    String? cityId,
+  }) {
+    if (_pricings.isEmpty) return null;
+
+    // 1. Try to find match with plan_id, vehicle_size, and area_id
+    if (areaId != null) {
+      for (var p in _pricings) {
+        final pPlanId = p['plan_id'] ?? p['planId'];
+        final pVehicleSize = p['vehicle_size'] ?? p['vehicleSize'];
+        final pAreaId = p['area_id'] ?? p['areaId'];
+        if (pPlanId == planId &&
+            _isSizeMatch(pVehicleSize?.toString(), vehicleSize) &&
+            pAreaId == areaId) {
+          final priceVal = p['price'] ?? p['price_amount'] ?? p['priceAmount'];
+          if (priceVal != null) {
+            return int.tryParse(priceVal.toString()) ?? 0;
+          }
+        }
+      }
+    }
+
+    // 2. Try to find match with plan_id, vehicle_size, and city_id
+    if (cityId != null) {
+      for (var p in _pricings) {
+        final pPlanId = p['plan_id'] ?? p['planId'];
+        final pVehicleSize = p['vehicle_size'] ?? p['vehicleSize'];
+        final pCityId = p['city_id'] ?? p['cityId'];
+        if (pPlanId == planId &&
+            _isSizeMatch(pVehicleSize?.toString(), vehicleSize) &&
+            pCityId == cityId) {
+          final priceVal = p['price'] ?? p['price_amount'] ?? p['priceAmount'];
+          if (priceVal != null) {
+            return int.tryParse(priceVal.toString()) ?? 0;
+          }
+        }
+      }
+    }
+
+    // 3. Fallback to match with plan_id, vehicle_size
+    for (var p in _pricings) {
+      final pPlanId = p['plan_id'] ?? p['planId'];
+      final pVehicleSize = p['vehicle_size'] ?? p['vehicleSize'];
+      if (pPlanId == planId &&
+          _isSizeMatch(pVehicleSize?.toString(), vehicleSize)) {
+        final priceVal = p['price'] ?? p['price_amount'] ?? p['priceAmount'];
+        if (priceVal != null) {
+          return int.tryParse(priceVal.toString()) ?? 0;
+        }
+      }
+    }
+    return null;
+  }
+
 
 
   void selectPlan(Plan plan) {
