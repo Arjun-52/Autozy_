@@ -55,5 +55,12 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- Razorpay UPI intent: required on Android 11+ (API 30) so the checkout
+             can discover installed UPI apps (GPay/PhonePe/Paytm) and show them as
+             pay options. Only takes effect with a live key; test mode uses a VPA. -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="upi" android:host="pay"/>
+        </intent>
     </queries>
 </manifest>

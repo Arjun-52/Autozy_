@@ -3,8 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-import 'package:autozy/features/booking/models/payment_method_model.dart';
-import 'package:autozy/features/booking/widgets/payment_method_card.dart';
 import 'package:autozy/features/booking/widgets/pay_button.dart';
 import '../../../core/network/api_config.dart';
 import '../../../core/services/navigation_service.dart';
@@ -32,14 +30,6 @@ class PaymentScreen extends StatefulWidget {
 class _PaymentScreenState extends State<PaymentScreen> {
   late final Razorpay _razorpay;
   CreateOrderResponse? _order;
-
-  int selectedIndex = 0;
-
-  final List<PaymentMethodModel> methods = [
-    PaymentMethodModel(name: "Paytm", icon: "assets/images/paytm.jpg"),
-    PaymentMethodModel(name: "PhonePe", icon: "assets/images/phonepay.jpg"),
-    PaymentMethodModel(name: "GPay", icon: "assets/images/gpay.jpg"),
-  ];
 
   @override
   void initState() {
@@ -171,7 +161,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "Select Payment Method",
+                    "Payment Methods",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -182,21 +172,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "You can pay using UPI, cards, net banking and wallets on the next screen.",
+                    "Tap Pay to continue. You can choose UPI, cards, net banking "
+                    "or wallets on the secure Razorpay screen — your installed UPI "
+                    "apps will appear there automatically.",
                     style: TextStyle(fontSize: 13, color: Colors.black54),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              PaymentMethodCard(
-                methods: methods,
-                selectedIndex: selectedIndex,
-                onSelect: (index) {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                },
-              ),
+              const SizedBox(height: 24),
+              const _SupportedMethods(),
               const Spacer(),
               PayButton(
                 price: widget.amount.toString(),
@@ -208,6 +192,52 @@ class _PaymentScreenState extends State<PaymentScreen> {
             Container(
               color: Colors.black26,
               child: const Center(child: CircularProgressIndicator()),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Indicative (non-interactive) list of the payment categories Razorpay
+/// supports. The actual method — and the installed UPI apps — are presented
+/// dynamically by the Razorpay checkout sheet, not chosen here.
+class _SupportedMethods extends StatelessWidget {
+  const _SupportedMethods();
+
+  static const _methods = <(IconData, String)>[
+    (Icons.account_balance_wallet_outlined, 'UPI'),
+    (Icons.credit_card, 'Cards'),
+    (Icons.account_balance_outlined, 'Net Banking'),
+    (Icons.wallet_outlined, 'Wallets'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          for (final (icon, label) in _methods)
+            Expanded(
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xffFFF8E6),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(icon, color: const Color(0xffF4C430)),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    label,
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
+                ],
+              ),
             ),
         ],
       ),

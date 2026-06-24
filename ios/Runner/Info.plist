@@ -49,5 +49,17 @@
 	<string>This app requires access to the camera to take inspection photos of your vehicle.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to the photo library to select inspection photos of your vehicle.</string>
+	<!-- Razorpay UPI intent: lets the Razorpay checkout detect and open installed
+	     UPI apps (Google Pay/PhonePe/Paytm/BHIM/CRED). iOS hides apps not listed
+	     here from canOpenURL. Only effective with a live key; test mode uses a VPA. -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>tez</string>
+		<string>gpay</string>
+		<string>phonepe</string>
+		<string>paytmmp</string>
+		<string>bhim</string>
+		<string>credpay</string>
+	</array>
 </dict>
 </plist>
