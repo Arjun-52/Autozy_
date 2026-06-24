@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../core/utils/app_logger.dart';
+import '../core/services/area_storage.dart';
 import '../data/repositories/area_repository.dart';
 import '../data/models/dto/nearby_areas_response.dart';
 
 class AreaProvider extends ChangeNotifier {
   final AreaRepository _areaRepository;
+  final AreaStorage? _areaStorage;
 
   List<Area> _nearbyAreas = [];
   Area? _selectedArea;
@@ -14,7 +16,9 @@ class AreaProvider extends ChangeNotifier {
   double? _lastLat;
   double? _lastLng;
 
-  AreaProvider(this._areaRepository);
+  AreaProvider(this._areaRepository, {AreaStorage? areaStorage, Area? initialArea})
+      : _areaStorage = areaStorage,
+        _selectedArea = initialArea;
 
   List<Area> get nearbyAreas => _nearbyAreas;
   Area? get selectedArea => _selectedArea;
@@ -77,6 +81,16 @@ class AreaProvider extends ChangeNotifier {
     _selectedArea = area;
     _areaDetails = area; // Keep details in sync
     AppLogger.info('Selected service area: ${area.name} (${area.id})', tag: 'Areas');
+    // Persist so the area survives app restarts (checkout requires it).
+    _areaStorage?.saveSelectedArea(area);
+    notifyListeners();
+  }
+
+  /// Clears the selected area from memory and storage (e.g. on logout).
+  void clearSelectedArea() {
+    _selectedArea = null;
+    _areaDetails = null;
+    _areaStorage?.clear();
     notifyListeners();
   }
 

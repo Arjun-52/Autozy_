@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/services/navigation_service.dart';
 import 'core/services/token_storage.dart';
+import 'core/services/area_storage.dart';
+import 'data/models/dto/nearby_areas_response.dart';
 
 import 'core/constants/colors.dart';
 import 'core/router/go_router.dart';
@@ -17,6 +19,7 @@ import 'data/repositories/inspection_repository.dart';
 import 'data/repositories/area_repository.dart';
 import 'data/repositories/subscription_repository.dart';
 import 'data/repositories/notification_repository.dart';
+import 'data/repositories/payment_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'providers/auth_provider.dart';
@@ -37,6 +40,7 @@ import 'providers/ticket_provider.dart';
 import 'providers/ticket_details_provider.dart';
 import 'providers/notification_provider.dart';
 import 'providers/home_provider.dart';
+import 'providers/payment_provider.dart';
 
 Future<void> _firebaseBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
@@ -54,21 +58,45 @@ void main() async {
   final apiService = ApiService();
   final tokenStorage = TokenStorage();
   final savedToken = await tokenStorage.getAccessToken();
+  final savedRefreshToken = await tokenStorage.getRefreshToken();
   if (savedToken != null && savedToken.isNotEmpty) {
     apiService.setAuthToken(savedToken);
   }
+  // Restore the refresh token too, otherwise the first 401 after a restart has
+  // no refresh token in memory and forces an immediate logout.
+  if (savedRefreshToken != null && savedRefreshToken.isNotEmpty) {
+    apiService.setRefreshToken(savedRefreshToken);
+  }
+  // Persist rotated tokens after a silent refresh so they survive restarts.
+  apiService.onTokensRefreshed = (accessToken, refreshToken) {
+    tokenStorage.saveTokens(accessToken: accessToken, refreshToken: refreshToken);
+  };
 
-  runApp(AutozyApp(apiService: apiService, tokenStorage: tokenStorage));
+  // Restore the previously selected service area so it survives restarts —
+  // the splash screen skips the area-selection screen when a session exists.
+  final areaStorage = AreaStorage();
+  final savedArea = await areaStorage.getSelectedArea();
+
+  runApp(AutozyApp(
+    apiService: apiService,
+    tokenStorage: tokenStorage,
+    areaStorage: areaStorage,
+    savedArea: savedArea,
+  ));
 }
 
 class AutozyApp extends StatefulWidget {
   final ApiService apiService;
   final TokenStorage tokenStorage;
+  final AreaStorage areaStorage;
+  final Area? savedArea;
 
   const AutozyApp({
     super.key,
     required this.apiService,
     required this.tokenStorage,
+    required this.areaStorage,
+    this.savedArea,
   });
 
   @override
@@ -114,10 +142,13 @@ class _AutozyAppState extends State<AutozyApp> {
 
         Provider<TokenStorage>.value(value: widget.tokenStorage),
 
+        Provider<AreaStorage>.value(value: widget.areaStorage),
+
         Provider<AuthService>(
           create: (context) => AuthService(
             context.read<ApiService>(),
             context.read<TokenStorage>(),
+            context.read<AreaStorage>(),
           ),
         ),
 
@@ -166,6 +197,10 @@ class _AutozyAppState extends State<AutozyApp> {
           create: (context) => NotificationRepository(context.read<ApiService>()),
         ),
 
+        Provider<PaymentRepository>(
+          create: (context) => PaymentRepository(context.read<ApiService>()),
+        ),
+
         /// PROVIDERS
         ChangeNotifierProvider<OtpProvider>(create: (_) => OtpProvider()),
 
@@ -203,8 +238,11 @@ class _AutozyAppState extends State<AutozyApp> {
         ),
         
         ChangeNotifierProvider<AreaProvider>(
-          create: (context) =>
-              AreaProvider(context.read<AreaRepository>()),
+          create: (context) => AreaProvider(
+            context.read<AreaRepository>(),
+            areaStorage: context.read<AreaStorage>(),
+            initialArea: widget.savedArea,
+          ),
         ),
 
         ChangeNotifierProvider<SubscriptionProvider>(
@@ -240,6 +278,11 @@ class _AutozyAppState extends State<AutozyApp> {
         ChangeNotifierProvider<NotificationProvider>(
           create: (context) =>
               NotificationProvider(context.read<NotificationRepository>()),
+        ),
+
+        ChangeNotifierProvider<PaymentProvider>(
+          create: (context) =>
+              PaymentProvider(context.read<PaymentRepository>()),
         ),
       ],
 

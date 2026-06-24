@@ -1,5 +1,6 @@
 // Auth Service handling authentication related API calls
 import '../../core/services/token_storage.dart';
+import '../../core/services/area_storage.dart';
 import '../../core/utils/app_logger.dart';
 import '../models/dto/send_otp_response.dart';
 import '../models/dto/logout_response.dart';
@@ -11,8 +12,9 @@ import 'api_service.dart';
 class AuthService {
   final ApiService _apiService;
   final TokenStorage _tokenStorage;
+  final AreaStorage _areaStorage;
 
-  AuthService(this._apiService, this._tokenStorage);
+  AuthService(this._apiService, this._tokenStorage, this._areaStorage);
 
   // LOGIN
   Future<Map<String, dynamic>> login(String email, String password) async {
@@ -158,6 +160,7 @@ class AuthService {
       _apiService.clearAuthToken();
       _apiService.clearRefreshToken();
       await _tokenStorage.clear();
+      await _areaStorage.clear();
       AppLogger.info('Logout success', tag: 'Auth');
       return LogoutResponse.fromJson(responseData);
     } catch (e, st) {
@@ -165,6 +168,7 @@ class AuthService {
       _apiService.clearAuthToken();
       _apiService.clearRefreshToken();
       await _tokenStorage.clear();
+      await _areaStorage.clear();
       rethrow;
     }
   }

@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class BottomBar extends StatelessWidget {
+  final String day;
   final String date;
   final String time;
 
-  const BottomBar({super.key, required this.date, required this.time});
+  const BottomBar({super.key, required this.day, required this.date, required this.time});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,7 @@ class BottomBar extends StatelessWidget {
             onPressed: () {
               context.pushNamed(
                 'checkout',
-                extra: {"day": 'Monday', "date": date, "time": time},
+                extra: {"day": day, "date": date, "time": time},
               );
             },
             child: const Text(

@@ -10,6 +10,11 @@ class ApiService {
   String? _refreshToken;
   void Function()? onSessionExpired;
 
+  /// Invoked after a successful silent token refresh so callers can persist the
+  /// rotated tokens (e.g. to [TokenStorage]). Without this the new tokens live
+  /// only in memory and are lost on the next app restart.
+  void Function(String accessToken, String refreshToken)? onTokensRefreshed;
+
   String? get refreshToken => _refreshToken;
 
   bool get hasToken => _authToken != null && _authToken!.isNotEmpty;
@@ -109,7 +114,8 @@ class ApiService {
           if (success && newAccessToken != null && newRefreshToken != null) {
             setAuthToken(newAccessToken);
             setRefreshToken(newRefreshToken);
-            
+            onTokensRefreshed?.call(newAccessToken, newRefreshToken);
+
             AppLogger.info('Token refresh successful. Retrying original request...', tag: 'ApiService');
             response = await makeRequest();
           } else {

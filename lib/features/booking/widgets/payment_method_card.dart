@@ -32,17 +32,14 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
+      // Use Material (not a plain DecoratedBox) so the ListTiles below have a
+      // Material ancestor to paint their background/ink on.
+      child: Material(
         color: Colors.white,
+        elevation: 3,
+        shadowColor: Colors.black.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: Column(
+        child: Column(
         children: [
           /// TITLE
           const Padding(
@@ -136,7 +133,8 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
                 ],
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }

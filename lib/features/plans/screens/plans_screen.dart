@@ -3,6 +3,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/plan_provider.dart';
+import '../../../providers/area_provider.dart';
+import '../../booking/widgets/plan_pricing.dart';
 import '../widgets/plan_card.dart';
 
 class PlansScreen extends StatefulWidget {
@@ -17,27 +19,12 @@ class _PlansScreenState extends State<PlansScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PlanProvider>().fetchPlans();
+      final plan = context.read<PlanProvider>();
+      plan.fetchPlans();
+      // Load real pricing so the cards can show "from ₹X" instead of hardcoded
+      // placeholder prices.
+      if (plan.pricings.isEmpty) plan.fetchPricing();
     });
-  }
-
-  String _getPriceForPlan(String name) {
-    switch (name.toUpperCase()) {
-      case 'BASIC':
-        return '₹499';
-      case 'STANDARD':
-        return '₹799';
-      case 'REGULAR_CLEANING':
-        return '₹699';
-      case 'REGULAR_WATER_WASH':
-        return '₹899';
-      case 'INTERNAL_CLEANING':
-        return '₹399';
-      case 'PREMIUM':
-        return '₹1,299';
-      default:
-        return '₹499';
-    }
   }
 
   Widget _getPlanIcon(String name, bool isSelected) {
@@ -154,6 +141,7 @@ class _PlansScreenState extends State<PlansScreen> {
     final isLoading = planProvider.isLoading;
     final error = planProvider.error;
     final selectedPlan = planProvider.selectedPlan;
+    final cityId = context.watch<AreaProvider>().selectedArea?.cityId;
 
     // Auto-select first plan if selection is empty and list is not empty
     if (selectedPlan == null && plans.isNotEmpty) {
@@ -225,7 +213,8 @@ class _PlansScreenState extends State<PlansScreen> {
                   itemBuilder: (context, index) {
                     final plan = plans[index];
                     final isSelected = selectedPlan?.id == plan.id;
-                    final price = _getPriceForPlan(plan.name);
+                    final minPrice = planProvider.minPriceForPlan(plan.id, cityId: cityId);
+                    final price = minPrice != null ? 'from ₹${formatPrice(minPrice)}' : '—';
                     final isPopular = plan.name.toUpperCase() == 'STANDARD';
 
                     // Build features map

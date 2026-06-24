@@ -9,6 +9,7 @@ class VehicleProvider extends ChangeNotifier {
   final VehicleRepository _vehicleRepository;
 
   List<Vehicle> _vehicles = [];
+  Vehicle? _selectedVehicle;
   bool _isLoading = false;
   String? _error;
   String? _patchStatus; // 'loading', 'success', 'error', null
@@ -27,8 +28,15 @@ class VehicleProvider extends ChangeNotifier {
   VehicleProvider(this._vehicleRepository);
 
   List<Vehicle> get vehicles => _vehicles;
+  Vehicle? get selectedVehicle => _selectedVehicle;
   bool get isLoading => _isLoading; // legacy loading for create/delete actions
   String? get error => _error;
+
+  /// The vehicle the user picked for the current booking. Used by checkout.
+  void selectVehicle(Vehicle vehicle) {
+    _selectedVehicle = vehicle;
+    notifyListeners();
+  }
 
   // Pagination getters
   bool get isListLoading => _isListLoading;
