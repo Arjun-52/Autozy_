@@ -134,10 +134,12 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
         AppLogger.info('Location retrieved successfully: ${position.latitude}, ${position.longitude}', tag: 'Vehicles');
       }
     } catch (e) {
-      setState(() {
-        localError = "Unable to determine current location";
-        _isLocating = false;
-      });
+      if (mounted) {
+        setState(() {
+          localError = "Unable to determine current location";
+          _isLocating = false;
+        });
+      }
       AppLogger.error("Location fetching error", error: e);
     } finally {
       if (mounted) {
