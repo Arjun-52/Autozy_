@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../providers/home_provider.dart';
+import '../../../providers/vehicle_provider.dart';
 import '../widgets/explore_card.dart.dart';
 import '../widgets/greeting_section.dart';
 import '../widgets/home_header.dart';
@@ -25,6 +26,9 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeProvider>().fetchDashboard();
+      // The home vehicle card reads VehicleProvider, which nothing else
+      // populates on a fresh launch — fetch it here so the card isn't stale.
+      context.read<VehicleProvider>().fetchVehicles(page: 1, limit: 20, reset: true);
     });
   }
 
@@ -38,7 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
-            await context.read<HomeProvider>().fetchDashboard();
+            final homeProv = context.read<HomeProvider>();
+            final vehicleProv = context.read<VehicleProvider>();
+            await homeProv.fetchDashboard();
+            await vehicleProv.fetchVehicles(page: 1, limit: 20, reset: true);
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),

@@ -57,7 +57,10 @@ class AppGoRouter {
       GoRoute(
         path: '/select-area',
         name: 'selectArea',
-        builder: (context, state) => const AreaSelectionScreen(),
+        builder: (context, state) {
+          final returnOnSelect = state.uri.queryParameters['return'] == 'true';
+          return AreaSelectionScreen(returnOnSelect: returnOnSelect);
+        },
       ),
 
       // Main navigation
@@ -146,16 +149,25 @@ class AppGoRouter {
         path: '/checkout',
         name: 'checkout',
         builder: (context, state) {
-          final day = state.uri.queryParameters['day'] ?? '';
-          final date = state.uri.queryParameters['date'] ?? '';
-          final time = state.uri.queryParameters['time'] ?? '';
-          return CheckoutScreen(day: day, date: date, time: time);
+          // Slot details are passed via `extra` (strings contain spaces/commas).
+          final extra = state.extra as Map<String, dynamic>? ?? const {};
+          return CheckoutScreen(
+            day: (extra['day'] as String?) ?? '',
+            date: (extra['date'] as String?) ?? '',
+            time: (extra['time'] as String?) ?? '',
+          );
         },
       ),
       GoRoute(
         path: '/payment',
         name: 'payment',
-        builder: (context, state) => const PaymentScreen(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? const {};
+          return PaymentScreen(
+            subscriptionId: (extra['subscriptionId'] as String?) ?? '',
+            amount: (extra['amount'] as num?) ?? 0,
+          );
+        },
       ),
       GoRoute(
         path: '/order-success',

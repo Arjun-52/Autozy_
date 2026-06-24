@@ -10,6 +10,11 @@ class ApiConfig {
 
   static const String apiBaseUrl = 'https://autozybackend.gyaanplant.co.in';
 
+  /// Razorpay publishable Key ID (safe to ship in the client).
+  /// Used as a fallback when the create-order response does not include a key.
+  /// Currently a TEST key — replace with the live key (rzp_live_...) for production.
+  static const String razorpayKeyId = 'rzp_test_SgTgIrRTm5fJjb';
+
   /// Base URLs for different environments
   static const Map<String, String> baseUrls = {
     development: apiBaseUrl,

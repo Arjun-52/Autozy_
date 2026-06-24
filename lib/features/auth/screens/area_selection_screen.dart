@@ -8,7 +8,11 @@ import '../../../providers/area_provider.dart';
 import '../../../data/models/dto/nearby_areas_response.dart';
 
 class AreaSelectionScreen extends StatefulWidget {
-  const AreaSelectionScreen({super.key});
+  /// When true (e.g. opened via "Change" from checkout), confirming pops back to
+  /// the caller instead of navigating to /home.
+  final bool returnOnSelect;
+
+  const AreaSelectionScreen({super.key, this.returnOnSelect = false});
 
   @override
   State<AreaSelectionScreen> createState() => _AreaSelectionScreenState();
@@ -351,7 +355,11 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                                 final isAvailable = _locallySelectedArea!.status?.toUpperCase() == 'AVAILABLE';
                                 if (isAvailable) {
                                   areaProvider.selectArea(_locallySelectedArea!);
-                                  context.go('/home');
+                                  if (widget.returnOnSelect && context.canPop()) {
+                                    context.pop();
+                                  } else {
+                                    context.go('/home');
+                                  }
                                 } else {
                                   areaProvider.joinWaitlist(_locallySelectedArea!.id, context);
                                 }

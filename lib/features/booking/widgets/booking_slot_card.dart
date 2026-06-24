@@ -14,6 +14,8 @@ class BookingSlotCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final parts = [day, date, time].where((e) => e.trim().isNotEmpty).toList();
+    final label = parts.isEmpty ? 'No slot selected' : parts.join(', ');
     return Container(
       width: double.infinity, // ✅ fill
 
@@ -61,9 +63,9 @@ class BookingSlotCard extends StatelessWidget {
 
                 const SizedBox(height: 4),
 
-                const Text(
-                  "Thursday, Mar 09, 08:00 - 13:00", // ✅ unchanged
-                  style: TextStyle(
+                Text(
+                  label,
+                  style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.black,

@@ -1,12 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/colors.dart';
+import '../../../providers/plan_provider.dart';
+import '../../../providers/vehicle_provider.dart';
+import '../../../providers/area_provider.dart';
+import 'plan_pricing.dart';
 
 class PlanDetailsCard extends StatelessWidget {
   const PlanDetailsCard({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final planProvider = context.watch<PlanProvider>();
+    final vehicle = context.watch<VehicleProvider>().selectedVehicle;
+    final area = context.watch<AreaProvider>().selectedArea;
+    final plan = planProvider.selectedPlan;
+
+    final planName = plan != null ? prettyPlanName(plan.name) : 'No plan selected';
+    final price = resolvePlanPrice(
+      planProvider: planProvider,
+      plan: plan,
+      vehicle: vehicle,
+      area: area,
+    );
+    final priceText = price != null ? '₹${formatPrice(price)}' : '—';
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
@@ -56,30 +75,30 @@ class PlanDetailsCard extends StatelessWidget {
 
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    "Standard",
-                    style: TextStyle(
+                    planName,
+                    style: const TextStyle(
                       color: Color(0xFF7E8392),
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
 
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
 
                   Text.rich(
                     TextSpan(
                       children: [
                         TextSpan(
-                          text: "₹799",
-                          style: TextStyle(
+                          text: priceText,
+                          style: const TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
                             color: AppColors.onSurface,
                           ),
                         ),
-                        TextSpan(
+                        const TextSpan(
                           text: " /month",
                           style: TextStyle(
                             fontSize: 12,

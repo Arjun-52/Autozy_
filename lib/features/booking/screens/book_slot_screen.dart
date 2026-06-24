@@ -65,12 +65,28 @@ class _BookSlotScreenState extends State<BookSlotScreen> {
     }
   }
 
-  final List<Map<String, String>> dates = [
-    {"day": "Today", "date": "08 Mar"},
-    {"day": "Tomorrow", "date": "09 Mar"},
-    {"day": "Saturday", "date": "10 Mar"},
-    {"day": "Sunday", "date": "11 Mar"},
-  ];
+  // Real upcoming dates (the chips were previously hardcoded to "08 Mar" etc.).
+  late final List<Map<String, String>> dates = _buildDates();
+
+  List<Map<String, String>> _buildDates() {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    ];
+    const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    return List.generate(7, (i) {
+      final d = today.add(Duration(days: i));
+      final day = i == 0
+          ? 'Today'
+          : i == 1
+              ? 'Tomorrow'
+              : weekdays[d.weekday - 1];
+      final date = '${d.day.toString().padLeft(2, '0')} ${months[d.month - 1]}';
+      return {'day': day, 'date': date};
+    });
+  }
 
   final List<Map<String, String>> times = [
     {"title": "Morning", "time": "08:00 - 13:00"},
@@ -130,6 +146,7 @@ class _BookSlotScreenState extends State<BookSlotScreen> {
           ),
 
           BottomBar(
+            day: dates[selectedDate]["day"]!,
             date: dates[selectedDate]["date"]!,
             time: times[selectedTime]["time"]!,
           ),
