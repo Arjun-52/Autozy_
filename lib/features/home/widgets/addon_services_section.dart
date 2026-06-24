@@ -65,22 +65,22 @@ class AddonServicesSection extends StatelessWidget {
           children: [
             _buildItem(
               context,
-              imagePath: 'assets/images/Polishing.svg',
+              imagePath: 'assets/images/Body-Wash.svg',
               label: "Body\nWash",
             ),
             _buildItem(
               context,
-              imagePath: 'assets/images/Full-Detailing.svg',
+              imagePath: 'assets/images/Interior-Cleaning.svg',
               label: "Interior\nClean",
             ),
             _buildItem(
               context,
-              imagePath: 'assets/images/Body-Wash.svg',
+              imagePath: 'assets/images/Full-Detailing.svg',
               label: "Full\nDetailing",
             ),
             _buildItem(
               context,
-              imagePath: 'assets/images/Interior-Cleaning.svg',
+              imagePath: 'assets/images/Polishing.svg',
               label: "Polishing",
             ),
           ],
