@@ -13,6 +13,7 @@ class Vehicle {
   final bool parkingLotAvailable;
   final bool securityPermissionRequired;
   final bool isActive;
+  final String status; // 'PENDING', 'APPROVED', 'REJECTED'
   final DateTime createdAt;
 
   // Legacy field compatibility
@@ -37,6 +38,7 @@ class Vehicle {
     required this.parkingLotAvailable,
     required this.securityPermissionRequired,
     required this.isActive,
+    required this.status,
     required this.createdAt,
   });
 
@@ -63,6 +65,7 @@ class Vehicle {
       parkingLotAvailable: json['parkingLotAvailable'] ?? json['parking_lot_available'] ?? false,
       securityPermissionRequired: json['securityPermissionRequired'] ?? json['security_permission_required'] ?? false,
       isActive: json['isActive'] ?? json['is_active'] ?? true,
+      status: json['status'] ?? 'PENDING',
       createdAt: DateTime.parse(json['createdAt'] ?? json['created_at'] ?? DateTime.now().toIso8601String()),
     );
   }
@@ -94,6 +97,7 @@ class Vehicle {
       'security_permission_required': securityPermissionRequired,
       'isActive': isActive,
       'is_active': isActive,
+      'status': status,
       'createdAt': createdAt.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
     };
@@ -114,6 +118,7 @@ class Vehicle {
     bool? parkingLotAvailable,
     bool? securityPermissionRequired,
     bool? isActive,
+    String? status,
     DateTime? createdAt,
   }) {
     return Vehicle(
@@ -131,6 +136,7 @@ class Vehicle {
       parkingLotAvailable: parkingLotAvailable ?? this.parkingLotAvailable,
       securityPermissionRequired: securityPermissionRequired ?? this.securityPermissionRequired,
       isActive: isActive ?? this.isActive,
+      status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
     );
   }

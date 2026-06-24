@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart';
-import 'package:flutter_svg/svg.dart';
 import '../../../providers/home_provider.dart';
 import '../../../providers/vehicle_provider.dart';
-import '../widgets/explore_card.dart.dart';
-import '../widgets/greeting_section.dart';
 import '../widgets/home_header.dart';
-import '../widgets/premium_services_card.dart';
-import '../widgets/special_offers.dart';
-import '../widgets/vehicle_card.dart';
-import '../widgets/standard_plan_active_card.dart';
+import '../widgets/active_plan_card.dart';
+import '../widgets/vehicle_status_card.dart';
+import '../widgets/addon_services_section.dart';
+import '../widgets/cleaning_evidence_card.dart';
+import '../widgets/premium_services_banner.dart';
+import '../widgets/service_packages_section.dart';
+import '../widgets/service_coverage_section.dart';
+import '../widgets/why_autozy_section.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.showPlanActiveCard = false});
@@ -26,210 +26,157 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<HomeProvider>().fetchDashboard();
-      // The home vehicle card reads VehicleProvider, which nothing else
-      // populates on a fresh launch — fetch it here so the card isn't stale.
       context.read<VehicleProvider>().fetchVehicles(page: 1, limit: 20, reset: true);
     });
+  }
+
+  Future<void> _refreshData() async {
+    await context.read<HomeProvider>().fetchDashboard();
+    if (mounted) {
+      await context.read<VehicleProvider>().fetchVehicles(page: 1, limit: 20, reset: true);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final homeProvider = context.watch<HomeProvider>();
+    final vehicleProvider = context.watch<VehicleProvider>();
     final dashboard = homeProvider.dashboardData;
 
+    final isLoading = homeProvider.isLoading && dashboard == null;
+    final hasError = homeProvider.error != null && dashboard == null;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: const Color(0xFFF9F9FB), // Clean premium background tint
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: () async {
-            final homeProv = context.read<HomeProvider>();
-            final vehicleProv = context.read<VehicleProvider>();
-            await homeProv.fetchDashboard();
-            await vehicleProv.fetchVehicles(page: 1, limit: 20, reset: true);
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: homeProvider.isLoading && dashboard == null
-                ? const Center(child: CircularProgressIndicator())
-                : homeProvider.error != null && dashboard == null
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(homeProvider.error ?? 'An error occurred'),
-                            const SizedBox(height: 12),
-                            ElevatedButton(
-                              onPressed: () => context.read<HomeProvider>().fetchDashboard(),
-                              child: const Text('Retry'),
-                            ),
-                          ],
+          onRefresh: _refreshData,
+          color: const Color(0xFFFFCB2F),
+          child: Builder(
+            builder: (context) {
+              if (isLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    color: Color(0xFFFFCB2F),
+                  ),
+                );
+              }
+
+              if (hasError) {
+                return SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height - 150,
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error_outline_rounded,
+                          size: 60,
+                          color: Colors.redAccent,
                         ),
-                      )
-                    : ListView(
-                        children: [
-                          const HomeHeader(),
-                          const SizedBox(height: 24),
-                          const GreetingSection(),
-                          const SizedBox(height: 24),
-                          
-                          // Active Subscriptions
-                          if (dashboard != null && dashboard.subscriptions.isNotEmpty)
-                            ...dashboard.subscriptions.map((sub) => GestureDetector(
-                                  onTap: () {
-                                    context.push('/subscription-details/${sub.id}');
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(bottom: 16),
-                                    padding: const EdgeInsets.all(16),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFF6A800),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: 36,
-                                          height: 36,
-                                          decoration: const BoxDecoration(
-                                            color: Colors.black,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: const Icon(Icons.check, color: Colors.white, size: 20),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "${sub.plan.replaceAll('_', ' ')} (${sub.status})",
-                                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
-                                              ),
-                                              const SizedBox(height: 2),
-                                              Text(
-                                                "Vehicle: ${sub.vehicle.brand} ${sub.vehicle.model} (${sub.vehicle.number})",
-                                                style: const TextStyle(fontSize: 14, color: Colors.black87),
-                                              ),
-                                              Text(
-                                                "Expires on: ${sub.endDate}",
-                                                style: const TextStyle(fontSize: 12, color: Colors.black54),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ))
-                          else if (widget.showPlanActiveCard)
-                            const StandardPlanActiveCard(),
-
-                          // Today's Services Section
-                          if (dashboard != null && dashboard.todayServices.isNotEmpty) ...[
-                            const Text(
-                              "Today's Services",
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        const SizedBox(height: 16),
+                        Text(
+                          homeProvider.error ?? 'Failed to load dashboard',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          "We encountered an error loading your data. Please pull down to refresh or tap retry.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF7E8392),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        ElevatedButton(
+                          onPressed: _refreshData,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFFCB2F),
+                            foregroundColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100),
                             ),
-                            const SizedBox(height: 12),
-                            ...dashboard.todayServices.map((service) => Container(
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: const Color(0xFFE9E9E9)),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.05),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "Vehicle: ${service.vehicleNumber}",
-                                              style: const TextStyle(fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text("Status: ${service.status}"),
-                                            if (service.completedAt != null)
-                                              Text("Completed At: ${service.completedAt}"),
-                                            if (service.photos != null)
-                                              const Text("📸 Photos available"),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )),
-                            const SizedBox(height: 24),
-                          ],
+                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                          ),
+                          child: const Text(
+                            'Retry',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
 
-                          const VehicleCard(),
-                          const SizedBox(height: 32),
-                          const Text(
-                            "Explore",
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ExploreCard(
-                                  icon: SvgPicture.asset(
-                                    'assets/images/view_plans.svg',
-                                    height: 24,
-                                    width: 24,
-                                  ),
-                                  title: "View Plans",
-                                  onTap: () {
-                                    context.pushNamed('plans');
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 14),
-                              Expanded(
-                                child: ExploreCard(
-                                  icon: const Icon(Icons.add_circle_outline),
-                                  title: "Add Vehicle",
-                                  onTap: () {
-                                    context.pushNamed('vehicles');
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 14),
-                          ExploreCard(
-                            icon: SvgPicture.asset(
-                              'assets/images/calender.svg',
-                              height: 24,
-                              width: 24,
-                            ),
-                            title: "Book Slot",
-                            onTap: () {
-                              context.pushNamed('bookSlot');
-                            },
-                            fullWidth: true,
-                          ),
-                          const SizedBox(height: 24),
-                          GestureDetector(
-                            onTap: () {
-                              context.pushNamed('bookAddon');
-                            },
-                            child: const PremiumServicesCard(),
-                          ),
-                          const SizedBox(height: 32),
-                          const SpecialOffersSection(),
-                          const SizedBox(height: 40),
-                        ],
-                      ),
+              final subscription = (dashboard != null && dashboard.subscriptions.isNotEmpty)
+                  ? dashboard.subscriptions.first
+                  : null;
+
+              final vehicle = vehicleProvider.vehicles.isNotEmpty
+                  ? vehicleProvider.vehicles.first
+                  : null;
+
+              final todayService = (dashboard != null && dashboard.todayServices.isNotEmpty)
+                  ? dashboard.todayServices.first
+                  : null;
+
+              return ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                children: [
+                  // SECTION 1: HEADER
+                  const HomeHeader(),
+                  const SizedBox(height: 24),
+
+                  // SECTION 2: ACTIVE SUBSCRIPTION CARD
+                  ActivePlanCard(
+                    subscription: subscription,
+                    hasVehicle: vehicle != null,
+                  ),
+
+                  // SECTION 3: VEHICLE STATUS CARD
+                  VehicleStatusCard(
+                    vehicle: vehicle,
+                    todayService: todayService,
+                    subscription: subscription,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // SECTION 4: ADD-ON SERVICES GRID
+                  const AddonServicesSection(),
+                  const SizedBox(height: 24),
+
+                  // SECTION 5: TODAY'S CLEANING EVIDENCE
+                  if (vehicle != null && vehicle.status.toUpperCase() == 'APPROVED') ...[
+                    CleaningEvidenceCard(todayService: todayService),
+                    const SizedBox(height: 16),
+                  ],
+
+                  // SECTION 6: PREMIUM SERVICES BANNER
+                  const PremiumServicesBanner(),
+                  const SizedBox(height: 16),
+
+                  // SECTION 7: POPULAR SERVICE PACKAGES
+                  const ServicePackagesSection(),
+                  const SizedBox(height: 24),
+
+                  // SECTION 8: SERVICE COVERAGE ACCORDION
+                  ServiceCoverageSection(subscription: subscription),
+                  const SizedBox(height: 16),
+
+                  // SECTION 9: WHY AUTOZY SECTION
+                  const WhyAutozySection(),
+                  const SizedBox(height: 32),
+                ],
+              );
+            },
           ),
         ),
       ),
