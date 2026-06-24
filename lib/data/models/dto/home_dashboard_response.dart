@@ -73,6 +73,7 @@ class HomeSubscription {
   final String status;
   final String endDate;
   final bool canPause;
+  final String? nextCleaning;
 
   HomeSubscription({
     required this.id,
@@ -81,6 +82,7 @@ class HomeSubscription {
     required this.status,
     required this.endDate,
     required this.canPause,
+    this.nextCleaning,
   });
 
   factory HomeSubscription.fromJson(Map<String, dynamic> json) {
@@ -91,6 +93,7 @@ class HomeSubscription {
       status: json['status'] ?? '',
       endDate: json['endDate'] ?? '',
       canPause: json['canPause'] ?? false,
+      nextCleaning: json['nextCleaning'] ?? json['next_cleaning'] ?? json['nextService'] ?? json['next_service'],
     );
   }
 
@@ -102,6 +105,7 @@ class HomeSubscription {
       'status': status,
       'endDate': endDate,
       'canPause': canPause,
+      'nextCleaning': nextCleaning,
     };
   }
 }
@@ -144,6 +148,10 @@ class TodayService {
   final String status;
   final String? completedAt;
   final List<dynamic>? photos;
+  final String? nextCleaning;
+  final String? detailerName;
+  final String? serviceType;
+  final String? cleaningDate;
 
   TodayService({
     required this.id,
@@ -151,6 +159,10 @@ class TodayService {
     required this.status,
     this.completedAt,
     this.photos,
+    this.nextCleaning,
+    this.detailerName,
+    this.serviceType,
+    this.cleaningDate,
   });
 
   factory TodayService.fromJson(Map<String, dynamic> json) {
@@ -160,6 +172,10 @@ class TodayService {
       status: json['status'] ?? '',
       completedAt: json['completedAt'],
       photos: json['photos'],
+      nextCleaning: json['nextCleaning'] ?? json['next_cleaning'] ?? json['nextService'] ?? json['next_service'],
+      detailerName: json['detailerName'] ?? json['detailer_name'] ?? json['detailer'],
+      serviceType: json['serviceType'] ?? json['service_type'] ?? json['service'],
+      cleaningDate: json['cleaningDate'] ?? json['cleaning_date'] ?? json['date'],
     );
   }
 
@@ -170,6 +186,10 @@ class TodayService {
       'status': status,
       'completedAt': completedAt,
       'photos': photos,
+      'nextCleaning': nextCleaning,
+      'detailerName': detailerName,
+      'serviceType': serviceType,
+      'cleaningDate': cleaningDate,
     };
   }
 }

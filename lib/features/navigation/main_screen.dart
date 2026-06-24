@@ -83,7 +83,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.access_time),
-            label: "Plans",
+            label: "Add-ons",
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),

@@ -6,6 +6,13 @@ class AddVehicleRequest {
   final double parkingLocationLat;
   final double parkingLocationLng;
   final String parkingNotes;
+  final String flatNo;
+  final String building;
+  final String locality;
+  final String landmark;
+  final String city;
+  final String state;
+  final String pincode;
 
   AddVehicleRequest({
     required this.vehicleNumber,
@@ -15,6 +22,13 @@ class AddVehicleRequest {
     required this.parkingLocationLat,
     required this.parkingLocationLng,
     required this.parkingNotes,
+    required this.flatNo,
+    required this.building,
+    required this.locality,
+    required this.landmark,
+    required this.city,
+    required this.state,
+    required this.pincode,
   });
 
   Map<String, dynamic> toJson() {
@@ -26,6 +40,13 @@ class AddVehicleRequest {
       'parkingLocationLat': parkingLocationLat,
       'parkingLocationLng': parkingLocationLng,
       'parkingNotes': parkingNotes.trim(),
+      'flatNo': flatNo.trim(),
+      'building': building.trim(),
+      'locality': locality.trim(),
+      'landmark': landmark.trim(),
+      'city': city.trim(),
+      'state': state.trim(),
+      'pincode': pincode.trim(),
     };
   }
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../../../providers/notification_provider.dart';
+import '../../../providers/area_provider.dart';
+import '../../../providers/vehicle_provider.dart';
 
 class HomeHeader extends StatefulWidget {
   const HomeHeader({super.key});
@@ -21,95 +21,157 @@ class _HomeHeaderState extends State<HomeHeader> {
     });
   }
 
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour >= 5 && hour < 12) {
+      return "Good Morning 👋";
+    } else if (hour >= 12 && hour < 17) {
+      return "Good Afternoon 👋";
+    } else {
+      return "Good Evening 👋";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final areaProvider = context.watch<AreaProvider>();
+    final notificationProvider = context.watch<NotificationProvider>();
+    final vehicleProvider = context.watch<VehicleProvider>();
+    final count = notificationProvider.unreadCount;
 
+    String locationText = "Madhapur, Hyderabad";
+    if (areaProvider.selectedArea != null) {
+      final area = areaProvider.selectedArea!;
+      final cityName = area.city?.name ?? "";
+      locationText = cityName.isNotEmpty ? "${area.name}, $cityName" : area.name;
+    }
+
+    final vehicle = vehicleProvider.vehicles.isNotEmpty ? vehicleProvider.vehicles.first : null;
+    String statusMessage = "Add your vehicle to manage its daily service";
+    if (vehicle != null) {
+      final status = vehicle.status.toUpperCase();
+      if (status == 'PENDING') {
+        statusMessage = "Your vehicle verification is pending. Our inspector will review your vehicle details. Services will begin once the vehicle is approved.";
+      } else if (status == 'APPROVED') {
+        statusMessage = "Your vehicle is approved and ready for service.";
+      } else if (status == 'REJECTED') {
+        statusMessage = "Your vehicle verification was rejected. Please review the remarks and update the vehicle details.";
+      }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Top Location Selector & Notification Bell Row
         Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              height: 62,
-              width: 62,
-              decoration: BoxDecoration(
-                color: const Color(0xFFF5F0E3).withValues(alpha: 0.099),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Image.asset(
-                  'assets/images/new-logo.png',
-                  fit: BoxFit.contain,
-                ),
+            // Location Selector
+            GestureDetector(
+              onTap: () {
+                context.push('/select-area');
+              },
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.location_on,
+                    color: Color(0xFFFEBB1B),
+                    size: 20,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    locationText,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: Colors.black54,
+                    size: 20,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 10),
-            const Text(
-              "autozy",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
 
-        GestureDetector(
-          onTap: () async {
-            await context.push('/notifications');
-            // Refresh the badge after returning from the list (items may have
-            // been read there).
-            if (context.mounted) {
-              context.read<NotificationProvider>().fetchUnreadCount();
-            }
-          },
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              SvgPicture.asset(
-                'assets/images/notification.svg',
-                colorFilter: const ColorFilter.mode(
-                  Colors.black,
-                  BlendMode.srcIn,
-                ),
-                height: 24,
-                width: 24,
-              ),
-
-              Consumer<NotificationProvider>(
-                builder: (context, provider, _) {
-                  final count = provider.unreadCount;
-                  if (count <= 0) return const SizedBox.shrink();
-
-                  final label = count > 9 ? '9+' : '$count';
-                  return Positioned(
-                    right: -6,
-                    top: -6,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      constraints: const BoxConstraints(
-                        minWidth: 16,
-                        minHeight: 16,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.white, width: 1.5),
-                      ),
-                      child: Center(
-                        child: Text(
-                          label,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                            height: 1,
+            // Notification Bell
+            GestureDetector(
+              onTap: () async {
+                await context.push('/notifications');
+                if (mounted) {
+                  context.read<NotificationProvider>().fetchUnreadCount();
+                }
+              },
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF5F5F5),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: const Color(0xFFE9E9E9)),
+                    ),
+                    child: const Icon(
+                      Icons.notifications_none_rounded,
+                      color: Colors.black,
+                      size: 22,
+                    ),
+                  ),
+                  if (count > 0)
+                    Positioned(
+                      right: 2,
+                      top: 2,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 1.5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            count > 9 ? '9+' : '$count',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              height: 1,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  );
-                },
+                ],
               ),
-            ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+
+        // Greeting section
+        Text(
+          _getGreeting(),
+          style: const TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            letterSpacing: -0.5,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          statusMessage,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF7E8392),
           ),
         ),
       ],
