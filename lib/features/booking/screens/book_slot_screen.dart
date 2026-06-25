@@ -31,7 +31,13 @@ class _BookSlotScreenState extends State<BookSlotScreen> {
     if (mounted) {
       final slotTitle = times[selectedTime]["title"] ?? 'Morning';
       final slotType = slotTitle.toUpperCase() == 'MORNING' ? 'MORNING' : 'EVENING';
-      context.read<SubscriptionProvider>().selectSlotType(slotType);
+      final provider = context.read<SubscriptionProvider>();
+      provider.selectSlotType(slotType);
+      
+      if (selectedDate < dates.length) {
+        final selectedDateTime = dates[selectedDate]['dateTime'] as DateTime;
+        provider.selectDate(selectedDateTime);
+      }
     }
   }
 
@@ -60,15 +66,42 @@ class _BookSlotScreenState extends State<BookSlotScreen> {
     if (picked != null) {
       print("Selected: $picked");
       if (mounted) {
-        context.read<SubscriptionProvider>().selectDate(picked);
+        final index = dates.indexWhere((element) {
+          final dt = element['dateTime'] as DateTime;
+          return dt.year == picked.year &&
+                 dt.month == picked.month &&
+                 dt.day == picked.day;
+        });
+
+        setState(() {
+          if (index != -1) {
+            selectedDate = index;
+          } else {
+            const months = [
+              'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+            ];
+            const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            final day = weekdays[picked.weekday - 1];
+            final dateStr = '${picked.day.toString().padLeft(2, '0')} ${months[picked.month - 1]}';
+            
+            dates.add({
+              'day': day,
+              'date': dateStr,
+              'dateTime': picked,
+            });
+            selectedDate = dates.length - 1;
+          }
+        });
+        _updateSelectedSlot();
       }
     }
   }
 
   // Real upcoming dates (the chips were previously hardcoded to "08 Mar" etc.).
-  late final List<Map<String, String>> dates = _buildDates();
+  late final List<Map<String, dynamic>> dates = _buildDates();
 
-  List<Map<String, String>> _buildDates() {
+  List<Map<String, dynamic>> _buildDates() {
     const months = [
       'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
@@ -84,7 +117,7 @@ class _BookSlotScreenState extends State<BookSlotScreen> {
               ? 'Tomorrow'
               : weekdays[d.weekday - 1];
       final date = '${d.day.toString().padLeft(2, '0')} ${months[d.month - 1]}';
-      return {'day': day, 'date': date};
+      return {'day': day, 'date': date, 'dateTime': d};
     });
   }
 

@@ -98,16 +98,25 @@ class VehicleStatusCard extends StatelessWidget {
         : "Standard Monthly Plan";
 
     // Dynamic completion status
-    String todayCleanText = "Scheduled for today";
+    String todayCleanText = "Pending";
+    String? todayCleanDesc = "No cleaning service completed yet";
+
     if (todayService != null) {
-      if (todayService!.completedAt != null && todayService!.completedAt!.isNotEmpty) {
+      if (todayService!.status.toUpperCase() == "CLEANED") {
+        todayCleanText = "Completed at ${todayService!.completedAt ?? ''}";
+        todayCleanDesc = null;
+      } else if (todayService!.completedAt != null && todayService!.completedAt!.isNotEmpty) {
         todayCleanText = "Completed at ${todayService!.completedAt}";
+        todayCleanDesc = null;
       } else if (todayService!.status.toLowerCase() == 'completed') {
         todayCleanText = "Completed";
+        todayCleanDesc = null;
       } else if (todayService!.status.toLowerCase() == 'pending') {
-        todayCleanText = "Scheduled for today";
+        todayCleanText = "Pending";
+        todayCleanDesc = "No cleaning service completed yet";
       } else {
         todayCleanText = "Status: ${_toTitleCase(todayService!.status)}";
+        todayCleanDesc = null;
       }
     }
 
@@ -273,7 +282,7 @@ class VehicleStatusCard extends StatelessWidget {
           ),
           if (status == 'APPROVED') ...[
             const Divider(height: 1, color: Color(0xFFE9E9E9)),
-            if (subscription != null && todayService != null)
+            if (subscription != null)
               // Bottom Clean Row
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -302,10 +311,21 @@ class VehicleStatusCard extends StatelessWidget {
                             todayCleanText,
                             style: const TextStyle(
                               fontSize: 12,
-                              color: Color(0xFF7E8392),
-                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
+                          if (todayCleanDesc != null) ...[
+                            const SizedBox(height: 2),
+                            Text(
+                              todayCleanDesc,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFF7E8392),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),

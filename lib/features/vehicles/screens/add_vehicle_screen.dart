@@ -59,6 +59,40 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   };
 
   @override
+  void initState() {
+    super.initState();
+    final provider = context.read<VehicleProvider>();
+    
+    numberController.text = provider.regNumber;
+    latController.text = provider.latitude;
+    lngController.text = provider.longitude;
+    notesController.text = provider.parkingNotes;
+    flatController.text = provider.flat;
+    buildingController.text = provider.building;
+    localityController.text = provider.locality;
+    landmarkController.text = provider.landmark;
+    cityController.text = provider.city;
+    stateController.text = provider.stateName;
+    pincodeController.text = provider.pincode;
+    
+    selectedMake = provider.brand;
+    selectedModel = provider.model;
+    selectedSize = provider.size;
+
+    numberController.addListener(() => provider.setRegNumber(numberController.text));
+    latController.addListener(() => provider.setLatitude(latController.text));
+    lngController.addListener(() => provider.setLongitude(lngController.text));
+    notesController.addListener(() => provider.setParkingNotes(notesController.text));
+    flatController.addListener(() => provider.setFlat(flatController.text));
+    buildingController.addListener(() => provider.setBuilding(buildingController.text));
+    localityController.addListener(() => provider.setLocality(localityController.text));
+    landmarkController.addListener(() => provider.setLandmark(landmarkController.text));
+    cityController.addListener(() => provider.setCity(cityController.text));
+    stateController.addListener(() => provider.setStateName(stateController.text));
+    pincodeController.addListener(() => provider.setPincode(pincodeController.text));
+  }
+
+  @override
   void dispose() {
     numberController.dispose();
     latController.dispose();
@@ -152,41 +186,109 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   Widget build(BuildContext context) {
     final vehicleProvider = context.watch<VehicleProvider>();
 
-    return Material(
-      color: Colors.transparent,
-      child: Container(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 20,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-        ),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
+    return PopScope(
+      canPop: !vehicleProvider.isRegistrationFormDirty(),
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+
+        final discard = await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Discard Changes?"),
+              content: const Text(
+                  "Your vehicle details have not been submitted yet. Do you want to discard the entered information?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text("Continue Editing"),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text("Discard Changes",
+                      style: TextStyle(color: Colors.red)),
+                ),
+              ],
+            );
+          },
+        );
+
+        if (discard == true && context.mounted) {
+          context.read<VehicleProvider>().resetRegistrationForm();
+          Navigator.of(context).pop(result);
+        }
+      },
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.85,
           ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// HEADER
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: const Icon(Icons.close),
-                  ),
-                  const SizedBox(width: 10),
-                  const Text(
-                    "Add Vehicle",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 20,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          ),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(25),
+              topRight: Radius.circular(25),
+            ),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                /// HEADER
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: const Icon(Icons.close),
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          "Add Vehicle",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        context.read<VehicleProvider>().resetRegistrationForm();
+                        numberController.clear();
+                        latController.text = "17.3850";
+                        lngController.text = "78.4867";
+                        notesController.clear();
+                        flatController.clear();
+                        buildingController.clear();
+                        localityController.clear();
+                        landmarkController.clear();
+                        cityController.clear();
+                        stateController.clear();
+                        pincodeController.clear();
+                        setState(() {
+                          selectedMake = null;
+                          selectedModel = null;
+                          selectedSize = null;
+                          localError = null;
+                        });
+                      },
+                      child: const Text(
+                        "Reset",
+                        style: TextStyle(
+                            color: Colors.red, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
 
               const SizedBox(height: 20),
 
@@ -231,6 +333,9 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                         selectedMake = value;
                         selectedModel = null;
                       });
+                      final provider = context.read<VehicleProvider>();
+                      provider.setBrand(value);
+                      provider.setModel(null);
                     },
                   ),
                 ),
@@ -254,6 +359,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       setState(() {
                         selectedModel = value;
                       });
+                      context.read<VehicleProvider>().setModel(value);
                     },
                   ),
                 ),
@@ -277,6 +383,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       setState(() {
                         selectedSize = value;
                       });
+                      context.read<VehicleProvider>().setSize(value);
                     },
                   ),
                 ),
@@ -563,6 +670,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   onPressed: vehicleProvider.isLoading
                       ? null
                       : () async {
+                          final vehicleProv = context.read<VehicleProvider>();
                           final rawNumber = numberController.text.trim();
                           if (rawNumber.isEmpty) {
                             setState(() => localError = "Vehicle number is required");
@@ -570,6 +678,14 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                           }
 
                           final formattedNumber = rawNumber.replaceAll(' ', '').toUpperCase();
+
+                          final isDuplicate = vehicleProv.vehicles.any(
+                            (v) => v.vehicleNumber.replaceAll(' ', '').toUpperCase() == formattedNumber
+                          );
+                          if (isDuplicate) {
+                            setState(() => localError = "Vehicle with this number is already registered");
+                            return;
+                          }
 
                           if (selectedMake == null) {
                             setState(() => localError = "Vehicle make is required");
@@ -635,7 +751,6 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                           );
 
                           final authProvider = context.read<AuthProvider>();
-                          final vehicleProv = context.read<VehicleProvider>();
                           final navigator = Navigator.of(context);
                           final scaffoldMessenger = ScaffoldMessenger.of(context);
 
@@ -680,8 +795,9 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget buildField({
     required String label,

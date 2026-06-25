@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../core/utils/responsive.dart';
 
 class AddonServicesSection extends StatelessWidget {
   const AddonServicesSection({super.key});
@@ -20,19 +21,19 @@ class AddonServicesSection extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(
-                width: 56,
-                height: 56,
+                width: context.w(56),
+                height: context.w(56),
                 child: SvgPicture.asset(
                   imagePath,
                   fit: BoxFit.contain,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: context.h(8)),
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 12,
+                style: TextStyle(
+                  fontSize: context.sp(12),
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                   height: 1.2,
@@ -50,15 +51,15 @@ class AddonServicesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           "Add-On Services",
           style: TextStyle(
-            fontSize: 18,
+            fontSize: context.sp(18),
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: context.h(16)),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,3 +90,4 @@ class AddonServicesSection extends StatelessWidget {
     );
   }
 }
+

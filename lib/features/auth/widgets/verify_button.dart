@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/colors.dart';
+import '../../../core/utils/responsive.dart';
 
 class VerifyButton extends StatelessWidget {
   final Future<void> Function()? onPressed;
@@ -9,26 +10,38 @@ class VerifyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
-      height: 52,
-
+      width: context.w(280),
+      height: context.h(40),
       child: ElevatedButton(
         onPressed: onPressed,
-
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.yellow,
+          elevation: 0,
+          shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(8),
           ),
         ),
-
-        child: const Text(
-          "Verify & Continue",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Verify & Continue",
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontSize: context.sp(10),
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
+            SizedBox(width: context.w(6)),
+            const Icon(
+              Icons.arrow_forward,
+              size: 14,
+              color: Colors.black,
+            ),
+          ],
         ),
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DateSelector extends StatelessWidget {
-  final List<Map<String, String>> dates;
+  final List<Map<String, dynamic>> dates;
   final int selectedDate;
   final Function(int) onDateSelected;
 
