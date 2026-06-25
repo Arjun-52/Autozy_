@@ -83,7 +83,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                     locationText,
                     style: const TextStyle(
                       fontSize: 14,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                       color: Colors.black87,
                     ),
                   ),
@@ -159,19 +159,22 @@ class _HomeHeaderState extends State<HomeHeader> {
         Text(
           _getGreeting(),
           style: const TextStyle(
-            fontSize: 22,
+            fontSize: 28,
             fontWeight: FontWeight.w600,
             color: Colors.black,
             letterSpacing: -0.5,
           ),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 4),
         Text(
           statusMessage,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w400,
-            color: Color(0xFF7E8392),
+            color: Color(0xFF6B7280),
+            height: 1.3,
           ),
         ),
       ],

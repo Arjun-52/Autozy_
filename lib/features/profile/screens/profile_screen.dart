@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/router/navigation_helper.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/notification_provider.dart';
 
@@ -62,7 +61,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              /// USER CARD
               InkWell(
                 onTap: () async {
                   await context.pushNamed('editProfile');
@@ -71,13 +69,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }
                 },
                 child: Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.12),
+                        color: Colors.black.withOpacity(0.015),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -86,26 +84,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Row(
                     children: [
                       Container(
-                        width: 60,
-                        height: 60,
+                        width: 48,
+                        height: 48,
                         decoration: BoxDecoration(
                           color: AppColors.brandYellow,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Center(
                           child: authProvider.localAvatarPath != null && authProvider.localAvatarPath!.isNotEmpty
                               ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(12),
                                   child: Image.file(
                                     File(authProvider.localAvatarPath!),
-                                    width: 60,
-                                    height: 60,
+                                    width: 48,
+                                    height: 48,
                                     fit: BoxFit.cover,
                                   ),
                                 )
                               : SizedBox(
-                                  height: 24,
-                                  width: 24,
+                                  height: 20,
+                                  width: 20,
                                   child: SvgPicture.asset(
                                     'assets/images/profile.svg',
                                     fit: BoxFit.contain,
@@ -113,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                         ),
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,25 +119,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Text(
                               displayName,
                               style: const TextStyle(
-                                fontSize: 18,
+                                fontSize: 15,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                             Text(
                               "+91 $displayPhone",
                               style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w400,
                                 color: Color(0xff7E8392),
                               ),
                             ),
                             if (profile != null) ...[
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 2),
                               Text(
                                 "Registered Vehicles: ${profile.vehicleCount}",
                                 style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
                                   color: AppColors.brandOrange,
                                 ),
                               ),
@@ -147,12 +145,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                       ),
-                      const Icon(Icons.chevron_right),
+                      const Icon(Icons.chevron_right, size: 20),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 16),
 
               /// MENU ITEMS
               MenuTile(
@@ -204,9 +202,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   size: 24,
                   color: Colors.black87,
                 ),
-                title: "My Support Tickets",
+                title: "Support",
                 onTap: () {
-                  context.push('/tickets');
+                  context.push('/support');
                 },
               ),
               MenuTile(
@@ -236,10 +234,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 child: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(11),
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.red),
-                    borderRadius: BorderRadius.circular(7),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -263,18 +261,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               /// APP INFO
               SizedBox(
                 width: double.infinity,
-                height: 180,
+                height: 130,
                 child: Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: const Color(0xFFEEEEEE),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 12,
-                        spreadRadius: 1,
-                        offset: const Offset(0, 4),
+                        color: Colors.black.withOpacity(0.015),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
                       ),
                     ],
                   ),
@@ -283,15 +280,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: [
                       Image.asset(
                         'assets/images/new-logo.png',
-                        width: 50,
-                        height: 50,
+                        width: 36,
+                        height: 36,
                         fit: BoxFit.contain,
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 6),
                       const Text(
                         "autozy",
                         style: TextStyle(
-                          fontSize: 27,
+                          fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: Color(0xff363636),
                         ),
@@ -299,7 +296,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const Text(
                         "Version 1.0.0",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w400,
                           color: Color(0xff7E8392),
                         ),

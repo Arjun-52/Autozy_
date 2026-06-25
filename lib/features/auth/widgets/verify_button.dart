@@ -10,8 +10,8 @@ class VerifyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: context.w(280),
-      height: context.h(40),
+      width: double.infinity,
+      height: context.h(46),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
@@ -30,15 +30,15 @@ class VerifyButton extends StatelessWidget {
               "Verify & Continue",
               style: TextStyle(
                 fontFamily: 'Poppins',
-                fontSize: context.sp(10),
+                fontSize: context.sp(14),
                 fontWeight: FontWeight.w500,
                 color: Colors.black,
               ),
             ),
             SizedBox(width: context.w(6)),
-            const Icon(
+            Icon(
               Icons.arrow_forward,
-              size: 14,
+              size: context.sp(18),
               color: Colors.black,
             ),
           ],

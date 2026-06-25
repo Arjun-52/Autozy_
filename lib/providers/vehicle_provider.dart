@@ -133,7 +133,6 @@ class VehicleProvider extends ChangeNotifier {
 
   Future<void> fetchVehicles({int page = 1, int limit = 20, bool reset = false}) async {
     if (reset) {
-      _vehicles.clear();
       _currentPage = 1;
       _totalPages = 1;
     }

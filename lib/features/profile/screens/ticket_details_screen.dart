@@ -167,6 +167,18 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
 
           // Details grid
           _buildDetailItem(Icons.category, "Category / Type", ticket.type?.replaceAll('_', ' ').toUpperCase() ?? 'N/A'),
+          if (ticket.vehicleNumber != null && ticket.vehicleNumber!.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _buildDetailItem(Icons.directions_car, "Vehicle Number", ticket.vehicleNumber!),
+          ],
+          if (ticket.subscriptionId != null && ticket.subscriptionId!.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _buildDetailItem(Icons.card_membership, "Subscription ID", ticket.subscriptionId!),
+          ],
+          if (ticket.serviceDate != null && ticket.serviceDate!.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            _buildDetailItem(Icons.calendar_today, "Service Date", _formatDate(ticket.serviceDate!)),
+          ],
           if (formattedCreatedDate.isNotEmpty) ...[
             const SizedBox(height: 12),
             _buildDetailItem(Icons.create, "Created On", formattedCreatedDate),

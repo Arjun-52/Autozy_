@@ -64,6 +64,12 @@ class TicketProvider extends ChangeNotifier {
     }
   }
 
+  bool _isSubmitting = false;
+  TicketModel? _createdTicket;
+
+  bool get isSubmitting => _isSubmitting;
+  TicketModel? get createdTicket => _createdTicket;
+
   Future<void> loadMore() async {
     if (_isPageLoading || _meta == null) return;
 
@@ -83,6 +89,50 @@ class TicketProvider extends ChangeNotifier {
     } finally {
       _isPageLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<TicketModel?> createTicket({
+    required String type,
+    required String vehicleId,
+    String? subscriptionId,
+    String? serviceDate,
+    required String description,
+    List<String>? localPhotoPaths,
+  }) async {
+    if (_isSubmitting) return null;
+    _isSubmitting = true;
+    _errorMessage = null;
+    _createdTicket = null;
+    notifyListeners();
+
+    try {
+      final uploadedUrls = <String>[];
+      if (localPhotoPaths != null && localPhotoPaths.isNotEmpty) {
+        for (final path in localPhotoPaths) {
+          final url = await _repository.uploadImage(path);
+          uploadedUrls.add(url);
+        }
+      }
+
+      final ticket = await _repository.createTicket(
+        type: type,
+        vehicleId: vehicleId,
+        subscriptionId: subscriptionId,
+        serviceDate: serviceDate,
+        description: description,
+        proofPhotos: uploadedUrls,
+      );
+
+      _createdTicket = ticket;
+      _isSubmitting = false;
+      notifyListeners();
+      return ticket;
+    } catch (e) {
+      _errorMessage = e.toString().replaceAll('Exception: ', '');
+      _isSubmitting = false;
+      notifyListeners();
+      rethrow;
     }
   }
 }

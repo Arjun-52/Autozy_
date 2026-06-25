@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../core/utils/responsive.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -51,9 +52,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 12),
-              const Text(
+              Text(
                 "Select Profile Picture",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(15)),
               ),
               const SizedBox(height: 12),
               ListTile(
@@ -97,7 +98,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final authProvider = context.watch<AuthProvider>();
 
     return Scaffold(
-      backgroundColor: const Color(0xffF5F5F5),
+      backgroundColor: const Color(0xFFF9F9FB),
 
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -108,17 +109,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
+        title: Text(
           "Edit Profile",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: context.sp(18)),
         ),
       ),
 
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: EdgeInsets.symmetric(horizontal: context.w(20)),
         child: Column(
           children: [
-            const SizedBox(height: 24),
+            SizedBox(height: context.h(24)),
 
             /// PROFILE AVATAR WITH CAMERA SELECTION
             GestureDetector(
@@ -126,8 +127,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: Stack(
                 children: [
                   Container(
-                    width: 120,
-                    height: 120,
+                    width: context.w(100),
+                    height: context.w(100),
                     decoration: const BoxDecoration(
                       color: Color(0xFFF6C431),
                       shape: BoxShape.circle,
@@ -137,15 +138,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ? ClipOval(
                               child: Image.file(
                                 File(authProvider.localAvatarPath!),
-                                width: 120,
-                                height: 120,
+                                width: context.w(100),
+                                height: context.w(100),
                                 fit: BoxFit.cover,
                               ),
                             )
                           : SvgPicture.asset(
                               'assets/images/profile.svg',
-                              height: 64,
-                              width: 64,
+                              height: context.w(52),
+                              width: context.w(52),
                               fit: BoxFit.contain,
                             ),
                     ),
@@ -154,7 +155,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     bottom: 0,
                     right: 0,
                     child: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(6),
                       decoration: const BoxDecoration(
                         color: Colors.black,
                         shape: BoxShape.circle,
@@ -162,7 +163,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: const Icon(
                         Icons.camera_alt_rounded,
                         color: Colors.white,
-                        size: 18,
+                        size: 16,
                       ),
                     ),
                   ),
@@ -170,12 +171,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ),
 
-            const SizedBox(height: 32),
+            SizedBox(height: context.h(28)),
 
             /// FULL NAME
             BuildInputField(label: "Enter Name", controller: nameController),
 
-            const SizedBox(height: 16),
+            SizedBox(height: context.h(12)),
 
             /// MOBILE NUMBER
             BuildInputField(
@@ -183,7 +184,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               controller: phoneController,
             ),
 
-            const SizedBox(height: 16),
+            SizedBox(height: context.h(12)),
 
             /// EMAIL
             BuildInputField(label: "Please Enter Email", controller: emailController),
@@ -193,7 +194,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             /// SAVE BUTTON
             SizedBox(
               width: double.infinity,
-              height: 48,
+              height: context.h(46),
               child: ElevatedButton(
                 onPressed: authProvider.profileLoading
                     ? null
@@ -240,10 +241,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         height: 24,
                         child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5),
                       )
-                    : const Text(
+                    : Text(
                         "Save Changes",
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: context.sp(14.5),
                           fontWeight: FontWeight.w600,
                           color: Colors.black,
                         ),
@@ -251,7 +252,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ),
 
-            const SizedBox(height: 24),
+            SizedBox(height: context.h(20)),
           ],
         ),
       ),

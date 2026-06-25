@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../providers/area_provider.dart';
 import '../../../data/models/dto/nearby_areas_response.dart';
+import '../../../core/utils/responsive.dart';
 
 class AreaSelectionScreen extends StatefulWidget {
   /// When true (e.g. opened via "Change" from checkout), confirming pops back to
@@ -100,11 +101,15 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
     final areas = areaProvider.nearbyAreas;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F2),
+      backgroundColor: const Color(0xFFF9F9FB),
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "Select Service Area",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+            fontSize: context.sp(16),
+          ),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -124,13 +129,16 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
         },
         child: () {
           if (_isLocating || areaProvider.isLoading) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(color: Color(0xFFF6C431)),
-                  SizedBox(height: 16),
-                  Text("Determining your location...", style: TextStyle(color: Colors.grey)),
+                  const CircularProgressIndicator(color: Color(0xFFFFCB2F)),
+                  SizedBox(height: context.h(16)),
+                  Text(
+                    "Determining your location...",
+                    style: TextStyle(color: Colors.grey, fontSize: context.sp(14), fontWeight: FontWeight.w400),
+                  ),
                 ],
               ),
             );
@@ -171,7 +179,7 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
             children: [
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
+                  padding: EdgeInsets.all(context.w(16)),
                   itemCount: areas.length,
                   itemBuilder: (context, index) {
                     final area = areas[index];
@@ -186,22 +194,25 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                         context.read<AreaProvider>().fetchAreaDetails(area.id);
                       },
                       child: Container(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        margin: EdgeInsets.only(bottom: context.h(10)),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.w(16),
+                          vertical: context.h(12),
+                        ),
                         decoration: BoxDecoration(
                           color: isAvailable ? Colors.white : Colors.white.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: isSelected
-                                ? const Color(0xFFF6C431)
-                                : Colors.transparent,
-                            width: 2,
+                                ? const Color(0xFFFFCB2F)
+                                : const Color(0xFFE9E9E9),
+                            width: isSelected ? 1.8 : 1.0,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
+                              color: Colors.black.withOpacity(0.015),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
                             ),
                           ],
                         ),
@@ -216,63 +227,89 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                                   Expanded(
                                     child: Text(
                                       area.name,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
+                                      style: TextStyle(
+                                        fontSize: context.sp(15),
+                                        fontWeight: FontWeight.w600,
                                         color: Colors.black,
                                       ),
                                     ),
                                   ),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: context.w(8),
+                                      vertical: context.h(4),
                                     ),
                                     decoration: BoxDecoration(
                                       color: isAvailable
                                           ? const Color(0xFFE8F8EF)
                                           : const Color(0xFFFFECEC),
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Text(
                                       isAvailable ? "Available" : "Full",
                                       style: TextStyle(
                                         color: isAvailable ? Colors.green : Colors.red,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.bold,
+                                        fontSize: context.sp(11),
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 4),
+                              SizedBox(height: context.h(4)),
                               Text(
                                 "${area.city?.name ?? ''}, ${area.city?.state ?? ''}",
-                                style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                                style: TextStyle(
+                                  color: Colors.grey.shade600,
+                                  fontSize: context.sp(12),
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
-                              const Divider(height: 18),
+                              Divider(height: context.h(18)),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const Text("Slots Available", style: TextStyle(color: Colors.grey, fontSize: 11)),
-                                      const SizedBox(height: 2),
+                                      Text(
+                                        "Slots Available",
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: context.sp(11),
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      SizedBox(height: context.h(2)),
                                       Text(
                                         "${area.availableSlots ?? 0} / ${area.maxCapacity ?? 0}",
-                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: context.sp(13),
+                                          color: Colors.black,
+                                        ),
                                       ),
                                     ],
                                   ),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      const Text("Coverage Radius", style: TextStyle(color: Colors.grey, fontSize: 11)),
-                                      const SizedBox(height: 2),
+                                      Text(
+                                        "Coverage Radius",
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: context.sp(11),
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      SizedBox(height: context.h(2)),
                                       Text(
                                         "${area.radiusKm ?? '0.0'} km",
-                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: context.sp(13),
+                                          color: Colors.black,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -287,34 +324,48 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 24),
-                decoration: const BoxDecoration(
+                padding: EdgeInsets.only(
+                  left: context.w(16),
+                  right: context.w(16),
+                  top: context.h(16),
+                  bottom: context.h(24),
+                ),
+                decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black12,
+                      color: Colors.black.withOpacity(0.03),
                       blurRadius: 10,
-                      offset: Offset(0, -2),
+                      offset: const Offset(0, -2),
                     ),
                   ],
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (_locallySelectedArea != null && areaProvider.areaDetails != null && areaProvider.areaDetails!.id == _locallySelectedArea!.id) ...[
+                    if (_locallySelectedArea != null &&
+                        areaProvider.areaDetails != null &&
+                        areaProvider.areaDetails!.id == _locallySelectedArea!.id) ...[
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             "Selected Area Details",
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: context.sp(15),
+                              color: Colors.black87,
+                            ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: context.w(10),
+                              vertical: context.h(4),
+                            ),
                             decoration: BoxDecoration(
                               color: (areaProvider.areaDetails!.status?.toUpperCase() == 'AVAILABLE')
                                   ? const Color(0xFFE8F8EF)
@@ -334,15 +385,17 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                                     shape: BoxShape.circle,
                                   ),
                                 ),
-                                const SizedBox(width: 6),
+                                SizedBox(width: context.w(6)),
                                 Text(
-                                  areaProvider.areaDetails!.status?.toUpperCase() == 'AVAILABLE' ? "Available" : "Full",
+                                  areaProvider.areaDetails!.status?.toUpperCase() == 'AVAILABLE'
+                                      ? "Available"
+                                      : "Full",
                                   style: TextStyle(
                                     color: (areaProvider.areaDetails!.status?.toUpperCase() == 'AVAILABLE')
                                         ? Colors.green
                                         : Colors.red,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
+                                    fontSize: context.sp(12),
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ],
@@ -350,30 +403,38 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: context.h(12)),
                       Row(
                         children: [
                           Expanded(
                             child: Container(
-                              padding: const EdgeInsets.all(12),
+                              padding: EdgeInsets.all(context.w(11)),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF9FAFB),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: const Color(0xFFF3F4F6)),
+                                border: Border.all(color: const Color(0xFFE9E9E9)),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     areaProvider.areaDetails!.name,
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: context.sp(14),
+                                      color: Colors.black,
+                                    ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  const SizedBox(height: 2),
+                                  SizedBox(height: context.h(2)),
                                   Text(
                                     "${areaProvider.areaDetails!.city?.name ?? ''}, ${areaProvider.areaDetails!.city?.state ?? ''}",
-                                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                                    style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: context.sp(12),
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -381,25 +442,26 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: context.w(8)),
                           _buildMiniMetric(
                             label: "Radius",
                             value: "${areaProvider.areaDetails!.radiusKm ?? '0.0'} km",
                             icon: Icons.map_outlined,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: context.w(8)),
                           _buildMiniMetric(
                             label: "Slots",
-                            value: "${areaProvider.areaDetails!.availableSlots ?? 0}/${areaProvider.areaDetails!.maxCapacity ?? 0}",
+                            value:
+                                "${areaProvider.areaDetails!.availableSlots ?? 0}/${areaProvider.areaDetails!.maxCapacity ?? 0}",
                             icon: Icons.people_outline,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: context.h(16)),
                     ],
                     SizedBox(
                       width: double.infinity,
-                      height: 48,
+                      height: context.h(46),
                       child: ElevatedButton(
                         onPressed: _locallySelectedArea == null || areaProvider.isLoading
                             ? null
@@ -417,11 +479,11 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                                 }
                               },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF6C431),
+                          backgroundColor: const Color(0xFFFFCB2F),
                           disabledBackgroundColor: Colors.grey.shade300,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                         ),
                         child: areaProvider.isLoading
@@ -436,10 +498,10 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                                     : (_locallySelectedArea!.status?.toUpperCase() == 'AVAILABLE'
                                         ? "Confirm & Continue"
                                         : "Join Waitlist"),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: context.sp(14),
                                 ),
                               ),
                       ),
@@ -456,26 +518,34 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
 
   Widget _buildMiniMetric({required String label, required String value, required IconData icon}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: context.w(10), vertical: context.h(8)),
       decoration: BoxDecoration(
         color: const Color(0xFFF9FAFB),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFF3F4F6)),
+        border: Border.all(color: const Color(0xFFE9E9E9)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 16, color: Colors.grey.shade600),
-          const SizedBox(height: 4),
+          SizedBox(height: context.h(4)),
           Text(
             label,
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 10, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              color: Colors.grey.shade500,
+              fontSize: context.sp(10),
+              fontWeight: FontWeight.w500,
+            ),
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: context.h(2)),
           Text(
             value,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: context.sp(12),
+              color: Colors.black87,
+            ),
           ),
         ],
       ),
@@ -485,31 +555,34 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
   Widget _buildEmptyState() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(context.w(32)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.location_off_outlined, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
-            const Text(
+            Icon(Icons.location_off_outlined, size: context.w(64), color: Colors.grey),
+            SizedBox(height: context.h(16)),
+            Text(
               "No Areas Available Nearby",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: context.sp(18), fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: context.h(8)),
             Text(
               "No service areas were found near your current location.",
-              style: TextStyle(color: Colors.grey.shade600),
+              style: TextStyle(color: Colors.grey.shade600, fontSize: context.sp(13), fontWeight: FontWeight.w400),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: context.h(24)),
             ElevatedButton(
               onPressed: _checkPermissionAndGetLocation,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF6C431),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                backgroundColor: const Color(0xFFFFCB2F),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text("Retry Search", style: TextStyle(color: Colors.black)),
+              child: Text(
+                "Retry Search",
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: context.sp(13)),
+              ),
             ),
           ],
         ),
@@ -524,31 +597,34 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
   }) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(context.w(32)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.redAccent),
-            const SizedBox(height: 16),
+            Icon(Icons.error_outline, size: context.w(64), color: Colors.redAccent),
+            SizedBox(height: context.h(16)),
             Text(
               title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: context.sp(18), fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: context.h(8)),
             Text(
               message,
-              style: TextStyle(color: Colors.grey.shade600),
+              style: TextStyle(color: Colors.grey.shade600, fontSize: context.sp(13), fontWeight: FontWeight.w400),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: context.h(24)),
             ElevatedButton(
               onPressed: onRetry,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFF6C431),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                backgroundColor: const Color(0xFFFFCB2F),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text("Retry", style: TextStyle(color: Colors.black)),
+              child: Text(
+                "Retry",
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: context.sp(13)),
+              ),
             ),
           ],
         ),

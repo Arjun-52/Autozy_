@@ -11,6 +11,7 @@ import '../../../core/services/navigation_service.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../data/models/dto/create_order_response.dart';
 import '../../../providers/payment_provider.dart';
+import '../../../core/utils/responsive.dart';
 
 class PaymentScreen extends StatefulWidget {
   /// Subscription this payment settles. Required for the create-order call.
@@ -151,11 +152,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
     final isBusy = context.watch<PaymentProvider>().isBusy;
 
     return Scaffold(
-      backgroundColor: const Color(0xffFFFFFF),
+      backgroundColor: const Color(0xFFF9F9FB),
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "Payment",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: context.sp(16), fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -165,29 +166,29 @@ class _PaymentScreenState extends State<PaymentScreen> {
         children: [
           Column(
             children: [
-              const SizedBox(height: 20),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+              SizedBox(height: context.h(20)),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: context.w(16)),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Select Payment Method",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    style: TextStyle(fontSize: context.sp(15), fontWeight: FontWeight.w600, color: Colors.black),
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
+              SizedBox(height: context.h(8)),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: context.w(16)),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "You can pay using UPI, cards, net banking and wallets on the next screen.",
-                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                    style: TextStyle(fontSize: context.sp(13), color: Colors.grey.shade600, fontWeight: FontWeight.w400),
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: context.h(20)),
               PaymentMethodCard(
                 methods: methods,
                 selectedIndex: selectedIndex,

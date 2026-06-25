@@ -32,17 +32,17 @@ class ActivePlanCard extends StatelessWidget {
     // If subscription is expired, cancelled, or doesn't exist, show "Choose a Plan" state
     if (status == 'NONE' || status == 'EXPIRED' || status == 'CANCELLED') {
       return Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: const Color(0xFFE9E9E9)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(0.015),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -50,8 +50,8 @@ class ActivePlanCard extends StatelessWidget {
           children: [
             // Plan Icon
             Container(
-              width: 38,
-              height: 38,
+              width: 32,
+              height: 32,
               decoration: const BoxDecoration(
                 color: Color(0xFFFFF9E6),
                 shape: BoxShape.circle,
@@ -59,10 +59,10 @@ class ActivePlanCard extends StatelessWidget {
               child: const Icon(
                 Icons.star_outline_rounded,
                 color: Color(0xFFFFCB2F),
-                size: 20,
+                size: 16,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             // Details
             Expanded(
               child: Column(
@@ -76,7 +76,7 @@ class ActivePlanCard extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 2),
+                  SizedBox(height: 1),
                   Text(
                     "Choose a plan to start daily service",
                     style: TextStyle(
@@ -98,7 +98,7 @@ class ActivePlanCard extends StatelessWidget {
                 backgroundColor: const Color(0xFFFFCB2F),
                 foregroundColor: Colors.black,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 shape: RoundedRectangleBorder(
@@ -128,7 +128,7 @@ class ActivePlanCard extends StatelessWidget {
     Color textColor = Colors.black;
     Color buttonColor = Colors.white;
     Color buttonTextColor = Colors.black;
-    Widget statusIcon = const Icon(Icons.check_rounded, color: Colors.white, size: 20);
+    Widget statusIcon = const Icon(Icons.check_rounded, color: Colors.white, size: 16);
     Color iconBg = const Color(0xFF008847);
     String statusTitle = "$planName Active";
     String dateLabel = "Valid until $expiryDate";
@@ -139,7 +139,7 @@ class ActivePlanCard extends StatelessWidget {
       textColor = Colors.black87;
       buttonColor = const Color(0xFFFFCB2F);
       buttonTextColor = Colors.black;
-      statusIcon = const Icon(Icons.pause_rounded, color: Colors.white, size: 20);
+      statusIcon = const Icon(Icons.pause_rounded, color: Colors.white, size: 16);
       iconBg = Colors.grey;
       statusTitle = "$planName Paused";
       buttonText = "Resume";
@@ -148,7 +148,7 @@ class ActivePlanCard extends StatelessWidget {
       textColor = Colors.black87;
       buttonColor = Colors.white;
       buttonTextColor = Colors.black;
-      statusIcon = const Icon(Icons.pending_actions_rounded, color: Colors.white, size: 20);
+      statusIcon = const Icon(Icons.pending_actions_rounded, color: Colors.white, size: 16);
       iconBg = const Color(0xFFDD900C);
       statusTitle = "$planName Pending";
       dateLabel = "Activation pending";
@@ -156,40 +156,32 @@ class ActivePlanCard extends StatelessWidget {
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: status == 'ACTIVE'
-            ? [
-                BoxShadow(
-                  color: const Color(0xFFFFCB2F).withOpacity(0.3),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-              ]
-            : [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.015),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Row(
         children: [
           // Circular Status Icon
           Container(
-            width: 38,
-            height: 38,
+            width: 32,
+            height: 32,
             decoration: BoxDecoration(
               color: iconBg,
               shape: BoxShape.circle,
             ),
             child: statusIcon,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           // Details Column
           Expanded(
             child: Column(
@@ -199,23 +191,23 @@ class ActivePlanCard extends StatelessWidget {
                   statusTitle,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    fontSize: 15,
+                    fontSize: 14,
                     color: textColor,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Row(
                   children: [
                     Icon(
                       Icons.access_time_filled_rounded,
-                      size: 14,
+                      size: 13,
                       color: textColor.withOpacity(0.8),
                     ),
                     const SizedBox(width: 4),
                     Text(
                       dateLabel,
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 11,
                         fontWeight: FontWeight.w500,
                         color: textColor.withOpacity(0.8),
                       ),
@@ -235,7 +227,7 @@ class ActivePlanCard extends StatelessWidget {
               backgroundColor: buttonColor,
               foregroundColor: buttonTextColor,
               elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               shape: RoundedRectangleBorder(

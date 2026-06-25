@@ -208,12 +208,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
 
-                    SizedBox(height: context.h(16)),
+                    SizedBox(height: context.h(20)),
 
-                    /// BUTTON
                     SizedBox(
-                      width: context.w(280),
-                      height: context.h(40),
+                      width: double.infinity,
+                      height: context.h(46),
                       child: ElevatedButton(
                         onPressed: authProvider.isLoading
                             ? null
@@ -260,7 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             : Text(
                                 "Continue",
                                 style: TextStyle(
-                                  fontSize: context.sp(10),
+                                  fontSize: context.sp(14),
                                   fontWeight: FontWeight.w500,
                                   color: Colors.black,
                                 ),

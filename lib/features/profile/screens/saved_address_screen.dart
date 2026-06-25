@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:autozy/features/profile/widgets/address_card.dart';
+import '../../../core/utils/responsive.dart';
 
 class SavedAddressScreen extends StatefulWidget {
   const SavedAddressScreen({super.key});
@@ -87,9 +88,9 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
                   const SizedBox(width: 8),
                   Text(
                     editIndex != null ? "Edit Address" : "Add Address",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: context.sp(15),
                     ),
                   ),
                 ],
@@ -102,7 +103,7 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
                 borderRadius: BorderRadius.circular(12),
                 child: Image.asset(
                   'assets/images/map.png',
-                  height: 150,
+                  height: context.h(120),
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
@@ -129,7 +130,7 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFFCB2F),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -157,7 +158,7 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
                   },
                   child: Text(
                     editIndex != null ? "Update Address" : "Add Address",
-                    style: const TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -184,14 +185,14 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F0E3),
+      backgroundColor: const Color(0xFFF9F9FB),
 
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Saved Addresses",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: context.sp(18)),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
@@ -254,21 +255,22 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
 
           /// ADD BUTTON
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(16)),
             child: SizedBox(
               width: double.infinity,
+              height: context.h(46),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFFFCB2F),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+                  elevation: 0,
                 ),
                 onPressed: () => showAddAddressSheet(),
-                child: const Text(
+                child: Text(
                   "Add New Address",
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: context.sp(14.5)),
                 ),
               ),
             ),

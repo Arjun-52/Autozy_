@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   // SECTION 1: HEADER
                   const HomeHeader(),
-                  SizedBox(height: context.h(20)),
+                  SizedBox(height: context.h(24)),
 
                   // SECTION 2: ACTIVE SUBSCRIPTION CARD
                   ActivePlanCard(
@@ -151,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     todayService: todayService,
                     subscription: subscription,
                   ),
-                  SizedBox(height: context.h(20)),
+                  SizedBox(height: context.h(24)),
 
                   // SECTION 4: ADD-ON SERVICES GRID
                   const AddonServicesSection(),

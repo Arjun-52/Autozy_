@@ -11,6 +11,7 @@ import '../../../providers/plan_provider.dart';
 import '../../../providers/subscription_provider.dart';
 import '../../../data/models/dto/subscription_list_response.dart' as sub_dto;
 import '../../../../core/services/navigation_service.dart';
+import '../../../core/utils/responsive.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final String day;
@@ -96,41 +97,50 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       context: context,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (sheetContext) {
         return SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            padding: EdgeInsets.symmetric(vertical: context.h(12)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 4, 20, 8),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(context.w(20), context.h(4), context.w(20), context.h(8)),
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Text('Select Vehicle',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                    child: Text(
+                      'Select Vehicle',
+                      style: TextStyle(fontSize: context.sp(16), fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ),
                 if (vehicles.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Text('No vehicles yet. Add one to continue.'),
+                  Padding(
+                    padding: EdgeInsets.all(context.w(20)),
+                    child: Text(
+                      'No vehicles yet. Add one to continue.',
+                      style: TextStyle(fontSize: context.sp(13), fontWeight: FontWeight.w400),
+                    ),
                   ),
                 ...vehicles.map((v) {
                   final taken = _takenVehicleIds.contains(v.id);
                   final isSelected = vehicleProvider.selectedVehicle?.id == v.id;
                   return ListTile(
                     enabled: !taken,
-                    leading: const Icon(Icons.directions_car_outlined),
-                    title: Text('${v.brand} ${v.model}'),
+                    leading: Icon(Icons.directions_car_outlined, size: context.w(20)),
+                    title: Text(
+                      '${v.brand} ${v.model}',
+                      style: TextStyle(fontSize: context.sp(14), fontWeight: FontWeight.w500),
+                    ),
                     subtitle: Text(
                       '${v.vehicleNumber} • ${v.sizeCategory}'
                       '${taken ? ' • Already subscribed' : ''}',
+                      style: TextStyle(fontSize: context.sp(12), fontWeight: FontWeight.w400),
                     ),
                     trailing: isSelected
-                        ? const Icon(Icons.check_circle, color: Color(0xffF4C430))
+                        ? Icon(Icons.check_circle, color: const Color(0xffF4C430), size: context.w(20))
                         : null,
                     onTap: taken
                         ? null
@@ -142,8 +152,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 }),
                 const Divider(height: 8),
                 ListTile(
-                  leading: const Icon(Icons.add, color: Color(0xffF4C430)),
-                  title: const Text('Add Vehicle'),
+                  leading: Icon(Icons.add, color: const Color(0xffF4C430), size: context.w(20)),
+                  title: Text(
+                    'Add Vehicle',
+                    style: TextStyle(fontSize: context.sp(14), fontWeight: FontWeight.w500),
+                  ),
                   onTap: () => Navigator.of(sheetContext).pop('add'),
                 ),
               ],
@@ -316,9 +329,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffffffff),
+      backgroundColor: const Color(0xFFF9F9FB),
       appBar: AppBar(
-        title: const Text("Checkout", style: TextStyle(fontWeight: FontWeight.w500)),
+        title: Text(
+          "Checkout",
+          style: TextStyle(fontSize: context.sp(16), fontWeight: FontWeight.w600),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         foregroundColor: Colors.black,
@@ -327,17 +343,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(context.w(16)),
               child: Column(
                 children: [
                   _buildVehicleCard(),
-                  const SizedBox(height: 20),
+                  SizedBox(height: context.h(12)),
                   _buildServiceAreaCard(),
-                  const SizedBox(height: 20),
+                  SizedBox(height: context.h(12)),
                   BookingSlotCard(day: widget.day, date: widget.date, time: widget.time),
-                  const SizedBox(height: 20),
+                  SizedBox(height: context.h(12)),
                   const PlanDetailsCard(),
-                  const SizedBox(height: 20),
+                  SizedBox(height: context.h(12)),
                   const PriceBreakdownCard(),
                 ],
               ),
@@ -370,33 +386,51 @@ class _InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(context.w(11)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.015),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Row(
         children: [
-          Icon(icon, color: const Color(0xffF4C430)),
-          const SizedBox(width: 12),
+          Icon(icon, color: const Color(0xFFFFCB2F), size: context.w(20)),
+          SizedBox(width: context.w(10)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-                const SizedBox(height: 4),
-                Text(value, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                Text(
+                  label,
+                  style: TextStyle(color: Colors.grey, fontSize: context.sp(11), fontWeight: FontWeight.w400),
+                ),
+                SizedBox(height: context.h(2)),
+                Text(
+                  value,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(12.5)),
+                ),
               ],
             ),
           ),
-          TextButton(onPressed: onAction, child: Text(actionText)),
+          TextButton(
+            onPressed: onAction,
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(4)),
+              minimumSize: Size.zero,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+            child: Text(
+              actionText,
+              style: TextStyle(fontSize: context.sp(13), fontWeight: FontWeight.w600, color: const Color(0xFFC68A00)),
+            ),
+          ),
         ],
       ),
     );

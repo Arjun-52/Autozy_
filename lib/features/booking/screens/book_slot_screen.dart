@@ -7,6 +7,7 @@ import 'package:autozy/features/booking/widgets/time_slot_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/subscription_provider.dart';
+import '../../../core/utils/responsive.dart';
 
 class BookSlotScreen extends StatefulWidget {
   const BookSlotScreen({super.key});
@@ -130,11 +131,11 @@ class _BookSlotScreenState extends State<BookSlotScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffFFFFFF),
+      backgroundColor: const Color(0xFFF9F9FB),
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "Book Slot",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: context.sp(16), fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -158,7 +159,7 @@ class _BookSlotScreenState extends State<BookSlotScreen> {
             onCalendarTap: pickDate,
           ),
 
-          const SizedBox(height: 20),
+          SizedBox(height: context.h(20)),
 
           const SectionTitle(
             icon: Icons.access_time,

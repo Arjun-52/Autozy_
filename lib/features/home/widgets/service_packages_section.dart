@@ -54,25 +54,25 @@ class ServicePackagesSection extends StatelessWidget {
             color: Colors.black,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 8),
         SizedBox(
-          height: 125,
+          height: 112,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: packages.length,
             itemBuilder: (context, index) {
               final package = packages[index];
-              return Container(
-                width: 185,
+               return Container(
+                width: 175,
                 margin: const EdgeInsets.only(right: 12),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: const Color(0xFFE9E9E9)),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
+                      color: Colors.black.withOpacity(0.015),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -88,26 +88,26 @@ class ServicePackagesSection extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                           child: CachedNetworkImage(
                             imageUrl: package.imageUrl,
-                            width: 41,
-                            height: 41,
+                            width: 36,
+                            height: 36,
                             fit: BoxFit.cover,
                             placeholder: (context, url) => Container(
                               color: Colors.grey.shade100,
-                              width: 41,
-                              height: 41,
+                              width: 36,
+                              height: 36,
                               child: const Center(
                                 child: SizedBox(
-                                  width: 14,
-                                  height: 14,
+                                  width: 12,
+                                  height: 12,
                                   child: CircularProgressIndicator(strokeWidth: 2, color: Colors.amber),
                                 ),
                               ),
                             ),
                             errorWidget: (context, url, error) => Container(
                               color: Colors.grey.shade100,
-                              width: 41,
-                              height: 41,
-                              child: const Icon(Icons.directions_car_filled, color: Colors.grey, size: 18),
+                              width: 36,
+                              height: 36,
+                              child: const Icon(Icons.directions_car_filled, color: Colors.grey, size: 16),
                             ),
                           ),
                         ),
@@ -120,18 +120,18 @@ class ServicePackagesSection extends StatelessWidget {
                               Text(
                                 package.name,
                                 style: const TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 12.5,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.black,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
-                              const SizedBox(height: 2),
+                              const SizedBox(height: 1),
                               Text(
                                 "₹${package.price.toInt()}",
                                 style: const TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.black87,
                                 ),
@@ -145,7 +145,7 @@ class ServicePackagesSection extends StatelessWidget {
                     // Add Button with black border matching reference design exactly
                     SizedBox(
                       width: double.infinity,
-                      height: 32,
+                      height: 28,
                       child: OutlinedButton(
                         onPressed: () {
                           context.pushNamed('bookAddon');
@@ -161,7 +161,7 @@ class ServicePackagesSection extends StatelessWidget {
                         child: const Text(
                           "+ Add",
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
