@@ -98,6 +98,16 @@ class TicketRepository {
       AppLogger.info('Ticket created successfully', tag: 'Tickets');
       return TicketModel.fromJson(responseData);
     } catch (e, st) {
+      if (e is ApiException) {
+        print("TICKET_CREATION_FAILED_ERROR_STATUS: ${e.statusCode}");
+        print("TICKET_CREATION_FAILED_ERROR_BODY: ${e.body}");
+        try {
+          final errorData = jsonDecode(e.body);
+          print("TICKET_CREATION_FAILED_VALIDATION_ERRORS: ${errorData['errors']}");
+        } catch (_) {
+          print("TICKET_CREATION_FAILED_VALIDATION_ERRORS: Could not parse body as JSON");
+        }
+      }
       print("TICKET_CREATION_FAILED_ERROR: $e");
       AppLogger.error('Failed to create ticket', tag: 'Tickets', error: e, stackTrace: st);
       rethrow;

@@ -184,40 +184,44 @@ class OrderDetailsCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(width: context.w(10)),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          planName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: context.sp(12.5),
-                            color: const Color(0xff7E8392),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            planName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: context.sp(12.5),
+                              color: const Color(0xff7E8392),
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: priceText,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: context.sp(14),
-                                  color: AppColors.onSurface,
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: priceText,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: context.sp(14),
+                                    color: AppColors.onSurface,
+                                  ),
                                 ),
-                              ),
-                              TextSpan(
-                                text: " /month",
-                                style: TextStyle(
-                                  fontSize: context.sp(11),
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color(0xFF7E8392),
+                                TextSpan(
+                                  text: " /month",
+                                  style: TextStyle(
+                                    fontSize: context.sp(11),
+                                    fontWeight: FontWeight.w400,
+                                    color: const Color(0xFF7E8392),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),

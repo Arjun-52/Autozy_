@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import '../../../providers/addon_booking_provider.dart';
 import '../../../data/models/dto/my_addon_bookings_response.dart';
 import '../../../core/utils/responsive.dart';
@@ -44,6 +45,16 @@ class _AddonBookingsScreenState extends State<AddonBookingsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              context.pop();
+            } else {
+              context.go('/home?initialIndex=3');
+            }
+          },
+        ),
         title: Text(
           "My Add-on Bookings",
           style: TextStyle(
@@ -122,16 +133,20 @@ class _AddonBookingsScreenState extends State<AddonBookingsScreen> {
         children: [
           // Row 1: Booking ID & Status badge
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "ID: ${booking.bookingId ?? booking.id ?? 'N/A'}",
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontSize: context.sp(11.5),
-                  fontWeight: FontWeight.w400,
+              Expanded(
+                child: Text(
+                  "ID: ${booking.bookingId ?? booking.id ?? 'N/A'}",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.grey.shade600,
+                    fontSize: context.sp(11.5),
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
+              SizedBox(width: context.w(8)),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(4)),
                 decoration: BoxDecoration(
@@ -178,7 +193,7 @@ class _AddonBookingsScreenState extends State<AddonBookingsScreen> {
 
           // Row 3: Vehicle details
           if (booking.vehicleDetails != null) ...[
-            _buildInfoRow(Icons.directions_car, "Vehicle", booking.vehicleDetails!),
+            _buildInfoRow(Icons.directions_car, "Vehicle", _formatVehicleDetails(booking)),
             SizedBox(height: context.h(6)),
           ],
 
@@ -225,6 +240,55 @@ class _AddonBookingsScreenState extends State<AddonBookingsScreen> {
         ],
       ),
     );
+  }
+
+  String _formatVehicleDetails(AddonBookingModel booking) {
+    if (booking.rawJson != null) {
+      final vehicleData = booking.rawJson!['vehicle'] ?? booking.rawJson!['vehicleDetails'];
+      if (vehicleData is Map) {
+        final brand = vehicleData['brand'] ?? '';
+        final model = vehicleData['model'] ?? '';
+        final vehicleNumber = vehicleData['vehicle_number'] ?? vehicleData['vehicleNumber'] ?? '';
+
+        final parts = <String>[];
+        if (brand.toString().isNotEmpty || model.toString().isNotEmpty) {
+          parts.add('${brand} ${model}'.trim());
+        }
+        if (vehicleNumber.toString().isNotEmpty) {
+          parts.add('($vehicleNumber)');
+        }
+        if (parts.isNotEmpty) {
+          return parts.join(' ');
+        }
+      }
+    }
+
+    final details = booking.vehicleDetails;
+    if (details != null && details.startsWith('{') && details.endsWith('}')) {
+      try {
+        final brandMatch = RegExp(r'brand:\s*([^,}]+)').firstMatch(details);
+        final modelMatch = RegExp(r'model:\s*([^,}]+)').firstMatch(details);
+        final numberMatch = RegExp(r'vehicle_number:\s*([^,}]+)').firstMatch(details) ??
+                            RegExp(r'vehicleNumber:\s*([^,}]+)').firstMatch(details);
+
+        final brand = brandMatch?.group(1)?.trim() ?? '';
+        final model = modelMatch?.group(1)?.trim() ?? '';
+        final vehicleNumber = numberMatch?.group(1)?.trim() ?? '';
+
+        final parts = <String>[];
+        if (brand.isNotEmpty || model.isNotEmpty) {
+          parts.add('${brand} ${model}'.trim());
+        }
+        if (vehicleNumber.isNotEmpty) {
+          parts.add('($vehicleNumber)');
+        }
+        if (parts.isNotEmpty) {
+          return parts.join(' ');
+        }
+      } catch (_) {}
+    }
+
+    return booking.vehicleDetails ?? 'N/A';
   }
 
   Widget _buildInfoRow(IconData icon, String label, String value) {

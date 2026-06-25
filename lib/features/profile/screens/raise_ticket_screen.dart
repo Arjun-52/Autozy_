@@ -91,12 +91,14 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
           maxWidth: 1200,
           source: source,
         );
+        if (!mounted || !context.mounted) return;
         if (file != null) {
           setState(() {
             _localPhotoPaths.add(file.path);
           });
         }
       } catch (e) {
+        if (!mounted || !context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to pick image: $e')),
         );
@@ -123,6 +125,8 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
         );
       },
     );
+
+    if (!mounted || !context.mounted) return;
 
     if (picked != null) {
       setState(() {
@@ -163,15 +167,16 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
         localPhotoPaths: _localPhotoPaths,
       );
 
-      if (created != null && mounted) {
+      if (!mounted || !context.mounted) return;
+
+      if (created != null) {
         _showSuccessDialog(created.id ?? '', created.status ?? 'OPEN', created.createdAt ?? '');
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: Colors.redAccent),
-        );
-      }
+      if (!mounted || !context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString()), backgroundColor: Colors.redAccent),
+      );
     }
   }
 
@@ -236,7 +241,15 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label, style: const TextStyle(color: Colors.grey, fontSize: 13)),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+          ),
         ],
       ),
     );
