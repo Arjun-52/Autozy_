@@ -107,7 +107,7 @@ class PlanPricingModel {
   factory PlanPricingModel.fromJson(Map<String, dynamic> json) {
     return PlanPricingModel(
       id: json['id'] as String? ?? '',
-      price: json['price'] as int? ?? 0,
+      price: json['price'] as int? ?? json['price_monthly'] as int? ?? 0,
       plan: json['plan'] != null
           ? PlanModel.fromJson(json['plan'] as Map<String, dynamic>)
           : null,

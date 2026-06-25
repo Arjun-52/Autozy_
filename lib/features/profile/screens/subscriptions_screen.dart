@@ -184,6 +184,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
         children: [
           /// TOP ROW (PLAN & STATUS)
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 padding: EdgeInsets.all(context.w(8)),
@@ -210,7 +211,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(height: context.h(2)),
+                    SizedBox(height: context.h(4)),
                     Text(
                       "₹$price /month",
                       style: TextStyle(
@@ -222,6 +223,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                   ],
                 ),
               ),
+              SizedBox(width: context.w(8)),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(4)),
                 decoration: BoxDecoration(

@@ -28,21 +28,24 @@ class _HomeScreenDetailsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: context.h(6)),
+      padding: EdgeInsets.symmetric(vertical: context.h(5)),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Text(
+            label,
+            style: TextStyle(color: Colors.grey.shade600, fontSize: context.sp(10.5), fontWeight: FontWeight.w500),
+          ),
+          SizedBox(width: context.w(16)),
           Expanded(
             child: Text(
-              label,
-              style: TextStyle(color: Colors.grey.shade600, fontSize: context.sp(11.5), fontWeight: FontWeight.w500),
+              value,
+              style: TextStyle(color: Colors.black, fontSize: context.sp(11), fontWeight: FontWeight.w600),
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
-          ),
-          SizedBox(width: context.w(10)),
-          Text(
-            value,
-            style: TextStyle(color: Colors.black, fontSize: context.sp(12), fontWeight: FontWeight.w600),
-            textAlign: TextAlign.end,
           ),
         ],
       ),
@@ -197,11 +200,11 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
                         Expanded(
                           child: Text(
                             sub.planPricing?.plan?.name ?? 'Subscription Plan',
-                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(16)),
+                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(14.5)),
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(4)),
+                          padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(3)),
                           decoration: BoxDecoration(
                             color: _getStatusBgColor(sub.status),
                             borderRadius: BorderRadius.circular(12),
@@ -209,15 +212,15 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
                           ),
                           child: Text(
                             sub.status.toUpperCase(),
-                            style: TextStyle(color: _getStatusTextColor(sub.status), fontWeight: FontWeight.w600, fontSize: context.sp(10)),
+                            style: TextStyle(color: _getStatusTextColor(sub.status), fontWeight: FontWeight.w600, fontSize: context.sp(9)),
                           ),
                         )
                       ],
                     ),
-                    SizedBox(height: context.h(8)),
+                    SizedBox(height: context.h(6)),
                     Text(
                       "₹${sub.planPricing?.price ?? 0} / month",
-                      style: TextStyle(color: const Color(0xffC68A00), fontWeight: FontWeight.w600, fontSize: context.sp(14)),
+                      style: TextStyle(color: const Color(0xffC68A00), fontWeight: FontWeight.w600, fontSize: context.sp(13)),
                     ),
                     Divider(height: context.h(24)),
                     _HomeScreenDetailsRow(label: "SUBSCRIPTION ID", value: sub.id),
@@ -231,55 +234,58 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
                 ),
               ),
               if (sub.status.toUpperCase() != 'PAUSED') ...[
-                SizedBox(height: context.h(24)),
-                SizedBox(
-                  width: double.infinity,
-                  height: context.h(46),
-                  child: ElevatedButton(
-                    onPressed: subProvider.isPauseLoading
-                        ? null
-                        : () async {
-                            final success = await subProvider.pauseSubscription(sub.id);
-                            if (success && context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Subscription paused successfully"),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                            } else if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Failed to pause subscription. Please try again."),
-                                  backgroundColor: Colors.redAccent,
-                                ),
-                              );
-                            }
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFEF6C00),
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                SizedBox(height: context.h(20)),
+                Center(
+                  child: SizedBox(
+                    width: context.w(220),
+                    height: context.h(40),
+                    child: ElevatedButton(
+                      onPressed: subProvider.isPauseLoading
+                          ? null
+                          : () async {
+                              final success = await subProvider.pauseSubscription(sub.id);
+                              if (success && context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Subscription paused successfully"),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              } else if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Failed to pause subscription. Please try again."),
+                                    backgroundColor: Colors.redAccent,
+                                  ),
+                                );
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFEF6C00),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
+                      child: subProvider.isPauseLoading
+                          ? const SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              "Pause Subscription",
+                              style: TextStyle(
+                                fontSize: context.sp(12.5),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                     ),
-                    child: subProvider.isPauseLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : Text(
-                            "Pause Subscription",
-                            style: TextStyle(
-                              fontSize: context.sp(14),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
                   ),
                 ),
               ],
