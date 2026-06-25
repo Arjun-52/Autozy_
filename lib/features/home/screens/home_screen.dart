@@ -137,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   // SECTION 1: HEADER
                   const HomeHeader(),
-                  SizedBox(height: context.h(24)),
+                  SizedBox(height: context.h(20)),
 
                   // SECTION 2: ACTIVE SUBSCRIPTION CARD
                   ActivePlanCard(
@@ -151,29 +151,29 @@ class _HomeScreenState extends State<HomeScreen> {
                     todayService: todayService,
                     subscription: subscription,
                   ),
-                  SizedBox(height: context.h(16)),
+                  SizedBox(height: context.h(20)),
 
                   // SECTION 4: ADD-ON SERVICES GRID
                   const AddonServicesSection(),
-                  SizedBox(height: context.h(24)),
+                  SizedBox(height: context.h(28)),
 
                   // SECTION 5: TODAY'S CLEANING EVIDENCE
                   if (vehicle != null && vehicle.status.toUpperCase() == 'APPROVED') ...[
                     CleaningEvidenceCard(todayService: todayService),
-                    SizedBox(height: context.h(16)),
+                    SizedBox(height: context.h(28)),
                   ],
 
                   // SECTION 6: PREMIUM SERVICES BANNER
                   const PremiumServicesBanner(),
-                  SizedBox(height: context.h(16)),
+                  SizedBox(height: context.h(28)),
 
                   // SECTION 7: POPULAR SERVICE PACKAGES
                   const ServicePackagesSection(),
-                  SizedBox(height: context.h(24)),
+                  SizedBox(height: context.h(28)),
 
                   // SECTION 8: SERVICE COVERAGE ACCORDION
                   ServiceCoverageSection(subscription: subscription),
-                  SizedBox(height: context.h(16)),
+                  SizedBox(height: context.h(28)),
 
                   // SECTION 9: WHY AUTOZY SECTION
                   const WhyAutozySection(),

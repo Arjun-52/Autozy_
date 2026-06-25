@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:autozy/core/constants/colors.dart';
 import 'package:autozy/features/profile/widgets/menu_tile.dart';
 import 'package:flutter/material.dart';
@@ -63,8 +64,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               /// USER CARD
               InkWell(
-                onTap: () {
-                  NavigationHelper.safeNavigate(context, 'editProfile');
+                onTap: () async {
+                  await context.pushNamed('editProfile');
+                  if (context.mounted) {
+                    context.read<AuthProvider>().fetchUserProfile();
+                  }
                 },
                 child: Container(
                   padding: const EdgeInsets.all(16),
@@ -89,14 +93,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Center(
-                          child: SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: SvgPicture.asset(
-                              'assets/images/profile.svg',
-                              fit: BoxFit.contain,
-                            ),
-                          ),
+                          child: authProvider.localAvatarPath != null && authProvider.localAvatarPath!.isNotEmpty
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Image.file(
+                                    File(authProvider.localAvatarPath!),
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: SvgPicture.asset(
+                                    'assets/images/profile.svg',
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
                         ),
                       ),
                       const SizedBox(width: 16),

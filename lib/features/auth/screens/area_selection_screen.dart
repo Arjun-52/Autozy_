@@ -186,11 +186,11 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                         context.read<AreaProvider>().fetchAreaDetails(area.id);
                       },
                       child: Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        padding: const EdgeInsets.all(16),
+                        margin: const EdgeInsets.only(bottom: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
                           color: isAvailable ? Colors.white : Colors.white.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: isSelected
                                 ? const Color(0xFFF6C431)
@@ -217,7 +217,7 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                                     child: Text(
                                       area.name,
                                       style: const TextStyle(
-                                        fontSize: 18,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black,
                                       ),
@@ -225,8 +225,8 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                                   ),
                                   Container(
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 5,
+                                      horizontal: 8,
+                                      vertical: 4,
                                     ),
                                     decoration: BoxDecoration(
                                       color: isAvailable
@@ -238,41 +238,41 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                                       isAvailable ? "Available" : "Full",
                                       style: TextStyle(
                                         color: isAvailable ? Colors.green : Colors.red,
-                                        fontSize: 12,
+                                        fontSize: 11,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 4),
                               Text(
                                 "${area.city?.name ?? ''}, ${area.city?.state ?? ''}",
-                                style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                                style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                               ),
-                              const Divider(height: 24),
+                              const Divider(height: 18),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const Text("Slots Available", style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                      const SizedBox(height: 4),
+                                      const Text("Slots Available", style: TextStyle(color: Colors.grey, fontSize: 11)),
+                                      const SizedBox(height: 2),
                                       Text(
                                         "${area.availableSlots ?? 0} / ${area.maxCapacity ?? 0}",
-                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                                       ),
                                     ],
                                   ),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      const Text("Coverage Radius", style: TextStyle(color: Colors.grey, fontSize: 12)),
-                                      const SizedBox(height: 4),
+                                      const Text("Coverage Radius", style: TextStyle(color: Colors.grey, fontSize: 11)),
+                                      const SizedBox(height: 2),
                                       Text(
                                         "${area.radiusKm ?? '0.0'} km",
-                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                                       ),
                                     ],
                                   ),
@@ -287,67 +287,119 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 24),
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(24),
                     topRight: Radius.circular(24),
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 10,
+                      offset: Offset(0, -2),
+                    ),
+                  ],
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (_locallySelectedArea != null && areaProvider.areaDetails != null && areaProvider.areaDetails!.id == _locallySelectedArea!.id) ...[
-                      const Text(
-                        "Area Details",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            "Selected Area Details",
+                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black87),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: (areaProvider.areaDetails!.status?.toUpperCase() == 'AVAILABLE')
+                                  ? const Color(0xFFE8F8EF)
+                                  : const Color(0xFFFFECEC),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                    color: (areaProvider.areaDetails!.status?.toUpperCase() == 'AVAILABLE')
+                                        ? Colors.green
+                                        : Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  areaProvider.areaDetails!.status?.toUpperCase() == 'AVAILABLE' ? "Available" : "Full",
+                                  style: TextStyle(
+                                    color: (areaProvider.areaDetails!.status?.toUpperCase() == 'AVAILABLE')
+                                        ? Colors.green
+                                        : Colors.red,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 12),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Area: ${areaProvider.areaDetails!.name}", style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                          Text("City: ${areaProvider.areaDetails!.city?.name ?? ''}", style: const TextStyle(fontSize: 13)),
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF9FAFB),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: const Color(0xFFF3F4F6)),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    areaProvider.areaDetails!.name,
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.black),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    "${areaProvider.areaDetails!.city?.name ?? ''}, ${areaProvider.areaDetails!.city?.state ?? ''}",
+                                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          _buildMiniMetric(
+                            label: "Radius",
+                            value: "${areaProvider.areaDetails!.radiusKm ?? '0.0'} km",
+                            icon: Icons.map_outlined,
+                          ),
+                          const SizedBox(width: 8),
+                          _buildMiniMetric(
+                            label: "Slots",
+                            value: "${areaProvider.areaDetails!.availableSlots ?? 0}/${areaProvider.areaDetails!.maxCapacity ?? 0}",
+                            icon: Icons.people_outline,
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("State: ${areaProvider.areaDetails!.city?.state ?? ''}", style: const TextStyle(fontSize: 13)),
-                          Text("Status: ${areaProvider.areaDetails!.status ?? ''}", style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Radius: ${areaProvider.areaDetails!.radiusKm ?? ''} km", style: const TextStyle(fontSize: 13)),
-                          Text("Capacity: ${areaProvider.areaDetails!.maxCapacity ?? ''}", style: const TextStyle(fontSize: 13)),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Current Subscriptions: ${areaProvider.areaDetails!.currentSubscriptions ?? '0'}", style: const TextStyle(fontSize: 13)),
-                          Text("Onboarding Paused: ${areaProvider.areaDetails!.isOnboardingPaused ?? false}", style: const TextStyle(fontSize: 13)),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Active Status: ${areaProvider.areaDetails!.isActive ?? false}", style: const TextStyle(fontSize: 13)),
-                          Text("Coords: ${areaProvider.areaDetails!.centerLat ?? ''}, ${areaProvider.areaDetails!.centerLng ?? ''}", style: const TextStyle(fontSize: 13)),
-                        ],
-                      ),
-                      const Divider(height: 24),
+                      const SizedBox(height: 16),
                     ],
                     SizedBox(
                       width: double.infinity,
-                      height: 52,
+                      height: 48,
                       child: ElevatedButton(
                         onPressed: _locallySelectedArea == null || areaProvider.isLoading
                             ? null
@@ -367,12 +419,17 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFF6C431),
                           disabledBackgroundColor: Colors.grey.shade300,
+                          elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                         child: areaProvider.isLoading
-                            ? const CircularProgressIndicator(color: Colors.black)
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5),
+                              )
                             : Text(
                                 _locallySelectedArea == null
                                     ? "Select an Area"
@@ -382,7 +439,7 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
                                 style: const TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 15,
                                 ),
                               ),
                       ),
@@ -393,6 +450,34 @@ class _AreaSelectionScreenState extends State<AreaSelectionScreen> {
             ],
           );
         }(),
+      ),
+    );
+  }
+
+  Widget _buildMiniMetric({required String label, required String value, required IconData icon}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFF3F4F6)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: Colors.grey.shade600),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(color: Colors.grey.shade500, fontSize: 10, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.black87),
+          ),
+        ],
       ),
     );
   }

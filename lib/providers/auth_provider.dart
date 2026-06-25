@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/repositories/auth_repository.dart';
 import '../data/models/user_model.dart';
@@ -11,7 +12,9 @@ import '../core/router/go_router.dart';
 class AuthProvider extends ChangeNotifier {
   final AuthRepository _authRepository;
 
-  AuthProvider(this._authRepository);
+  AuthProvider(this._authRepository) {
+    loadLocalAvatar();
+  }
 
   // ----- Auth State -----
   User? _user;
@@ -20,6 +23,7 @@ class AuthProvider extends ChangeNotifier {
   String? _phone;
   String? _successMessage;
   String? _lastOtpRequestStatus;
+  String? _localAvatarPath;
 
   // ----- Profile State -----
   UserProfile? _profile;
@@ -40,6 +44,7 @@ class AuthProvider extends ChangeNotifier {
   bool get profileLoading => _profileLoading;
   String? get profileError => _profileError;
   String? get profileSuccessMessage => _profileSuccessMessage;
+  String? get localAvatarPath => _localAvatarPath;
 
   // ----- Helper Methods -----
   void _setLoading(bool value) {
@@ -214,5 +219,27 @@ class AuthProvider extends ChangeNotifier {
     _error = 'Session expired. Please log in again.';
     notifyListeners();
     AppGoRouter.router.go('/login');
+  }
+
+  // LOCAL AVATAR STORAGE
+  Future<void> loadLocalAvatar() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _localAvatarPath = prefs.getString('user_profile_avatar');
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Failed to load local avatar: $e', tag: 'Auth');
+    }
+  }
+
+  Future<void> updateLocalAvatar(String path) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_profile_avatar', path);
+      _localAvatarPath = path;
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('Failed to save local avatar: $e', tag: 'Auth');
+    }
   }
 }

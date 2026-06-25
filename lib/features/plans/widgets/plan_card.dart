@@ -27,36 +27,33 @@ class PlanCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: Colors.white,
-
-          borderRadius: BorderRadius.circular(16),
-
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected
                 ? const Color(0xffF4C430)
                 : const Color(0xFFE9E9E9),
             width: isSelected ? 2 : 1,
           ),
-
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF161616).withValues(alpha: 0.12),
-              blurRadius: 13,
+              color: const Color(0xFF161616).withValues(alpha: 0.08),
+              blurRadius: 10,
               spreadRadius: 0,
-              offset: const Offset(0, 4),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (isPopular)
+            if (isPopular) ...[
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 6,
+                  horizontal: 10,
+                  vertical: 4,
                 ),
                 decoration: BoxDecoration(
                   color: const Color(0xffF4C430),
@@ -67,9 +64,8 @@ class PlanCard extends StatelessWidget {
                   style: TextStyle(fontSize: 9, fontWeight: FontWeight.w500),
                 ),
               ),
-
-            const SizedBox(height: 10),
-
+              const SizedBox(height: 8),
+            ],
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -78,19 +74,17 @@ class PlanCard extends StatelessWidget {
                     children: [
                       /// ICON CONTAINER
                       Container(
-                        height: 50,
-                        width: 50,
+                        height: 40,
+                        width: 40,
                         decoration: BoxDecoration(
                           color: isSelected
                               ? const Color(0xFFFFCB2F)
                               : const Color(0xFFFFECBC),
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: icon,
                       ),
-
-                      const SizedBox(width: 12),
-
+                      const SizedBox(width: 10),
                       /// TITLE + PRICE
                       Expanded(
                         child: Column(
@@ -105,15 +99,13 @@ class PlanCard extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-
-                            const SizedBox(height: 4),
-
+                            const SizedBox(height: 2),
                             Row(
                               children: [
                                 Text(
                                   price,
                                   style: const TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -121,19 +113,18 @@ class PlanCard extends StatelessWidget {
                                   " /month",
                                   style: TextStyle(
                                     color: Color(0xFF7E8392),
-                                    fontSize: 12,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
                             ),
-
                             if (description != null && description!.isNotEmpty) ...[
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 2),
                               Text(
                                 description!,
                                 style: const TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 11,
                                   color: Color(0xFF7E8392),
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -147,12 +138,11 @@ class PlanCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(width: 12),
-
+                const SizedBox(width: 10),
                 /// SELECTED CHECK CIRCLE
                 Container(
-                  width: 28,
-                  height: 28,
+                  width: 24,
+                  height: 24,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: isSelected ? const Color(0xFFFFCB2F) : Colors.white,
@@ -164,24 +154,22 @@ class PlanCard extends StatelessWidget {
                     ),
                   ),
                   child: isSelected
-                      ? const Icon(Icons.check, size: 16, color: Colors.black)
+                      ? const Icon(Icons.check, size: 14, color: Colors.black)
                       : null,
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-
+            const SizedBox(height: 10),
             Column(
               children: features.map((f) {
                 final isSelected = f["isSelected"] as bool;
-
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  padding: const EdgeInsets.symmetric(vertical: 2),
                   child: Row(
                     children: [
                       Icon(
                         Icons.check,
-                        size: 18,
+                        size: 14,
                         color: isSelected
                             ? const Color(0xFFFFCB2F)
                             : const Color(0xFF7E8392),
@@ -190,6 +178,7 @@ class PlanCard extends StatelessWidget {
                       Text(
                         f["title"] as String,
                         style: TextStyle(
+                          fontSize: 11,
                           color: isSelected
                               ? Colors.black
                               : const Color(0xFF7E8392),

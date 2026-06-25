@@ -21,20 +21,20 @@ class AddonServicesSection extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(
-                width: context.w(56),
-                height: context.w(56),
+                width: context.w(45),
+                height: context.w(45),
                 child: SvgPicture.asset(
                   imagePath,
                   fit: BoxFit.contain,
                 ),
               ),
-              SizedBox(height: context.h(8)),
+              SizedBox(height: context.h(6)),
               Text(
                 label,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: context.sp(12),
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color: Colors.black,
                   height: 1.2,
                 ),
@@ -55,11 +55,11 @@ class AddonServicesSection extends StatelessWidget {
           "Add-On Services",
           style: TextStyle(
             fontSize: context.sp(18),
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w600,
             color: Colors.black,
           ),
         ),
-        SizedBox(height: context.h(16)),
+        SizedBox(height: context.h(12)),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,

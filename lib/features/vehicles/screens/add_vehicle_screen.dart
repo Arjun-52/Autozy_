@@ -780,7 +780,11 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                     ),
                   ),
                   child: vehicleProvider.isLoading
-                      ? const CircularProgressIndicator(color: Colors.black)
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5),
+                        )
                       : const Text(
                           "Add Vehicle",
                           style: TextStyle(

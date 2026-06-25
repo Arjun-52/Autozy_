@@ -32,11 +32,11 @@ class ActivePlanCard extends StatelessWidget {
     // If subscription is expired, cancelled, or doesn't exist, show "Choose a Plan" state
     if (status == 'NONE' || status == 'EXPIRED' || status == 'CANCELLED') {
       return Container(
-        margin: const EdgeInsets.only(bottom: 20),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: const Color(0xFFE9E9E9)),
           boxShadow: [
             BoxShadow(
@@ -71,7 +71,7 @@ class ActivePlanCard extends StatelessWidget {
                   Text(
                     "No Active Subscription",
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                       fontSize: 14,
                       color: Colors.black,
                     ),
@@ -82,7 +82,7 @@ class ActivePlanCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12,
                       color: Color(0xFF7E8392),
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ],
@@ -109,7 +109,7 @@ class ActivePlanCard extends StatelessWidget {
                 "View Plans",
                 style: TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -156,11 +156,11 @@ class ActivePlanCard extends StatelessWidget {
     }
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: cardColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: status == 'ACTIVE'
             ? [
                 BoxShadow(
@@ -198,7 +198,7 @@ class ActivePlanCard extends StatelessWidget {
                 Text(
                   statusTitle,
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     fontSize: 15,
                     color: textColor,
                   ),
@@ -216,7 +216,7 @@ class ActivePlanCard extends StatelessWidget {
                       dateLabel,
                       style: TextStyle(
                         fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: textColor.withOpacity(0.8),
                       ),
                     ),
@@ -246,7 +246,7 @@ class ActivePlanCard extends StatelessWidget {
               buttonText,
               style: const TextStyle(
                 fontSize: 12,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

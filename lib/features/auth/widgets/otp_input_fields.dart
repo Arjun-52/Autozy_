@@ -66,15 +66,15 @@ class _OtpInputFieldsState extends State<OtpInputFields> {
               contentPadding: EdgeInsets.zero,
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFE5E7EB), width: 1),
+                borderSide: const BorderSide(color: Color(0xFFB5B8BC), width: 1.8),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFFFCB2F), width: 1.5),
+                borderSide: const BorderSide(color: Color(0xFFFFCB2F), width: 2.2),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Color(0xFFE5E7EB), width: 1),
+                borderSide: const BorderSide(color: Color(0xFFB5B8BC), width: 1.8),
               ),
             ),
             onChanged: (value) {

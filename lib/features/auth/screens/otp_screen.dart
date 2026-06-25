@@ -64,11 +64,14 @@ class _OtpScreenState extends State<OtpScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: context.h(12)),
+                    SizedBox(height: context.h(4)),
 
                     /// Header
-                    const OtpHeader(),
-                    SizedBox(height: context.h(28)),
+                    Transform.translate(
+                      offset: Offset(-context.w(10), 0),
+                      child: const OtpHeader(),
+                    ),
+                    SizedBox(height: context.h(24)),
 
                     /// Logo
                     const OtpLogo(),

@@ -199,18 +199,18 @@ class _VehicleScreenState extends State<VehicleScreen> {
                                   }
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 6),
+                                  padding: const EdgeInsets.symmetric(vertical: 4),
                                   child: Container(
-                                    margin: const EdgeInsets.only(bottom: 12),
-                                    padding: const EdgeInsets.all(14),
+                                    margin: const EdgeInsets.only(bottom: 10),
+                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(14),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black.withOpacity(0.06),
-                                          blurRadius: 20,
-                                          offset: const Offset(0, 6),
+                                          color: Colors.black.withOpacity(0.04),
+                                          blurRadius: 15,
+                                          offset: const Offset(0, 4),
                                         ),
                                       ],
                                     ),
@@ -221,16 +221,16 @@ class _VehicleScreenState extends State<VehicleScreen> {
                                           children: [
                                             /// ICON
                                             Container(
-                                              width: 55,
-                                              height: 55,
+                                              width: 44,
+                                              height: 44,
                                               decoration: BoxDecoration(
                                                 color: const Color(0xFFF6C431),
-                                                borderRadius: BorderRadius.circular(14),
+                                                borderRadius: BorderRadius.circular(10),
                                               ),
                                               child: Center(
                                                 child: SizedBox(
-                                                  height: 24,
-                                                  width: 24,
+                                                  height: 20,
+                                                  width: 20,
                                                   child: SvgPicture.asset(
                                                     'assets/images/car2.svg',
                                                     fit: BoxFit.contain,
@@ -238,8 +238,8 @@ class _VehicleScreenState extends State<VehicleScreen> {
                                                 ),
                                               ),
                                             ),
-
-                                            const SizedBox(width: 12),
+ 
+                                            const SizedBox(width: 10),
 
                                             /// TEXT
                                             Expanded(
@@ -322,7 +322,7 @@ class _VehicleScreenState extends State<VehicleScreen> {
                                           ],
                                         ),
                                         const Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 12),
+                                          padding: EdgeInsets.symmetric(vertical: 8),
                                           child: Divider(
                                             height: 1,
                                             color: Color(0xFFEAEAEA),

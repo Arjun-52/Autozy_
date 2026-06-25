@@ -30,11 +30,11 @@ class VehicleStatusCard extends StatelessWidget {
     if (vehicle == null) {
       return Container(
         width: double.infinity,
-        margin: const EdgeInsets.only(bottom: 20),
-        padding: const EdgeInsets.all(20),
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: const Color(0xFFE9E9E9)),
           boxShadow: [
             BoxShadow(
@@ -47,44 +47,47 @@ class VehicleStatusCard extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               decoration: const BoxDecoration(
                 color: Color(0xFFF5F5F5),
                 shape: BoxShape.circle,
               ),
               child: SvgPicture.asset(
                 'assets/images/car2.svg',
-                height: 36,
-                width: 36,
+                height: 30,
+                width: 30,
                 colorFilter: const ColorFilter.mode(Colors.grey, BlendMode.srcIn),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             const Text(
               "No Active Vehicles",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.black),
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, color: Colors.black),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             const Text(
               "Add a vehicle to manage its daily service",
-              style: TextStyle(fontSize: 13, color: Color(0xFF7E8392)),
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: Color(0xFF7E8392)),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                context.pushNamed('vehicles');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFCB2F),
-                foregroundColor: Colors.black,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 44,
+              child: ElevatedButton(
+                onPressed: () {
+                  context.pushNamed('vehicles');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFFFCB2F),
+                  foregroundColor: Colors.black,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
+                child: const Text("Add Vehicle", style: TextStyle(fontWeight: FontWeight.w600)),
               ),
-              child: const Text("Add Vehicle", style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -150,10 +153,10 @@ class VehicleStatusCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 20),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE9E9E9)),
         boxShadow: [
           BoxShadow(
@@ -215,7 +218,7 @@ class VehicleStatusCard extends StatelessWidget {
                               brandModel,
                               style: const TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w600,
                                 color: Colors.black,
                               ),
                               maxLines: 1,
@@ -235,7 +238,7 @@ class VehicleStatusCard extends StatelessWidget {
                               style: TextStyle(
                                 color: badgeColor,
                                 fontSize: 10,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
