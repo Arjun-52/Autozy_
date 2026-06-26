@@ -241,14 +241,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         height: 24,
                         child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5),
                       )
-                    : Text(
-                        "Save Changes",
-                        style: TextStyle(
-                          fontSize: context.sp(14.5),
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
+                    : Center(
+  child: Text(
+    "Save Changes",
+    textAlign: TextAlign.center,
+    style: TextStyle(
+      fontSize: context.sp(15.5),
+      fontWeight: FontWeight.w600,
+      color: Colors.black,
+      height: 1.0,
+    ),
+  ),
+),
               ),
             ),
 

@@ -532,27 +532,33 @@ class _RaiseTicketScreenState extends State<RaiseTicketScreen> {
 
                   // Submit button
                   SizedBox(
-                    width: double.infinity,
-                    height: context.h(46),
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFFFCB2F),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onPressed: ticketProvider.isSubmitting ? null : _submitTicket,
-                      child: Text(
-                        "Submit Ticket",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: context.sp(14),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
+  width: double.infinity,
+  height: 48, // Use a fixed height first
+  child: ElevatedButton(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color(0xFFFFCB2F),
+      elevation: 0,
+      padding: EdgeInsets.zero,
+      alignment: Alignment.center,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+    onPressed: ticketProvider.isSubmitting ? null : _submitTicket,
+    child: Center(
+      child: Text(
+        "Submit Ticket",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: context.sp(14),
+          fontWeight: FontWeight.w600,
+          height: 1.0,
+        ),
+      ),
+    ),
+  ),
+),
                 ],
               ),
             ),

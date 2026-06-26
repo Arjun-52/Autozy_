@@ -166,17 +166,17 @@ class _HomeHeaderState extends State<HomeHeader> {
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          statusMessage,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w400,
-            color: Color(0xFF6B7280),
-            height: 1.3,
-          ),
-        ),
+Text(
+  statusMessage,
+  style: TextStyle(
+    fontSize: 14,
+    color: Colors.grey.shade700,
+    height: 1.4,
+  ),
+  softWrap: true,
+  maxLines: null,
+  overflow: TextOverflow.visible,
+)
       ],
     );
   }

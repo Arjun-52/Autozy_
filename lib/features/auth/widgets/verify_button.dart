@@ -27,14 +27,16 @@ class VerifyButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Verify & Continue",
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: context.sp(14),
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
-              ),
-            ),
+  "Verify & Continue",
+  textAlign: TextAlign.center,
+  style: TextStyle(
+    fontFamily: 'Poppins',
+    fontSize: context.sp(14),
+    fontWeight: FontWeight.w600,
+    color: Colors.black,
+    height: 1.0,
+  ),
+),
             SizedBox(width: context.w(6)),
             Icon(
               Icons.arrow_forward,

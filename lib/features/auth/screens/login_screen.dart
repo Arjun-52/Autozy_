@@ -211,61 +211,70 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(height: context.h(20)),
 
                     SizedBox(
-                      width: double.infinity,
-                      height: context.h(46),
-                      child: ElevatedButton(
-                        onPressed: authProvider.isLoading
-                            ? null
-                            : () async {
-                                print('LOGIN BUTTON PRESSED');
-                                print(StackTrace.current);
-                                final success = await context
-                                    .read<AuthProvider>()
-                                    .continueWithPhone(phoneController.text);
+  width: double.infinity,
+  height: 52,
+  child: ElevatedButton(
+    onPressed: authProvider.isLoading
+        ? null
+        : () async {
+            print('LOGIN BUTTON PRESSED');
+            print(StackTrace.current);
 
-                                if (success && context.mounted) {
-                                  final successMsg = context.read<AuthProvider>().successMessage ?? "OTP Sent Successfully";
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(successMsg),
-                                      backgroundColor: Colors.green,
-                                    ),
-                                  );
-                                  context.pushNamed(
-                                    'otp',
-                                    queryParameters: {
-                                      'phone': phoneController.text.trim(),
-                                    },
-                                  );
-                                }
-                              },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.yellow,
-                          elevation: 0,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: authProvider.isLoading
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.black,
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : Text(
-                                "Continue",
-                                style: TextStyle(
-                                  fontSize: context.sp(14),
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
-                                ),
-                              ),
-                      ),
-                    ),
+            final success = await context
+                .read<AuthProvider>()
+                .continueWithPhone(phoneController.text);
+
+            if (success && context.mounted) {
+              final successMsg = context.read<AuthProvider>().successMessage ??
+                  "OTP Sent Successfully";
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(successMsg),
+                  backgroundColor: Colors.green,
+                ),
+              );
+
+              context.pushNamed(
+                'otp',
+                queryParameters: {
+                  'phone': phoneController.text.trim(),
+                },
+              );
+            }
+          },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.yellow,
+      elevation: 0,
+      shadowColor: Colors.transparent,
+      padding: EdgeInsets.zero,
+      alignment: Alignment.center,
+      minimumSize: const Size(double.infinity, 52),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+    ),
+    child: authProvider.isLoading
+        ? const SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(
+              color: Colors.black,
+              strokeWidth: 2,
+            ),
+          )
+        : Text(
+            "Continue",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: context.sp(14),
+              fontWeight: FontWeight.w600,
+              height: 1.0,
+            ),
+          ),
+  ),
+),
 
                     const Spacer(),
 
