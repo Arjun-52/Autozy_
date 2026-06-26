@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/utils/responsive.dart';
 
 class SectionTitle extends StatelessWidget {
   final IconData icon;
@@ -8,18 +9,18 @@ class SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+     return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(6)),
       child: Row(
         children: [
-          Icon(icon, color: Colors.black),
-          const SizedBox(width: 8),
+          Icon(icon, color: Colors.black, size: context.w(20)),
+          SizedBox(width: context.w(8)),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF000000),
+            style: TextStyle(
+              fontSize: context.sp(14),
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF000000),
             ),
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/utils/responsive.dart';
 
 class SuccessButton extends StatelessWidget {
   final String text;
@@ -15,30 +16,24 @@ class SuccessButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-
+      padding: EdgeInsets.symmetric(horizontal: context.w(16)),
       child: SizedBox(
         width: double.infinity,
-        height: 60,
-
+        height: context.h(46),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: filled ? const Color(0xffF4C430) : Colors.white,
             foregroundColor: Colors.black,
-            elevation: filled ? 0 : 0,
-
+            elevation: 0,
             side: filled ? null : const BorderSide(color: Color(0xffF4C430)),
-
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(8),
             ),
           ),
-
           onPressed: onPressed,
-
           child: Text(
             text,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: context.sp(14), fontWeight: FontWeight.w600),
           ),
         ),
       ),

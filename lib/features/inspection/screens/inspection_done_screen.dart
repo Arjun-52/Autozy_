@@ -1,11 +1,11 @@
 import 'package:autozy/core/constants/colors.dart';
 import 'package:autozy/features/inspection/widgets/inspection_completed_progress.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../widgets/inspection_success_card.dart';
 
 import '../widgets/inspection_photos_grid.dart';
-import '../widgets/multiple_photos_upload_widget.dart';
 import '../widgets/inspection_notice_card.dart';
 import '../widgets/inspection_home_button.dart';
 
@@ -23,7 +23,11 @@ class InspectionDoneScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.pop(context);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              context.go('/home');
+            }
           },
         ),
         title: const Text(
@@ -50,10 +54,6 @@ class InspectionDoneScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             const InspectionPhotosGrid(),
-
-            const SizedBox(height: 20),
-
-            const MultiplePhotosUploadWidget(),
 
             const SizedBox(height: 20),
 

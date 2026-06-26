@@ -214,13 +214,22 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
   }
 
   void _showSnackBar(String message) {
-    final messenger = NavigationService.scaffoldMessengerKey.currentState;
-    messenger?.showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.redAccent,
-      ),
-    );
+    if (!mounted) return;
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    } catch (_) {
+      NavigationService.scaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
   }
 
   void _showSuccessDialog() {

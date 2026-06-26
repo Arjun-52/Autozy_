@@ -95,6 +95,10 @@ class TicketDetailsModel {
   final String? updatedAt;
   final TicketAuthorModel? author;
   final List<TicketReplyModel> replies;
+  final String? vehicleId;
+  final String? vehicleNumber;
+  final String? subscriptionId;
+  final String? serviceDate;
 
   TicketDetailsModel({
     this.id,
@@ -109,6 +113,10 @@ class TicketDetailsModel {
     this.updatedAt,
     this.author,
     this.replies = const [],
+    this.vehicleId,
+    this.vehicleNumber,
+    this.subscriptionId,
+    this.serviceDate,
   });
 
   factory TicketDetailsModel.fromJson(Map<String, dynamic> json) {
@@ -137,6 +145,10 @@ class TicketDetailsModel {
       updatedAt: json['updatedAt']?.toString() ?? json['updated_at']?.toString(),
       author: json['author'] != null ? TicketAuthorModel.fromJson(json['author']) : null,
       replies: repliesList,
+      vehicleId: json['vehicleId']?.toString(),
+      vehicleNumber: json['vehicleNumber']?.toString() ?? json['vehicle']?['vehicleNumber']?.toString(),
+      subscriptionId: json['subscriptionId']?.toString(),
+      serviceDate: json['serviceDate']?.toString(),
     );
   }
 
@@ -153,6 +165,10 @@ class TicketDetailsModel {
         'updatedAt': updatedAt,
         'author': author?.toJson(),
         'replies': replies.map((e) => e.toJson()).toList(),
+        'vehicleId': vehicleId,
+        'vehicleNumber': vehicleNumber,
+        'subscriptionId': subscriptionId,
+        'serviceDate': serviceDate,
       };
 }
 

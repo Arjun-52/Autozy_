@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/colors.dart';
+import '../../../core/utils/responsive.dart';
 
 class OtpLogo extends StatelessWidget {
   const OtpLogo({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 140,
-      width: 140,
-      decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Image.asset("assets/images/new-logo.png", fit: BoxFit.contain),
+    return SizedBox(
+      height: context.w(64),
+      width: context.w(64),
+      child: Image.asset(
+        "assets/images/new-logo.png",
+        fit: BoxFit.contain,
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/otp_provider.dart';
+import '../../../core/utils/responsive.dart';
 
 class OtpInputFields extends StatefulWidget {
   const OtpInputFields({super.key});
@@ -47,35 +48,37 @@ class _OtpInputFieldsState extends State<OtpInputFields> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(6, (index) {
         return SizedBox(
-          width: 48,
-          height: 48,
+          width: context.w(48), // Slightly responsive width, capped
+          height: context.w(48),
           child: TextField(
             controller: controllers[index],
             focusNode: focusNodes[index],
             textAlign: TextAlign.center,
             keyboardType: TextInputType.number,
             maxLength: 1,
-
+            style: TextStyle(
+              fontSize: context.sp(16),
+              fontWeight: FontWeight.w600,
+            ),
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-
             decoration: InputDecoration(
               counterText: "",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.grey),
+              contentPadding: EdgeInsets.zero,
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFFB5B8BC), width: 1.8),
               ),
-
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: Colors.green, width: 2),
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFFFFCB2F), width: 2.2),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFFB5B8BC), width: 1.8),
               ),
             ),
-
             onChanged: (value) {
-              /// Move focus
               moveNext(index, value);
-
-              /// Update provider
               context.read<OtpProvider>().updateOtp(index, value);
             },
           ),

@@ -60,9 +60,12 @@ class _ServiceCoverageSectionState extends State<ServiceCoverageSection> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16, color: color),
+          Padding(
+            padding: const EdgeInsets.only(top: 1),
+            child: Icon(icon, size: 16, color: color),
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -166,24 +169,26 @@ class _ServiceCoverageSectionState extends State<ServiceCoverageSection> {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildCoverageColumn(
-                      heading: "What's Included",
-                      headingColor: const Color(0xFF008847),
-                      bgColor: const Color(0xFFE8F8EF),
-                      icon: Icons.check_circle_outline_rounded,
-                      items: included,
-                    ),
-                    _buildCoverageColumn(
-                      heading: "What's Not Included",
-                      headingColor: Colors.red,
-                      bgColor: const Color(0xFFFFECEC),
-                      icon: Icons.cancel_outlined,
-                      items: excluded,
-                    ),
-                  ],
+                child: IntrinsicHeight(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildCoverageColumn(
+                        heading: "What's Included",
+                        headingColor: const Color(0xFF008847),
+                        bgColor: const Color(0xFFE8F8EF),
+                        icon: Icons.check_circle_outline_rounded,
+                        items: included,
+                      ),
+                      _buildCoverageColumn(
+                        heading: "What's Not Included",
+                        headingColor: Colors.red,
+                        bgColor: const Color(0xFFFFECEC),
+                        icon: Icons.cancel_outlined,
+                        items: excluded,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

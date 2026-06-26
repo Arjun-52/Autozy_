@@ -395,7 +395,11 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
                             },
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFF6C431), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))),
                       child: vehicleProvider.patchStatus == 'loading'
-                          ? const CircularProgressIndicator(color: Colors.black)
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2.5),
+                            )
                           : const Text('Update Vehicle', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
                     ),
                   ),

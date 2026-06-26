@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/utils/responsive.dart';
 
 class SuccessIcon extends StatelessWidget {
   const SuccessIcon({super.key});
@@ -6,17 +7,17 @@ class SuccessIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 120,
-      height: 120,
+      width: context.w(100),
+      height: context.w(100),
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
         color: Color(0xffC7E9D7),
       ),
-      child: const Center(
+      child: Center(
         child: CircleAvatar(
-          radius: 40,
-          backgroundColor: Color(0xff24B36B),
-          child: Icon(Icons.check, color: Colors.white, size: 40),
+          radius: context.w(35),
+          backgroundColor: const Color(0xff24B36B),
+          child: Icon(Icons.check, color: Colors.white, size: context.w(35)),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/utils/responsive.dart';
 
 class BookingSlotCard extends StatelessWidget {
   final String day;
@@ -17,56 +18,46 @@ class BookingSlotCard extends StatelessWidget {
     final parts = [day, date, time].where((e) => e.trim().isNotEmpty).toList();
     final label = parts.isEmpty ? 'No slot selected' : parts.join(', ');
     return Container(
-      width: double.infinity, // ✅ fill
-
-      padding: const EdgeInsets.all(16),
-
+      width: double.infinity,
+      padding: EdgeInsets.all(context.w(11)),
       decoration: BoxDecoration(
         color: Colors.white,
-
-        borderRadius: BorderRadius.circular(16), // ✅ fixed
-
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
-
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF161616).withOpacity(0.12), // ✅ exact
-            blurRadius: 13,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.015),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.access_time,
-            size: 20, // ✅ adjusted
-            color: Color(0xff7E8392),
+            size: context.w(20),
+            color: const Color(0xff7E8392),
           ),
-
-          const SizedBox(width: 16), // ✅ exact gap
-
+          SizedBox(width: context.w(10)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min, // ✅ prevents overflow
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  "Booking Slot", // ✅ unchanged
+                Text(
+                  "Booking Slot",
                   style: TextStyle(
-                    color: Color(0xff7E8392),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                    color: const Color(0xff7E8392),
+                    fontSize: context.sp(11),
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
-
-                const SizedBox(height: 4),
-
+                SizedBox(height: context.h(2)),
                 Text(
                   label,
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TextStyle(
+                    fontSize: context.sp(12.5),
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/utils/responsive.dart';
 
 class PayButton extends StatelessWidget {
   final String price;
@@ -10,26 +11,23 @@ class PayButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(16),
-
+        padding: EdgeInsets.all(context.w(16)),
         child: SizedBox(
           width: double.infinity,
-          height: 60,
-
+          height: context.h(46),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xffF4C430),
+              elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(8),
               ),
             ),
-
             onPressed: onPressed,
-
             child: Text(
               "Pay ₹$price",
-              style: const TextStyle(
-                fontSize: 18,
+              style: TextStyle(
+                fontSize: context.sp(14),
                 color: Colors.black,
                 fontWeight: FontWeight.w600,
               ),

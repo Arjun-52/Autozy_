@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/utils/responsive.dart';
 
 class BottomBar extends StatelessWidget {
   final String day;
@@ -11,37 +12,33 @@ class BottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(10)),
       decoration: BoxDecoration(
         color: Colors.white,
-
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 10,
-            spreadRadius: 2,
-            offset: const Offset(0, -3),
+            color: Colors.black.withOpacity(0.015),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
           ),
         ],
       ),
-
       child: Row(
         children: [
           Expanded(
             child: Text(
               "$date, $time",
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13)),
             ),
           ),
-
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xffF4C430),
-              padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 18),
+              backgroundColor: const Color(0xFFFFCB2F),
+              padding: EdgeInsets.symmetric(horizontal: context.w(32), vertical: context.h(10)),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(8),
               ),
-              elevation: 4,
+              elevation: 0,
             ),
             onPressed: () {
               context.pushNamed(
@@ -49,12 +46,12 @@ class BottomBar extends StatelessWidget {
                 extra: {"day": day, "date": date, "time": time},
               );
             },
-            child: const Text(
+            child: Text(
               "Next",
               style: TextStyle(
                 color: Colors.black,
                 fontWeight: FontWeight.w600,
-                fontSize: 16,
+                fontSize: context.sp(14),
               ),
             ),
           ),

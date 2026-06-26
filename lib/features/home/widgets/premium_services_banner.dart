@@ -11,16 +11,16 @@ class PremiumServicesBanner extends StatelessWidget {
         context.pushNamed('bookAddon');
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 20),
-        padding: const EdgeInsets.all(20),
+        margin: EdgeInsets.zero,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: const Color(0xFFFFCB2F), // Matches the premium yellow
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFFFCB2F).withOpacity(0.3),
-              blurRadius: 14,
-              offset: const Offset(0, 4),
+              color: const Color(0xFFFFCB2F).withOpacity(0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -28,19 +28,19 @@ class PremiumServicesBanner extends StatelessWidget {
           children: [
             // Dark icon container
             Container(
-              width: 48,
-              height: 48,
+              width: 30,
+              height: 30,
               decoration: BoxDecoration(
                 color: Colors.black,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
                 Icons.flash_on_rounded,
                 color: Color(0xFFFFCB2F),
-                size: 26,
+                size: 15,
               ),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 10),
             // Text Column
             Expanded(
               child: Column(
@@ -49,19 +49,19 @@ class PremiumServicesBanner extends StatelessWidget {
                   Text(
                     "Premium Services",
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                       color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  SizedBox(height: 1),
                   Text(
-                    "Interior Deep Cleaning\nCeramic Coating & More",
+                    "Interior Deep Cleaning, Ceramic Coating & More",
                     style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
                       color: Colors.black87,
-                      height: 1.3,
+                      height: 1.1,
                     ),
                   ),
                 ],
@@ -72,7 +72,7 @@ class PremiumServicesBanner extends StatelessWidget {
             const Icon(
               Icons.chevron_right_rounded,
               color: Colors.black,
-              size: 28,
+              size: 20,
             ),
           ],
         ),

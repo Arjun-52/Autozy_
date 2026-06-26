@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../providers/subscription_provider.dart';
 import '../../../data/models/dto/subscription_list_response.dart';
+import '../../../core/utils/responsive.dart';
 
 class SubscriptionsScreen extends StatefulWidget {
   const SubscriptionsScreen({super.key});
@@ -85,31 +86,31 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
   Widget _buildEmptyState(SubscriptionProvider provider) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(context.w(32)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.card_membership_outlined, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
-            const Text(
+            Icon(Icons.card_membership_outlined, size: context.w(64), color: Colors.grey),
+            SizedBox(height: context.h(16)),
+            Text(
               "No Subscriptions Found",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: context.sp(18), fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: context.h(8)),
+            Text(
               "Create your first subscription to get started.",
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: Colors.grey, fontSize: context.sp(13), fontWeight: FontWeight.w400),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: context.h(24)),
             ElevatedButton(
               onPressed: () => provider.fetchSubscriptions(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xffF4C430),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text("Retry", style: TextStyle(color: Colors.black)),
+              child: Text("Retry", style: TextStyle(color: Colors.black, fontSize: context.sp(13), fontWeight: FontWeight.w600)),
             ),
           ],
         ),
@@ -120,31 +121,31 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
   Widget _buildErrorState(SubscriptionProvider provider, String error) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(context.w(32)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.redAccent),
-            const SizedBox(height: 16),
-            const Text(
+            Icon(Icons.error_outline, size: context.w(64), color: Colors.redAccent),
+            SizedBox(height: context.h(16)),
+            Text(
               "Unable to load subscriptions",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: context.sp(18), fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: context.h(8)),
             Text(
               error.contains('SocketException') ? 'Please check your internet connection.' : error,
-              style: const TextStyle(color: Colors.grey),
+              style: TextStyle(color: Colors.grey, fontSize: context.sp(13), fontWeight: FontWeight.w400),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: context.h(24)),
             ElevatedButton(
               onPressed: () => provider.fetchSubscriptions(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xffF4C430),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text("Retry", style: TextStyle(color: Colors.black)),
+              child: Text("Retry", style: TextStyle(color: Colors.black, fontSize: context.sp(13), fontWeight: FontWeight.w600)),
             ),
           ],
         ),
@@ -160,20 +161,21 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     final vehicleNumber = sub.vehicle?.vehicleNumber ?? '';
     final slotType = sub.slotType ?? 'MORNING';
 
-    final textStyleLabel = TextStyle(fontSize: 12, color: Colors.grey.shade600, fontWeight: FontWeight.w500);
-    final textStyleValue = const TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.w600);
+    final textStyleLabel = TextStyle(fontSize: context.sp(10), color: Colors.grey.shade600, fontWeight: FontWeight.w500);
+    final textStyleValue = TextStyle(fontSize: context.sp(12.5), color: Colors.black, fontWeight: FontWeight.w600);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(18),
+      margin: EdgeInsets.only(bottom: context.h(12)),
+      padding: EdgeInsets.all(context.w(11)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.015),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -182,46 +184,48 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
         children: [
           /// TOP ROW (PLAN & STATUS)
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: EdgeInsets.all(context.w(8)),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFECBC),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: SvgPicture.asset(
                   'assets/images/view_plans.svg',
-                  height: 24,
-                  width: 24,
+                  height: context.w(20),
+                  width: context.w(20),
                   fit: BoxFit.contain,
                 ),
               ),
-              const SizedBox(width: 14),
+              SizedBox(width: context.w(10)),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       planName,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      style: TextStyle(
+                        fontSize: context.sp(14),
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: context.h(4)),
                     Text(
                       "₹$price /month",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xffC68A00),
+                      style: TextStyle(
+                        fontSize: context.sp(12.5),
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xffC68A00),
                       ),
                     ),
                   ],
                 ),
               ),
+              SizedBox(width: context.w(8)),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(4)),
                 decoration: BoxDecoration(
                   color: _getStatusBgColor(sub.status),
                   borderRadius: BorderRadius.circular(12),
@@ -234,17 +238,17 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                   _getStatusText(sub.status),
                   style: TextStyle(
                     color: _getStatusTextColor(sub.status),
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
+                    fontSize: context.sp(10),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: context.h(12)),
           const Divider(),
-          const SizedBox(height: 12),
+          SizedBox(height: context.h(8)),
 
           /// DETAILS GRID
           Row(
@@ -255,9 +259,12 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("VEHICLE", style: textStyleLabel),
-                    const SizedBox(height: 4),
+                    SizedBox(height: context.h(2)),
                     Text("$vehicleBrand $vehicleModel", style: textStyleValue),
-                    Text(vehicleNumber, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                    Text(
+                      vehicleNumber,
+                      style: TextStyle(fontSize: context.sp(11), color: Colors.grey.shade600, fontWeight: FontWeight.w400),
+                    ),
                   ],
                 ),
               ),
@@ -266,7 +273,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("SLOT TYPE", style: textStyleLabel),
-                    const SizedBox(height: 4),
+                    SizedBox(height: context.h(2)),
                     Text(slotType.toUpperCase(), style: textStyleValue),
                   ],
                 ),
@@ -274,7 +281,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
             ],
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(height: context.h(12)),
 
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,7 +291,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("START DATE", style: textStyleLabel),
-                    const SizedBox(height: 4),
+                    SizedBox(height: context.h(2)),
                     Text(_formatDate(sub.startDate), style: textStyleValue),
                   ],
                 ),
@@ -294,7 +301,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("END DATE", style: textStyleLabel),
-                    const SizedBox(height: 4),
+                    SizedBox(height: context.h(2)),
                     Text(_formatDate(sub.endDate), style: textStyleValue),
                   ],
                 ),
@@ -314,16 +321,16 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
     final listError = subProvider.listError;
 
     return Scaffold(
-      backgroundColor: const Color(0xffF5F5F5),
+      backgroundColor: const Color(0xFFF9F9FB),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "My Subscriptions",
           style: TextStyle(
             color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
+            fontSize: context.sp(16),
+            fontWeight: FontWeight.w600,
           ),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
@@ -367,7 +374,7 @@ class _SubscriptionsScreenState extends State<SubscriptionsScreen> {
 
           return ListView.builder(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(context.w(16)),
             itemCount: subscriptions.length,
             itemBuilder: (context, index) {
               final sub = subscriptions[index];

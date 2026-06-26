@@ -32,6 +32,10 @@ class _HomeBottomNavState extends State<HomeBottomNav> {
         unselectedItemColor: const Color(0xFF8E8E93),
         showUnselectedLabels: true,
         showSelectedLabels: true,
+        iconSize: 18,
+        selectedFontSize: 11,
+        unselectedFontSize: 11,
+        type: BottomNavigationBarType.fixed,
 
         onTap: (index) {
           setState(() {
