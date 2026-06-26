@@ -1,3 +1,4 @@
+import 'dart:io';
 import '../../core/utils/app_logger.dart';
 import '../services/api_service.dart';
 import '../models/vehicle_model.dart';
@@ -107,6 +108,24 @@ class VehicleRepository {
       return response;
     } catch (e, st) {
       AppLogger.error('API failures: Failed to delete vehicle: $vehicleId', tag: 'Vehicles', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  /// Uploads a vehicle image (multipart, field name `file`) to
+  /// POST /api/v1/vehicles/:id/image and returns the updated vehicle.
+  Future<Vehicle> uploadVehicleImage(String vehicleId, File imageFile) async {
+    try {
+      AppLogger.info('Uploading vehicle image for: $vehicleId', tag: 'Vehicles');
+      final data = await _apiService.postMultipart(
+        '/api/v1/vehicles/$vehicleId/image',
+        filePath: imageFile.path,
+        fieldName: 'file',
+      );
+      final vehicleData = data['data'] ?? data['vehicle'] ?? data;
+      return Vehicle.fromJson(vehicleData);
+    } catch (e, st) {
+      AppLogger.error('Failed to upload vehicle image: $vehicleId', tag: 'Vehicles', error: e, stackTrace: st);
       rethrow;
     }
   }

@@ -1,5 +1,6 @@
 import '../../core/utils/app_logger.dart';
 import '../services/api_service.dart';
+import '../models/addon_service_model.dart';
 import '../models/dto/my_addon_bookings_response.dart';
 import '../models/dto/book_addon_request_model.dart';
 import '../models/dto/book_addon_response_model.dart';
@@ -8,6 +9,28 @@ class AddonRepository {
   final ApiService _apiService;
 
   AddonRepository(this._apiService);
+
+  /// Fetches the live add-on services catalog (with images + pricing) from
+  /// GET /api/v1/addons/services for a given city and vehicle size.
+  Future<List<AddonServiceModel>> getAddonServices({
+    required String cityId,
+    required String vehicleSize,
+  }) async {
+    try {
+      AppLogger.info('Fetching add-on services. city: $cityId, size: $vehicleSize', tag: 'Addons');
+      final data = await _apiService.get(
+        '/api/v1/addons/services',
+        queryParameters: {'cityId': cityId, 'vehicleSize': vehicleSize},
+      );
+      final List<dynamic> list = data['data'] ?? data['services'] ?? [];
+      return list
+          .map((e) => AddonServiceModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      AppLogger.error('Failed to fetch add-on services', tag: 'Addons', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
 
   Future<MyAddonBookingsResponse> getMyAddonBookings({
     int page = 1,

@@ -93,7 +93,7 @@ class HomeSubscription {
       status: json['status'] ?? '',
       endDate: json['endDate'] ?? '',
       canPause: json['canPause'] ?? false,
-      nextCleaning: json['nextCleaning'] ?? json['next_cleaning'] ?? json['nextService'] ?? json['next_service'],
+      nextCleaning: json['nextCleaningDate'] ?? json['nextCleaning'] ?? json['next_cleaning'] ?? json['nextService'] ?? json['next_service'],
     );
   }
 
@@ -152,6 +152,8 @@ class TodayService {
   final String? detailerName;
   final String? serviceType;
   final String? cleaningDate;
+  final String? beforeImage;
+  final String? afterImage;
 
   TodayService({
     required this.id,
@@ -163,6 +165,8 @@ class TodayService {
     this.detailerName,
     this.serviceType,
     this.cleaningDate,
+    this.beforeImage,
+    this.afterImage,
   });
 
   factory TodayService.fromJson(Map<String, dynamic> json) {
@@ -176,6 +180,8 @@ class TodayService {
       detailerName: json['detailerName'] ?? json['detailer_name'] ?? json['detailer'],
       serviceType: json['serviceType'] ?? json['service_type'] ?? json['service'],
       cleaningDate: json['cleaningDate'] ?? json['cleaning_date'] ?? json['date'],
+      beforeImage: json['beforeImage'] ?? json['before_image'],
+      afterImage: json['afterImage'] ?? json['after_photo_url'] ?? json['after_image'],
     );
   }
 

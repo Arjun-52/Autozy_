@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../data/models/dto/home_dashboard_response.dart';
+import '../../../data/models/plan_model.dart';
+import '../../../providers/plan_provider.dart';
 
 class ServiceCoverageSection extends StatefulWidget {
   final HomeSubscription? subscription;
@@ -15,6 +18,43 @@ class ServiceCoverageSection extends StatefulWidget {
 
 class _ServiceCoverageSectionState extends State<ServiceCoverageSection> {
   bool _isExpanded = false;
+
+  // Fallback coverage shown until the plan's own features are available.
+  static const List<String> _defaultIncluded = [
+    "Exterior Dust Removal",
+    "Glass Cleaning",
+    "Dashboard Wipe",
+    "Tyre Shine",
+  ];
+  static const List<String> _defaultExcluded = [
+    "Engine Wash",
+    "Paint Repair",
+    "Dent Repair",
+    "Scratch Removal",
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final planProvider = context.read<PlanProvider>();
+      if (planProvider.plans.isEmpty) {
+        planProvider.fetchPlans();
+      }
+    });
+  }
+
+  /// Finds the plan whose name matches the active subscription's plan name,
+  /// so we can read its real included/excluded coverage.
+  Plan? _matchingPlan(PlanProvider planProvider) {
+    final planName = widget.subscription?.plan;
+    if (planName == null || planName.isEmpty) return null;
+    final target = planName.toLowerCase().trim();
+    for (final p in planProvider.plans) {
+      if (p.name.toLowerCase().trim() == target) return p;
+    }
+    return null;
+  }
 
   Widget _buildItemRow({required IconData icon, required String text, required Color color}) {
     return Padding(
@@ -39,8 +79,52 @@ class _ServiceCoverageSectionState extends State<ServiceCoverageSection> {
     );
   }
 
+  Widget _buildCoverageColumn({
+    required String heading,
+    required Color headingColor,
+    required Color bgColor,
+    required IconData icon,
+    required List<String> items,
+  }) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        color: bgColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              heading,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: headingColor,
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (items.isEmpty)
+              _buildItemRow(icon: icon, text: "—", color: headingColor)
+            else
+              ...items.map((t) => _buildItemRow(icon: icon, text: t, color: headingColor)),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final planProvider = context.watch<PlanProvider>();
+    final plan = _matchingPlan(planProvider);
+    final features = plan?.features;
+
+    final included = (features != null && features.included.isNotEmpty)
+        ? features.included
+        : _defaultIncluded;
+    final excluded = (features != null && features.excluded.isNotEmpty)
+        ? features.excluded
+        : _defaultExcluded;
+
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 20),
@@ -85,87 +169,19 @@ class _ServiceCoverageSectionState extends State<ServiceCoverageSection> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // What's Included Column (Left side - Light Green background)
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(14),
-                        color: const Color(0xFFE8F8EF),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "What's Included",
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF008847),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            _buildItemRow(
-                              icon: Icons.check_circle_outline_rounded,
-                              text: "Exterior Dust Removal",
-                              color: const Color(0xFF008847),
-                            ),
-                            _buildItemRow(
-                              icon: Icons.check_circle_outline_rounded,
-                              text: "Glass Cleaning",
-                              color: const Color(0xFF008847),
-                            ),
-                            _buildItemRow(
-                              icon: Icons.check_circle_outline_rounded,
-                              text: "Dashboard Wipe",
-                              color: const Color(0xFF008847),
-                            ),
-                            _buildItemRow(
-                              icon: Icons.check_circle_outline_rounded,
-                              text: "Tyre Shine",
-                              color: const Color(0xFF008847),
-                            ),
-                          ],
-                        ),
-                      ),
+                    _buildCoverageColumn(
+                      heading: "What's Included",
+                      headingColor: const Color(0xFF008847),
+                      bgColor: const Color(0xFFE8F8EF),
+                      icon: Icons.check_circle_outline_rounded,
+                      items: included,
                     ),
-                    // What's Not Included Column (Right side - Light Red background)
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(14),
-                        color: const Color(0xFFFFECEC),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "What's Not Included",
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            _buildItemRow(
-                              icon: Icons.cancel_outlined,
-                              text: "Engine Wash",
-                              color: Colors.red,
-                            ),
-                            _buildItemRow(
-                              icon: Icons.cancel_outlined,
-                              text: "Paint Repair",
-                              color: Colors.red,
-                            ),
-                            _buildItemRow(
-                              icon: Icons.cancel_outlined,
-                              text: "Dent Repair",
-                              color: Colors.red,
-                            ),
-                            _buildItemRow(
-                              icon: Icons.cancel_outlined,
-                              text: "Scratch Removal",
-                              color: Colors.red,
-                            ),
-                          ],
-                        ),
-                      ),
+                    _buildCoverageColumn(
+                      heading: "What's Not Included",
+                      headingColor: Colors.red,
+                      bgColor: const Color(0xFFFFECEC),
+                      icon: Icons.cancel_outlined,
+                      items: excluded,
                     ),
                   ],
                 ),

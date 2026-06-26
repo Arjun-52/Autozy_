@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../../core/utils/app_logger.dart';
 import '../data/repositories/vehicle_repository.dart';
@@ -17,6 +18,7 @@ class VehicleProvider extends ChangeNotifier {
   Vehicle? _createdVehicle;
   String? _creationStatus; // 'loading', 'success', 'error', null
   String? _deleteStatus; // 'loading', 'success', 'error', null
+  String? _imageUploadStatus; // 'loading', 'success', 'error', null
 
   // Pagination state
   int _currentPage = 1;
@@ -49,6 +51,7 @@ class VehicleProvider extends ChangeNotifier {
   String? get creationStatus => _creationStatus;
   String? get deleteStatus => _deleteStatus;
   String? get patchStatus => _patchStatus;
+  String? get imageUploadStatus => _imageUploadStatus;
 
   Future<void> fetchVehicles({int page = 1, int limit = 20, bool reset = false}) async {
     if (reset) {
@@ -191,6 +194,32 @@ class VehicleProvider extends ChangeNotifier {
     } catch (e) {
       _patchStatus = 'error';
       _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Uploads an image for a vehicle and updates it in local state.
+  Future<bool> uploadVehicleImage(String vehicleId, File imageFile) async {
+    _imageUploadStatus = 'loading';
+    _error = null;
+    notifyListeners();
+    try {
+      final updated = await _vehicleRepository.uploadVehicleImage(vehicleId, imageFile);
+      final index = _vehicles.indexWhere((v) => v.id == vehicleId);
+      if (index != -1) {
+        _vehicles[index] = updated;
+      }
+      if (_selectedVehicle?.id == vehicleId) {
+        _selectedVehicle = updated;
+      }
+      _imageUploadStatus = 'success';
+      AppLogger.info('Vehicle image uploaded: $vehicleId', tag: 'Vehicles');
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _imageUploadStatus = 'error';
+      _error = e.toString().replaceAll('Exception: ', '');
       notifyListeners();
       return false;
     }

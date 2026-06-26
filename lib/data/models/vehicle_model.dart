@@ -14,13 +14,13 @@ class Vehicle {
   final bool securityPermissionRequired;
   final bool isActive;
   final String status; // 'PENDING', 'APPROVED', 'REJECTED'
+  final String? imageUrl;
   final DateTime createdAt;
 
   // Legacy field compatibility
   String get name => '$brand $model';
   String get number => vehicleNumber;
   String get type => sizeCategory;
-  String? get imageUrl => null;
   DateTime get updatedAt => createdAt;
 
   Vehicle({
@@ -39,6 +39,7 @@ class Vehicle {
     required this.securityPermissionRequired,
     required this.isActive,
     required this.status,
+    this.imageUrl,
     required this.createdAt,
   });
 
@@ -66,6 +67,7 @@ class Vehicle {
       securityPermissionRequired: json['securityPermissionRequired'] ?? json['security_permission_required'] ?? false,
       isActive: json['isActive'] ?? json['is_active'] ?? true,
       status: json['status'] ?? 'PENDING',
+      imageUrl: json['imageUrl'] ?? json['image_url'],
       createdAt: DateTime.parse(json['createdAt'] ?? json['created_at'] ?? DateTime.now().toIso8601String()),
     );
   }
@@ -98,6 +100,8 @@ class Vehicle {
       'isActive': isActive,
       'is_active': isActive,
       'status': status,
+      'imageUrl': imageUrl,
+      'image_url': imageUrl,
       'createdAt': createdAt.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
     };
@@ -119,6 +123,7 @@ class Vehicle {
     bool? securityPermissionRequired,
     bool? isActive,
     String? status,
+    String? imageUrl,
     DateTime? createdAt,
   }) {
     return Vehicle(
@@ -137,6 +142,7 @@ class Vehicle {
       securityPermissionRequired: securityPermissionRequired ?? this.securityPermissionRequired,
       isActive: isActive ?? this.isActive,
       status: status ?? this.status,
+      imageUrl: imageUrl ?? this.imageUrl,
       createdAt: createdAt ?? this.createdAt,
     );
   }

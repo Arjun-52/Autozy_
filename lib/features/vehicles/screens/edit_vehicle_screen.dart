@@ -1,5 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../data/models/dto/update_vehicle_request.dart';
 import '../../../providers/vehicle_provider.dart';
@@ -38,6 +42,10 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
 
   bool _isLoading = false;
 
+  String? _imageUrl;
+  bool _uploadingImage = false;
+  final ImagePicker _picker = ImagePicker();
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +63,7 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
       selectedMake = vehicle.brand;
       selectedModel = vehicle.model;
       selectedSize = vehicle.sizeCategory;
+      _imageUrl = vehicle.imageUrl;
       latController.text = vehicle.parkingLocationLat?.toString() ?? '';
       lngController.text = vehicle.parkingLocationLng?.toString() ?? '';
       notesController.text = vehicle.parkingNotes ?? '';
@@ -63,6 +72,143 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  void _showPhotoSourceSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: const Text('Choose from Gallery'),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _pickAndUpload(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt_outlined),
+                title: const Text('Take a Photo'),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  _pickAndUpload(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickAndUpload(ImageSource source) async {
+    final messenger = ScaffoldMessenger.of(context);
+
+    if (source == ImageSource.camera) {
+      final status = await Permission.camera.request();
+      if (!status.isGranted) {
+        messenger.showSnackBar(
+          const SnackBar(content: Text('Camera permission is required.')),
+        );
+        return;
+      }
+    }
+
+    try {
+      final XFile? picked = await _picker.pickImage(source: source, imageQuality: 70);
+      if (picked == null) return;
+
+      setState(() => _uploadingImage = true);
+      final provider = context.read<VehicleProvider>();
+      final ok = await provider.uploadVehicleImage(widget.vehicleId, File(picked.path));
+
+      if (!mounted) return;
+      if (ok) {
+        // Refresh the stored URL from the server copy.
+        final refreshed = await provider.getVehicleById(widget.vehicleId);
+        if (!mounted) return;
+        setState(() => _imageUrl = refreshed.imageUrl);
+        messenger.showSnackBar(
+          const SnackBar(content: Text('Vehicle photo updated'), backgroundColor: Colors.green),
+        );
+      } else {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(provider.error ?? 'Failed to upload photo'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    } catch (e) {
+      AppLogger.error('Vehicle image pick/upload failed', tag: 'Vehicles', error: e);
+      if (mounted) {
+        messenger.showSnackBar(
+          const SnackBar(content: Text('Failed to select image'), backgroundColor: Colors.redAccent),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _uploadingImage = false);
+    }
+  }
+
+  Widget _buildPhotoPicker() {
+    return Center(
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                width: 110,
+                height: 110,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF6F6F6),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFFE5E5E5)),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: (_imageUrl != null && _imageUrl!.isNotEmpty)
+                    ? CachedNetworkImage(
+                        imageUrl: _imageUrl!,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) =>
+                            const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.directions_car, size: 40, color: Colors.grey),
+                      )
+                    : const Icon(Icons.directions_car, size: 40, color: Colors.grey),
+              ),
+              if (_uploadingImage)
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.35),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Center(
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          TextButton.icon(
+            onPressed: _uploadingImage ? null : _showPhotoSourceSheet,
+            icon: const Icon(Icons.camera_alt_outlined, size: 18),
+            label: Text(
+              (_imageUrl != null && _imageUrl!.isNotEmpty) ? 'Change Photo' : 'Add Photo',
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -98,6 +244,9 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
+                  // Vehicle Photo
+                  _buildPhotoPicker(),
+                  const SizedBox(height: 16),
                   // Vehicle Number (read‑only, cannot change)
                   buildField(
                     label: "Vehicle Number",
