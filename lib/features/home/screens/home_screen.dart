@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/home_provider.dart';
 import '../../../providers/vehicle_provider.dart';
+import '../../../core/utils/responsive.dart';
+import '../../../data/models/dto/home_dashboard_response.dart';
 import '../widgets/home_header.dart';
 import '../widgets/active_plan_card.dart';
 import '../widgets/vehicle_status_card.dart';
@@ -66,8 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 return SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: Container(
-                    height: MediaQuery.of(context).size.height - 150,
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    height: context.screenHeight - context.h(150),
+                    padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -76,25 +78,25 @@ class _HomeScreenState extends State<HomeScreen> {
                           size: 60,
                           color: Colors.redAccent,
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: context.h(16)),
                         Text(
                           homeProvider.error ?? 'Failed to load dashboard',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style: TextStyle(
+                            fontSize: context.sp(16),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        const Text(
+                        SizedBox(height: context.h(12)),
+                        Text(
                           "We encountered an error loading your data. Please pull down to refresh or tap retry.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 13,
-                            color: Color(0xFF7E8392),
+                            fontSize: context.sp(13),
+                            color: const Color(0xFF7E8392),
                           ),
                         ),
-                        const SizedBox(height: 24),
+                        SizedBox(height: context.h(24)),
                         ElevatedButton(
                           onPressed: _refreshData,
                           style: ElevatedButton.styleFrom(
@@ -103,11 +105,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(100),
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                            padding: EdgeInsets.symmetric(horizontal: context.w(32), vertical: context.h(12)),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Retry',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: context.sp(14),
+                            ),
                           ),
                         ),
                       ],
@@ -116,64 +121,76 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              final subscription = (dashboard != null && dashboard.subscriptions.isNotEmpty)
-                  ? dashboard.subscriptions.first
-                  : null;
-
-              final vehicle = vehicleProvider.vehicles.isNotEmpty
+              final activeVehicle = vehicleProvider.selectedVehicle ?? (vehicleProvider.vehicles.isNotEmpty
                   ? vehicleProvider.vehicles.first
-                  : null;
+                  : null);
 
-              final todayService = (dashboard != null && dashboard.todayServices.isNotEmpty)
-                  ? dashboard.todayServices.first
-                  : null;
+              HomeSubscription? subscription;
+              if (dashboard != null && activeVehicle != null) {
+                for (var sub in dashboard.subscriptions) {
+                  if (sub.vehicle.number == activeVehicle.vehicleNumber || sub.vehicle.id == activeVehicle.id) {
+                    subscription = sub;
+                    break;
+                  }
+                }
+              }
+
+              TodayService? todayService;
+              if (dashboard != null && activeVehicle != null) {
+                for (var service in dashboard.todayServices) {
+                  if (service.vehicleNumber == activeVehicle.vehicleNumber) {
+                    todayService = service;
+                    break;
+                  }
+                }
+              }
 
               return ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(16)),
                 children: [
                   // SECTION 1: HEADER
                   const HomeHeader(),
-                  const SizedBox(height: 24),
+                  SizedBox(height: context.h(24)),
 
                   // SECTION 2: ACTIVE SUBSCRIPTION CARD
                   ActivePlanCard(
                     subscription: subscription,
-                    hasVehicle: vehicle != null,
+                    hasVehicle: activeVehicle != null,
                   ),
 
                   // SECTION 3: VEHICLE STATUS CARD
                   VehicleStatusCard(
-                    vehicle: vehicle,
+                    vehicle: activeVehicle,
                     todayService: todayService,
                     subscription: subscription,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: context.h(24)),
 
                   // SECTION 4: ADD-ON SERVICES GRID
                   const AddonServicesSection(),
-                  const SizedBox(height: 24),
+                  SizedBox(height: context.h(28)),
 
                   // SECTION 5: TODAY'S CLEANING EVIDENCE
-                  if (vehicle != null && vehicle.status.toUpperCase() == 'APPROVED') ...[
+                  if (activeVehicle != null && activeVehicle.status.toUpperCase() == 'APPROVED') ...[
                     CleaningEvidenceCard(todayService: todayService),
-                    const SizedBox(height: 16),
+                    SizedBox(height: context.h(28)),
                   ],
 
                   // SECTION 6: PREMIUM SERVICES BANNER
                   const PremiumServicesBanner(),
-                  const SizedBox(height: 16),
+                  SizedBox(height: context.h(28)),
 
                   // SECTION 7: POPULAR SERVICE PACKAGES
                   const ServicePackagesSection(),
-                  const SizedBox(height: 24),
+                  SizedBox(height: context.h(28)),
 
                   // SECTION 8: SERVICE COVERAGE ACCORDION
                   ServiceCoverageSection(subscription: subscription),
-                  const SizedBox(height: 16),
+                  SizedBox(height: context.h(28)),
 
                   // SECTION 9: WHY AUTOZY SECTION
                   const WhyAutozySection(),
-                  const SizedBox(height: 32),
+                  SizedBox(height: context.h(32)),
                 ],
               );
             },
@@ -183,3 +200,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+

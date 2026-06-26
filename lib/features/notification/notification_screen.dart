@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/utils/responsive.dart';
 
 import '../../providers/notification_provider.dart';
 
@@ -39,13 +40,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F0E3),
+      backgroundColor: const Color(0xFFF9F9FB),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Notifications",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: context.sp(18)),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
@@ -67,9 +68,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
               onRefresh: provider.refreshNotifications,
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                children: const [
-                  SizedBox(height: 160),
-                  _EmptyState(),
+                children: [
+                  SizedBox(height: context.h(160)),
+                  const _EmptyState(),
                 ],
               ),
             );
@@ -80,18 +81,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
             onRefresh: provider.refreshNotifications,
             child: ListView.builder(
               controller: _scrollController,
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(context.w(16)),
               itemCount: items.length + (provider.isPageLoading ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index >= items.length) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Center(child: CircularProgressIndicator()),
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: context.h(16)),
+                    child: const Center(child: CircularProgressIndicator()),
                   );
                 }
 
                 final n = items[index];
                 return _notificationCard(
+                  context,
                   icon: _iconForType(n.type),
                   title: n.title.isEmpty ? 'Notification' : n.title,
                   subtitle: n.body,
@@ -138,7 +140,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return '${time.day}/${time.month}/${time.year}';
   }
 
-  Widget _notificationCard({
+  Widget _notificationCard(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String subtitle,
@@ -150,55 +153,64 @@ class _NotificationScreenState extends State<NotificationScreen> {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(11),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.015),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: const Color(0xFFFFF3D6),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(icon, color: Colors.orange),
+              child: Icon(icon, color: Colors.orange, size: 20),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 14,
+                      fontSize: context.sp(13),
                     ),
                   ),
                   if (subtitle.isNotEmpty) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       subtitle,
-                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                      style: TextStyle(color: Colors.grey, fontSize: context.sp(11), fontWeight: FontWeight.w400),
                     ),
                   ],
                 ],
               ),
             ),
+            const SizedBox(width: 8),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
                   time,
-                  style: const TextStyle(fontSize: 11, color: Colors.grey),
+                  style: TextStyle(fontSize: context.sp(10), color: Colors.grey),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
                 if (isUnread)
                   Container(
-                    width: 8,
-                    height: 8,
+                    width: 6,
+                    height: 6,
                     decoration: const BoxDecoration(
                       color: Color(0xFFC68A00),
                       shape: BoxShape.circle,
@@ -218,15 +230,15 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.notifications_off_outlined, size: 56, color: Colors.grey),
-          SizedBox(height: 12),
+          Icon(Icons.notifications_off_outlined, size: context.w(56), color: Colors.grey),
+          SizedBox(height: context.h(12)),
           Text(
             "You're all caught up",
-            style: TextStyle(color: Colors.grey, fontSize: 14),
+            style: TextStyle(color: Colors.grey, fontSize: context.sp(14), fontWeight: FontWeight.w400),
           ),
         ],
       ),
@@ -244,18 +256,18 @@ class _ErrorState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(context.w(24)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.cloud_off, size: 56, color: Colors.grey),
-            const SizedBox(height: 12),
+            Icon(Icons.cloud_off, size: context.w(56), color: Colors.grey),
+            SizedBox(height: context.h(12)),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey, fontSize: 13),
+              style: TextStyle(color: Colors.grey, fontSize: context.sp(13), fontWeight: FontWeight.w400),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: context.h(16)),
             ElevatedButton(
               onPressed: onRetry,
               child: const Text('Retry'),

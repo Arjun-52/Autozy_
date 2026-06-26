@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/text_styles.dart';
-
+import '../../../../core/utils/responsive.dart';
 import '../../../../providers/otp_provider.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -53,77 +53,117 @@ class _OtpScreenState extends State<OtpScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 6),
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: context.screenHeight - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom,
+            ),
+            child: IntrinsicHeight(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: context.w(28)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: context.h(4)),
 
-              const OtpHeader(),
-              const SizedBox(height: 20),
+                    /// Header
+                    Transform.translate(
+                      offset: Offset(-context.w(10), 0),
+                      child: const OtpHeader(),
+                    ),
+                    SizedBox(height: context.h(24)),
 
-              const OtpLogo(),
-              const SizedBox(height: 20),
+                    /// Logo
+                    const OtpLogo(),
+                    SizedBox(height: context.h(28)),
 
-              Text(
-                "We have sent a verification code to",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                textAlign: TextAlign.center,
-              ),
+                    /// Verification message
+                    Text(
+                      "We have sent a verification code to",
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: context.sp(13),
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF8E8E93),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: context.h(4)),
+                    Text(
+                      "+91 ${widget.phone}",
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: context.sp(14),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
 
-              const SizedBox(height: 6),
+                    SizedBox(height: context.h(28)),
 
-              Text(
-                "+91 ${widget.phone}",
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                    /// Enter Code title
+                    Text(
+                      "Enter the Code",
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: context.sp(30),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    SizedBox(height: context.h(6)),
+
+                    /// Subtitle
+                    Text(
+                      "Please enter the 6-digit code sent to your number",
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: context.sp(12),
+                        fontWeight: FontWeight.w400,
+                        color: const Color(0xFF8E8E93),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    SizedBox(height: context.h(24)),
+
+                    /// OTP boxes
+                    const OtpInputFields(),
+
+                    SizedBox(height: context.h(32)),
+
+                    /// Verify Button
+                    VerifyButton(
+                      onPressed: authProvider.isLoading
+                          ? null
+                          : () async {
+                              print('OTP SUBMIT PRESSED');
+                              print(StackTrace.current);
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              final otpProvider = context.read<OtpProvider>();
+
+                              final success = await context
+                                  .read<AuthProvider>()
+                                  .verifyOtpAndLogin(widget.phone, otpProvider.otp);
+
+                              if (success && context.mounted) {
+                                context.go('/select-area');
+                              }
+                            },
+                    ),
+
+                    SizedBox(height: context.h(24)),
+
+                    /// Resend OTP
+                    const ResendOtpText(),
+
+                    const Spacer(),
+                    SizedBox(height: context.h(20)),
+                  ],
                 ),
               ),
-
-              const SizedBox(height: 26),
-
-              const Text(
-                "Enter The Code",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              const OtpInputFields(),
-
-              const SizedBox(height: 30),
-
-              VerifyButton(
-                onPressed: authProvider.isLoading
-                    ? null
-                    : () async {
-                        print('OTP SUBMIT PRESSED');
-                        print(StackTrace.current);
-                        ScaffoldMessenger.of(context).clearSnackBars();
-                        final otpProvider = context.read<OtpProvider>();
-
-                        final success = await context
-                            .read<AuthProvider>()
-                            .verifyOtpAndLogin(widget.phone, otpProvider.otp);
-
-                        if (success && context.mounted) {
-                          context.go('/select-area');
-                        }
-                      },
-              ),
-
-              const SizedBox(height: 30),
-
-              const ResendOtpText(),
-
-              const SizedBox(height: 20),
-            ],
+            ),
           ),
         ),
       ),

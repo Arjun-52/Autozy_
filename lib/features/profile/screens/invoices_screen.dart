@@ -2,41 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'dart:ui' show BlendMode, ColorFilter;
 import 'package:go_router/go_router.dart';
+import '../../../core/utils/responsive.dart';
 
 class InvoicesScreen extends StatelessWidget {
   const InvoicesScreen({super.key});
 
-  Widget buildSummaryCard(String value, String label, Widget icon) {
+  Widget buildSummaryCard(BuildContext context, String value, String label, Widget icon) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(11),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.12),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(0.015),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Column(
           children: [
-            SizedBox(height: 28, width: 28, child: icon),
-            const SizedBox(height: 10),
+            SizedBox(height: context.h(24), width: context.h(24), child: icon),
+            const SizedBox(height: 6),
             Text(
               value,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: context.sp(16), fontWeight: FontWeight.w600),
             ),
-            Text(label, style: const TextStyle(color: Colors.grey)),
+            const SizedBox(height: 2),
+            Text(label, style: TextStyle(color: Colors.grey, fontSize: context.sp(11.5), fontWeight: FontWeight.w400)),
           ],
         ),
       ),
     );
   }
 
-  Widget buildInvoiceCard({
+  Widget buildInvoiceCard(BuildContext context, {
     required String plan,
     required String vehicle,
     required String date,
@@ -44,16 +47,17 @@ class InvoicesScreen extends StatelessWidget {
     required bool paid,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(18),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(11),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.12),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.015),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -62,20 +66,20 @@ class InvoicesScreen extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.orange.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: SvgPicture.asset(
                   'assets/images/document.svg',
-                  height: 24,
-                  width: 24,
+                  height: 20,
+                  width: 20,
                   fit: BoxFit.contain,
                 ),
               ),
 
-              const SizedBox(width: 14),
+              const SizedBox(width: 10),
 
               Expanded(
                 child: Column(
@@ -83,29 +87,35 @@ class InvoicesScreen extends StatelessWidget {
                   children: [
                     Text(
                       plan,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                      style: TextStyle(
+                        fontSize: context.sp(13.5),
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Text(vehicle, style: const TextStyle(color: Colors.grey)),
+                    const SizedBox(height: 1),
+                    Text(
+                      vehicle, 
+                      style: TextStyle(color: Colors.grey, fontSize: context.sp(11), fontWeight: FontWeight.w400),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
                 ),
               ),
 
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
+                  horizontal: 10,
                   vertical: 3,
                 ),
                 decoration: BoxDecoration(
                   color: paid
-                      ? Colors.green.withValues(alpha: 0.15)
-                      : Colors.red.withValues(alpha: 0.15),
+                      ? Colors.green.withOpacity(0.08)
+                      : Colors.red.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: paid ? Colors.green : Colors.red,
-                    width: 1,
+                    width: 0.8,
                   ),
                 ),
                 child: Row(
@@ -113,7 +123,7 @@ class InvoicesScreen extends StatelessWidget {
                   children: [
                     Icon(
                       paid ? Icons.check_circle : Icons.warning_amber_rounded,
-                      size: 16,
+                      size: 13,
                       color: paid ? Colors.green : Colors.red,
                     ),
                     const SizedBox(width: 4),
@@ -122,7 +132,7 @@ class InvoicesScreen extends StatelessWidget {
                       style: TextStyle(
                         color: paid ? Colors.green : Colors.red,
                         fontWeight: FontWeight.w500,
-                        fontSize: 10,
+                        fontSize: context.sp(9.5),
                       ),
                     ),
                   ],
@@ -131,27 +141,30 @@ class InvoicesScreen extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
 
-          const Divider(),
+          const Divider(height: 1),
 
-          const SizedBox(height: 6),
+          const SizedBox(height: 8),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(date, style: const TextStyle(color: Colors.grey)),
+              Text(
+                date, 
+                style: TextStyle(color: Colors.grey, fontSize: context.sp(11.5), fontWeight: FontWeight.w400),
+              ),
               Row(
                 children: [
                   Text(
                     price,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
+                    style: TextStyle(
+                      fontSize: context.sp(13.5),
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(width: 6),
-                  const Icon(Icons.chevron_right),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.chevron_right, size: 18),
                 ],
               ),
             ],
@@ -164,59 +177,62 @@ class InvoicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF5F5F5),
+      backgroundColor: const Color(0xFFF9F9FB),
 
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Invoices & Bills",
           style: TextStyle(
             color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
+            fontSize: context.sp(18),
+            fontWeight: FontWeight.w600,
           ),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
 
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(context.w(16)),
         child: Column(
           children: [
             /// TOP SUMMARY
             Row(
               children: [
                 buildSummaryCard(
+                  context,
                   "₹3,959",
                   "Total Paid",
                   SvgPicture.asset(
                     'assets/images/moneys.svg',
-                    height: 24,
-                    width: 24,
+                    height: 20,
+                    width: 20,
                     fit: BoxFit.contain,
                   ),
                 ),
                 const SizedBox(width: 12),
                 buildSummaryCard(
+                  context,
                   "5",
                   "Invoices",
                   SvgPicture.asset(
                     'assets/images/view_plans.svg',
-                    height: 24,
-                    width: 24,
+                    height: 20,
+                    width: 20,
                     fit: BoxFit.contain,
                   ),
                 ),
               ],
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
             Expanded(
               child: ListView(
                 children: [
                   buildInvoiceCard(
+                    context,
                     plan: "Premium Plan",
                     vehicle: "TS 01 AB 1234 • BMW 3 Series",
                     date: "08 Mar 2026",
@@ -225,6 +241,7 @@ class InvoicesScreen extends StatelessWidget {
                   ),
 
                   buildInvoiceCard(
+                    context,
                     plan: "Standard Plan",
                     vehicle: "KA 01 CD 4567 • Honda City",
                     date: "24 Feb 2026",
@@ -233,6 +250,7 @@ class InvoicesScreen extends StatelessWidget {
                   ),
 
                   buildInvoiceCard(
+                    context,
                     plan: "Basic Plan",
                     vehicle: "TS 06 AB 0002 • Maruti Fronx",
                     date: "02 Jan 2026",
@@ -246,9 +264,8 @@ class InvoicesScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
+        currentIndex: 3,
         onTap: (index) {
-          // Match go_router nested routes under /home.
           if (index == 0) {
             context.go('/home?initialIndex=0');
           } else if (index == 1) {
@@ -259,8 +276,13 @@ class InvoicesScreen extends StatelessWidget {
             context.go('/home/profile');
           }
         },
-        selectedItemColor: const Color(0xffC68A00),
+        selectedItemColor: Colors.orange,
         unselectedItemColor: const Color(0xFF8E8E93),
+        showUnselectedLabels: true,
+        showSelectedLabels: true,
+        iconSize: 18,
+        selectedFontSize: 11,
+        unselectedFontSize: 11,
         type: BottomNavigationBarType.fixed,
         items: [
           const BottomNavigationBarItem(
@@ -273,8 +295,8 @@ class InvoicesScreen extends StatelessWidget {
                 final tint = IconTheme.of(context).color ?? const Color(0xFF8E8E93);
                 return SvgPicture.asset(
                   'assets/images/car2.svg',
-                  height: 24,
-                  width: 24,
+                  height: 18,
+                  width: 18,
                   colorFilter: ColorFilter.mode(tint, BlendMode.srcIn),
                 );
               },

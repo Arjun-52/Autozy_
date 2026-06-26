@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../providers/daily_service_provider.dart';
 import '../../../providers/vehicle_provider.dart';
 import '../../../data/models/dto/service_history_response.dart';
+import '../../../core/utils/responsive.dart';
 
 class ServiceHistoryScreen extends StatefulWidget {
   final String vehicleId;
@@ -51,26 +52,26 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xffF5F5F5),
+      backgroundColor: const Color(0xFFF9F9FB),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "Service History",
               style: TextStyle(
                 color: Colors.black,
-                fontSize: 18,
+                fontSize: context.sp(15),
                 fontWeight: FontWeight.w600,
               ),
             ),
             Text(
               "${vehicle.brand} ${vehicle.model} (${vehicle.vehicleNumber})",
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.grey,
-                fontSize: 12,
+                fontSize: context.sp(11.5),
                 fontWeight: FontWeight.w400,
               ),
             ),
@@ -98,14 +99,14 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
           child: ListView.builder(
             controller: _scrollController,
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(context.w(16)),
             itemCount: provider.historyList.length + 1,
             itemBuilder: (context, index) {
               if (index == provider.historyList.length) {
                 return provider.isPageLoading
-                    ? const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24),
-                        child: Center(
+                    ? Padding(
+                        padding: EdgeInsets.symmetric(vertical: context.h(24)),
+                        child: const Center(
                           child: CircularProgressIndicator(
                             color: Color(0xffF4C430),
                           ),
@@ -125,16 +126,17 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
     final formattedDate = _formatDate(item.serviceDate ?? '');
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: context.h(12)),
+      padding: EdgeInsets.all(context.w(11)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.015),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -145,74 +147,76 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(4)),
                 decoration: BoxDecoration(
                   color: statusColor.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   (item.serviceStatus ?? 'UNKNOWN').toUpperCase(),
                   style: TextStyle(
                     color: statusColor,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
+                    fontSize: context.sp(10),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
               Text(
                 formattedDate,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.grey,
-                  fontSize: 12,
+                  fontSize: context.sp(11.5),
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: context.h(8)),
           Text(
             item.serviceType ?? 'General Wash & Clean',
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+            style: TextStyle(
+              fontSize: context.sp(14),
+              fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
           ),
           if (item.specialistDetails != null) ...[
-            const SizedBox(height: 8),
+            SizedBox(height: context.h(8)),
             Row(
               children: [
-                const Icon(Icons.person_outline, size: 16, color: Colors.grey),
-                const SizedBox(width: 6),
+                Icon(Icons.person_outline, size: 14, color: Colors.grey.shade500),
+                SizedBox(width: context.w(6)),
                 Text(
                   "Specialist: ${item.specialistDetails}",
-                  style: const TextStyle(color: Colors.black54, fontSize: 13),
+                  style: TextStyle(color: Colors.black54, fontSize: context.sp(12), fontWeight: FontWeight.w400),
                 ),
               ],
             ),
           ],
           if (item.completionInfo != null) ...[
-            const SizedBox(height: 6),
+            SizedBox(height: context.h(6)),
             Row(
               children: [
-                const Icon(Icons.check_circle_outline, size: 16, color: Colors.green),
-                const SizedBox(width: 6),
+                const Icon(Icons.check_circle_outline, size: 14, color: Colors.green),
+                SizedBox(width: context.w(6)),
                 Text(
                   "Completed: ${item.completionInfo}",
-                  style: const TextStyle(color: Colors.black54, fontSize: 13),
+                  style: TextStyle(color: Colors.black54, fontSize: context.sp(12), fontWeight: FontWeight.w400),
                 ),
               ],
             ),
           ],
           if (item.notes != null && item.notes!.isNotEmpty) ...[
-            const SizedBox(height: 10),
+            SizedBox(height: context.h(10)),
             const Divider(),
-            const SizedBox(height: 6),
+            SizedBox(height: context.h(6)),
             Text(
               "Notes: ${item.notes}",
               style: TextStyle(
                 color: Colors.grey.shade700,
-                fontSize: 12,
+                fontSize: context.sp(11.5),
                 fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ],
@@ -258,32 +262,33 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
 
   Widget _buildShimmerLoading() {
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(context.w(16)),
       itemCount: 4,
       itemBuilder: (context, index) {
         return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          height: 120,
+          margin: EdgeInsets.only(bottom: context.h(12)),
+          height: context.h(120),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE9E9E9)),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(context.w(11)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(width: 80, height: 16, color: Colors.grey.shade200),
-                    Container(width: 60, height: 16, color: Colors.grey.shade200),
+                    Container(width: context.w(80), height: context.h(16), color: Colors.grey.shade200),
+                    Container(width: context.w(60), height: context.h(16), color: Colors.grey.shade200),
                   ],
                 ),
-                const SizedBox(height: 16),
-                Container(width: 150, height: 20, color: Colors.grey.shade200),
-                const SizedBox(height: 12),
-                Container(width: 200, height: 14, color: Colors.grey.shade200),
+                SizedBox(height: context.h(16)),
+                Container(width: context.w(150), height: context.h(20), color: Colors.grey.shade200),
+                SizedBox(height: context.h(12)),
+                Container(width: context.w(200), height: context.h(14), color: Colors.grey.shade200),
               ],
             ),
           ),
@@ -295,38 +300,40 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
   Widget _buildEmptyState(DailyServiceProvider provider) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(context.w(32)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.history, size: 70, color: Colors.grey.shade400),
-            const SizedBox(height: 16),
-            const Text(
+            Icon(Icons.history, size: context.w(64), color: Colors.grey.shade400),
+            SizedBox(height: context.h(16)),
+            Text(
               "No service history available",
               style: TextStyle(
-                fontSize: 16,
+                fontSize: context.sp(14),
                 fontWeight: FontWeight.w600,
                 color: Colors.black54,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: context.h(8)),
+            Text(
               "When your vehicle is cleaned or serviced, history will appear here.",
               style: TextStyle(
-                fontSize: 13,
+                fontSize: context.sp(12.5),
                 color: Colors.grey,
+                fontWeight: FontWeight.w400,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: context.h(24)),
             ElevatedButton.icon(
               onPressed: () => provider.fetchHistory(widget.vehicleId),
-              icon: const Icon(Icons.refresh),
-              label: const Text("Refresh"),
+              icon: Icon(Icons.refresh, size: context.w(18)),
+              label: Text("Refresh", style: TextStyle(fontSize: context.sp(13), fontWeight: FontWeight.w600)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xffF4C430),
                 foregroundColor: Colors.black,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
             ),
           ],
@@ -338,29 +345,29 @@ class _ServiceHistoryScreenState extends State<ServiceHistoryScreen> {
   Widget _buildErrorState(DailyServiceProvider provider) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: EdgeInsets.all(context.w(32)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 70, color: Colors.redAccent),
-            const SizedBox(height: 16),
+            Icon(Icons.error_outline, size: context.w(64), color: Colors.redAccent),
+            SizedBox(height: context.h(16)),
             Text(
               provider.errorMessage ?? "An error occurred while loading history.",
-              style: const TextStyle(
-                fontSize: 15,
+              style: TextStyle(
+                fontSize: context.sp(13.5),
                 fontWeight: FontWeight.w500,
                 color: Colors.black87,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: context.h(24)),
             ElevatedButton(
               onPressed: () => provider.fetchHistory(widget.vehicleId),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.redAccent,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text("Retry Connection", style: TextStyle(color: Colors.white)),
+              child: Text("Retry Connection", style: TextStyle(color: Colors.white, fontSize: context.sp(13), fontWeight: FontWeight.w600)),
             ),
           ],
         ),

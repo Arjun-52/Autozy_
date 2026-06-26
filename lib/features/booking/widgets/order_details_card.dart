@@ -6,6 +6,7 @@ import '../../../providers/plan_provider.dart';
 import '../../../providers/vehicle_provider.dart';
 import '../../../providers/area_provider.dart';
 import '../../../providers/subscription_provider.dart';
+import '../../../core/utils/responsive.dart';
 import 'plan_pricing.dart';
 
 class OrderDetailsCard extends StatelessWidget {
@@ -61,200 +62,186 @@ class OrderDetailsCard extends StatelessWidget {
     final slotLabel = slotParts.isEmpty ? 'Slot confirmed' : slotParts.join(', ');
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
-
+      margin: EdgeInsets.symmetric(horizontal: context.w(16)),
+      padding: EdgeInsets.all(context.w(16)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.015),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Center(
+          Center(
             child: Column(
               children: [
                 Text(
                   "Order Number",
                   style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xff7E8392),
+                    fontSize: context.sp(11),
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xff7E8392),
                   ),
                 ),
-
-                SizedBox(height: 4),
-
+                SizedBox(height: context.h(4)),
                 Text(
                   "ORD–2026001",
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFF013E6D),
+                    fontSize: context.sp(15),
+                    color: const Color(0xFF013E6D),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
             ),
           ),
-
-          const SizedBox(height: 20),
+          SizedBox(height: context.h(16)),
 
           /// BOOKING SLOT
           Container(
-            padding: const EdgeInsets.all(16),
-
+            padding: EdgeInsets.all(context.w(12)),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE9E9E9)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.15),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+                  color: Colors.black.withOpacity(0.015),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
-
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// Title Row
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.access_time, color: Colors.grey),
-                    SizedBox(width: 8),
-
+                    Icon(Icons.access_time, color: Colors.grey, size: context.w(18)),
+                    SizedBox(width: context.w(8)),
                     Text(
                       "Booking Slot",
                       style: TextStyle(
                         color: Colors.grey,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                        fontSize: context.sp(12),
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
                 ),
-
-                const SizedBox(height: 8),
-
-                /// Slot Time
+                SizedBox(height: context.h(6)),
                 Text(
                   slotLabel,
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5)),
                 ),
               ],
             ),
           ),
-
-          const SizedBox(height: 16),
+          SizedBox(height: context.h(12)),
 
           /// PLAN DETAILS CARD
           Container(
-            padding: const EdgeInsets.all(16),
-
+            padding: EdgeInsets.all(context.w(12)),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE9E9E9)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.18),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+                  color: Colors.black.withOpacity(0.015),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
-
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   "Plan Details",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: context.sp(13.5), fontWeight: FontWeight.w600),
                 ),
-
-                const SizedBox(height: 12),
-
+                SizedBox(height: context.h(10)),
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
-
+                      padding: EdgeInsets.all(context.w(8)),
                       decoration: BoxDecoration(
                         color: const Color(0xffF4C430),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: SvgPicture.asset(
                         'assets/images/Star.svg',
-                        height: 24,
-                        width: 24,
+                        height: context.w(18),
+                        width: context.w(18),
                       ),
                     ),
-
-                    const SizedBox(width: 10),
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          planName,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: Color(0xff7E8392),
+                    SizedBox(width: context.w(10)),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            planName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: context.sp(12.5),
+                              color: const Color(0xff7E8392),
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-
-                        Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: priceText,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16,
-                                  color: AppColors.onSurface,
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: priceText,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: context.sp(14),
+                                    color: AppColors.onSurface,
+                                  ),
                                 ),
-                              ),
-                              const TextSpan(
-                                text: " /month",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF7E8392),
+                                TextSpan(
+                                  text: " /month",
+                                  style: TextStyle(
+                                    fontSize: context.sp(11),
+                                    fontWeight: FontWeight.w400,
+                                    color: const Color(0xFF7E8392),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: context.h(16)),
 
           /// AMOUNT PAID
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 "Amount Paid",
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5)),
               ),
               const Spacer(),
               Text(
                 amountPaidText,
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(16), color: Colors.black),
               ),
             ],
           ),

@@ -3,7 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/otp_provider.dart';
-import '../../../core/constants/text_styles.dart';
+import '../../../core/utils/responsive.dart';
 
 class ResendOtpText extends StatefulWidget {
   const ResendOtpText({super.key});
@@ -39,26 +39,36 @@ class _ResendOtpTextState extends State<ResendOtpText> {
         children: [
           TextSpan(
             text: "Didn't receive OTP? ",
-            style: AppTextStyles.caption.copyWith(
-              color: const Color(0xFF5B5B5E),
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: context.sp(12),
+              fontWeight: FontWeight.w400,
+              color: const Color(0xFF8E8E93),
             ),
           ),
-
           otpProvider.canResend
               ? TextSpan(
                   text: "Resend OTP",
-                  style: AppTextStyles.caption.copyWith(
-                    color: const Color(0xFFDD900C),
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: context.sp(12),
                     fontWeight: FontWeight.w600,
+                    color: const Color(0xFFFFCB2F), // Brand Yellow
                   ),
                   recognizer: _tapGestureRecognizer,
                 )
               : TextSpan(
                   text: "Resend in ${otpProvider.secondsRemaining}s",
-                  style: AppTextStyles.caption.copyWith(color: Colors.grey),
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: context.sp(12),
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFF8E8E93),
+                  ),
                 ),
         ],
       ),
+      textAlign: TextAlign.center,
     );
   }
 }

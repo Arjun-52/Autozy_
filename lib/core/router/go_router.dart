@@ -26,6 +26,8 @@ import '../../features/profile/screens/addon_bookings_screen.dart';
 import '../../features/booking/screens/book_addon_screen.dart';
 import '../../features/profile/screens/tickets_screen.dart';
 import '../../features/profile/screens/ticket_details_screen.dart';
+import '../../features/profile/screens/support_center_screen.dart';
+import '../../features/profile/screens/raise_ticket_screen.dart';
 
 class AppGoRouter {
   static final GoRouter router = GoRouter(
@@ -234,6 +236,16 @@ class AppGoRouter {
         builder: (context, state) => const BookAddonScreen(),
       ),
       GoRoute(
+        path: '/support',
+        name: 'support',
+        builder: (context, state) => const SupportCenterScreen(),
+      ),
+      GoRoute(
+        path: '/raise-ticket',
+        name: 'raiseTicket',
+        builder: (context, state) => const RaiseTicketScreen(),
+      ),
+      GoRoute(
         path: '/tickets',
         name: 'tickets',
         builder: (context, state) => const TicketsScreen(),
@@ -322,5 +334,9 @@ class AppRoutes {
   static const String serviceCalendar = '/service-calendar';
   static const String addonBookings = '/addon-bookings';
   static const String bookAddon = '/book-addon';
+  static const String support = '/support';
+  static const String raiseTicket = '/raise-ticket';
+  static const String tickets = '/tickets';
+  static const String ticketDetails = '/ticket-details';
 }
 
