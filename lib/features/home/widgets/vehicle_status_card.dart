@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 import '../../../data/models/vehicle_model.dart';
 import '../../../data/models/dto/home_dashboard_response.dart';
+import '../../../providers/vehicle_provider.dart';
 
 class VehicleStatusCard extends StatelessWidget {
   final Vehicle? vehicle;
@@ -27,6 +29,10 @@ class VehicleStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final vehicleProvider = context.watch<VehicleProvider>();
+    final vehiclesList = vehicleProvider.vehicles;
+    final hasMultipleVehicles = vehiclesList.length > 1;
+
     if (vehicle == null) {
       return Container(
         width: double.infinity,
@@ -225,22 +231,71 @@ class VehicleStatusCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          // Approval Badge
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: badgeBg,
-                              borderRadius: BorderRadius.circular(100),
-                              border: Border.all(color: badgeColor, width: 0.8),
-                            ),
-                            child: Text(
-                              badgeText,
-                              style: TextStyle(
-                                color: badgeColor,
-                                fontSize: 9,
-                                fontWeight: FontWeight.w600,
+                           // Approval Badge & Dropdown
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: badgeBg,
+                                  borderRadius: BorderRadius.circular(100),
+                                  border: Border.all(color: badgeColor, width: 0.8),
+                                ),
+                                child: Text(
+                                  badgeText,
+                                  style: TextStyle(
+                                    color: badgeColor,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
-                            ),
+                              if (hasMultipleVehicles) ...[
+                                const SizedBox(width: 4),
+                                PopupMenuButton<Vehicle>(
+                                  icon: const Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    size: 18,
+                                    color: Colors.black54,
+                                  ),
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  style: const ButtonStyle(
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  onSelected: (Vehicle selected) {
+                                    vehicleProvider.selectVehicle(selected);
+                                  },
+                                  itemBuilder: (BuildContext context) {
+                                    return vehiclesList.map((Vehicle v) {
+                                      final isSelected = v.id == vehicle!.id;
+                                      return PopupMenuItem<Vehicle>(
+                                        value: v,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "${v.brand} ${v.model} (${v.vehicleNumber})",
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                              ),
+                                            ),
+                                            if (isSelected)
+                                              const Icon(
+                                                Icons.check,
+                                                color: Color(0xFFFFCB2F),
+                                                size: 16,
+                                              ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList();
+                                  },
+                                ),
+                              ],
+                            ],
                           ),
                         ],
                       ),
@@ -256,22 +311,34 @@ class VehicleStatusCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       // Active Subscription Name Row
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            status == 'APPROVED' ? Icons.check_circle_rounded : Icons.pending_rounded,
-                            color: badgeColor,
-                            size: 14,
+                          Padding(
+                            padding: const EdgeInsets.only(top: 1.0),
+                            child: Icon(
+                              status == 'APPROVED'
+                                  ? Icons.check_circle_rounded
+                                  : status == 'REJECTED'
+                                      ? Icons.cancel
+                                      : Icons.pending_rounded,
+                              color: badgeColor,
+                              size: 14,
+                            ),
                           ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              status == 'APPROVED' ? planName : "Pending Approval",
+                              status == 'APPROVED'
+                                  ? planName
+                                  : status == 'REJECTED'
+                                      ? "Vehicle got rejected because: ${vehicle!.rejectionReason ?? 'Quality check failed'}"
+                                      : "Pending Approval",
                               style: const TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xFF7E8392),
                               ),
-                              maxLines: 1,
+                              maxLines: status == 'REJECTED' ? 3 : 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),

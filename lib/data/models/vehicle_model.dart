@@ -15,6 +15,7 @@ class Vehicle {
   final bool isActive;
   final String status; // 'PENDING', 'APPROVED', 'REJECTED'
   final DateTime createdAt;
+  final String? rejectionReason;
 
   // Legacy field compatibility
   String get name => '$brand $model';
@@ -40,6 +41,7 @@ class Vehicle {
     required this.isActive,
     required this.status,
     required this.createdAt,
+    this.rejectionReason,
   });
 
   factory Vehicle.fromJson(Map<String, dynamic> json) {
@@ -67,6 +69,7 @@ class Vehicle {
       isActive: json['isActive'] ?? json['is_active'] ?? true,
       status: json['status'] ?? 'PENDING',
       createdAt: DateTime.parse(json['createdAt'] ?? json['created_at'] ?? DateTime.now().toIso8601String()),
+      rejectionReason: json['rejectionReason'] ?? json['rejection_reason'] ?? json['reason'] ?? json['remarks'] ?? json['notes'] ?? json['comments'],
     );
   }
 
@@ -100,6 +103,8 @@ class Vehicle {
       'status': status,
       'createdAt': createdAt.toIso8601String(),
       'created_at': createdAt.toIso8601String(),
+      'rejectionReason': rejectionReason,
+      'rejection_reason': rejectionReason,
     };
   }
 
@@ -120,6 +125,7 @@ class Vehicle {
     bool? isActive,
     String? status,
     DateTime? createdAt,
+    String? rejectionReason,
   }) {
     return Vehicle(
       id: id ?? this.id,
@@ -138,6 +144,7 @@ class Vehicle {
       isActive: isActive ?? this.isActive,
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
+      rejectionReason: rejectionReason ?? this.rejectionReason,
     );
   }
 }

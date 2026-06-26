@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../providers/home_provider.dart';
 import '../../../providers/vehicle_provider.dart';
 import '../../../core/utils/responsive.dart';
+import '../../../data/models/dto/home_dashboard_response.dart';
 import '../widgets/home_header.dart';
 import '../widgets/active_plan_card.dart';
 import '../widgets/vehicle_status_card.dart';
@@ -120,17 +121,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              final subscription = (dashboard != null && dashboard.subscriptions.isNotEmpty)
-                  ? dashboard.subscriptions.first
-                  : null;
-
-              final vehicle = vehicleProvider.vehicles.isNotEmpty
+              final activeVehicle = vehicleProvider.selectedVehicle ?? (vehicleProvider.vehicles.isNotEmpty
                   ? vehicleProvider.vehicles.first
-                  : null;
+                  : null);
 
-              final todayService = (dashboard != null && dashboard.todayServices.isNotEmpty)
-                  ? dashboard.todayServices.first
-                  : null;
+              HomeSubscription? subscription;
+              if (dashboard != null && activeVehicle != null) {
+                for (var sub in dashboard.subscriptions) {
+                  if (sub.vehicle.number == activeVehicle.vehicleNumber || sub.vehicle.id == activeVehicle.id) {
+                    subscription = sub;
+                    break;
+                  }
+                }
+              }
+
+              TodayService? todayService;
+              if (dashboard != null && activeVehicle != null) {
+                for (var service in dashboard.todayServices) {
+                  if (service.vehicleNumber == activeVehicle.vehicleNumber) {
+                    todayService = service;
+                    break;
+                  }
+                }
+              }
 
               return ListView(
                 padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(16)),
@@ -142,12 +155,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   // SECTION 2: ACTIVE SUBSCRIPTION CARD
                   ActivePlanCard(
                     subscription: subscription,
-                    hasVehicle: vehicle != null,
+                    hasVehicle: activeVehicle != null,
                   ),
 
                   // SECTION 3: VEHICLE STATUS CARD
                   VehicleStatusCard(
-                    vehicle: vehicle,
+                    vehicle: activeVehicle,
                     todayService: todayService,
                     subscription: subscription,
                   ),
@@ -158,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(height: context.h(28)),
 
                   // SECTION 5: TODAY'S CLEANING EVIDENCE
-                  if (vehicle != null && vehicle.status.toUpperCase() == 'APPROVED') ...[
+                  if (activeVehicle != null && activeVehicle.status.toUpperCase() == 'APPROVED') ...[
                     CleaningEvidenceCard(todayService: todayService),
                     SizedBox(height: context.h(28)),
                   ],
