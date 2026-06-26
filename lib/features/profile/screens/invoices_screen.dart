@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'dart:ui' show BlendMode, ColorFilter;
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../core/utils/responsive.dart';
 import '../../../providers/payment_provider.dart';
@@ -304,56 +302,6 @@ class _InvoicesScreenState extends State<InvoicesScreen> {
       body: Padding(
         padding: EdgeInsets.all(context.w(16)),
         child: _buildBody(context, provider),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 3,
-        onTap: (index) {
-          if (index == 0) {
-            context.go('/home?initialIndex=0');
-          } else if (index == 1) {
-            context.go('/home/vehicles');
-          } else if (index == 2) {
-            context.go('/home/plans');
-          } else if (index == 3) {
-            context.go('/home/profile');
-          }
-        },
-        selectedItemColor: Colors.orange,
-        unselectedItemColor: const Color(0xFF8E8E93),
-        showUnselectedLabels: true,
-        showSelectedLabels: true,
-        iconSize: 18,
-        selectedFontSize: 11,
-        unselectedFontSize: 11,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Builder(
-              builder: (context) {
-                final tint = IconTheme.of(context).color ?? const Color(0xFF8E8E93);
-                return SvgPicture.asset(
-                  'assets/images/car2.svg',
-                  height: 18,
-                  width: 18,
-                  colorFilter: ColorFilter.mode(tint, BlendMode.srcIn),
-                );
-              },
-            ),
-            label: "Vehicles",
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.access_time),
-            label: "Plans",
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: "Profile",
-          ),
-        ],
       ),
     );
   }
