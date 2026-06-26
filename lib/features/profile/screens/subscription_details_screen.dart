@@ -223,13 +223,95 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
                       style: TextStyle(color: const Color(0xffC68A00), fontWeight: FontWeight.w600, fontSize: context.sp(13)),
                     ),
                     Divider(height: context.h(24)),
-                    _HomeScreenDetailsRow(label: "SUBSCRIPTION ID", value: sub.id),
-                    _HomeScreenDetailsRow(label: "VEHICLE", value: "${sub.vehicle?.brand ?? ''} ${sub.vehicle?.model ?? ''} (${sub.vehicle?.vehicleNumber ?? ''})"),
-                    _HomeScreenDetailsRow(label: "SLOT TYPE", value: sub.slotType?.toUpperCase() ?? 'MORNING'),
-                    _HomeScreenDetailsRow(label: "START DATE", value: _formatDate(sub.startDate)),
-                    _HomeScreenDetailsRow(label: "END DATE", value: _formatDate(sub.endDate)),
-                    _HomeScreenDetailsRow(label: "CITY", value: sub.city?.name ?? 'N/A'),
-                    _HomeScreenDetailsRow(label: "STATE", value: sub.city?.state ?? 'N/A'),
+                    
+                    Text(
+                          'Vehicle Details',
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5), color: Colors.black87),
+                        ),
+                        const SizedBox(height: 8),
+                        _HomeScreenDetailsRow(label: "Vehicle", value: "${sub.vehicle?.brand ?? ''} ${sub.vehicle?.model ?? ''} (${sub.vehicle?.vehicleNumber ?? ''})"),
+                    _HomeScreenDetailsRow(label: "Slot", value: sub.slotType?.toUpperCase() ?? 'MORNING'),
+                    Text(
+                          'Subscription Period',
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5), color: Colors.black87),
+                        ),
+                        const SizedBox(height: 8),
+                        _HomeScreenDetailsRow(label: "Start", value: _formatDate(sub.startDate)),
+                    _HomeScreenDetailsRow(label: "End", value: _formatDate(sub.endDate)),
+                    _HomeScreenDetailsRow(label: "City", value: sub.city?.name ?? 'N/A'),
+                    _HomeScreenDetailsRow(label: "State", value: sub.city?.state ?? 'N/A'),
+                    // ---------- Services Summary ----------
+                    if (sub.servicesSummary != null && sub.servicesSummary!.isNotEmpty) ...[
+                      const Divider(),
+                      Text(
+                        'Services Summary',
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5), color: Colors.black87),
+                      ),
+                      const SizedBox(height: 8),
+                      ...sub.servicesSummary!.map((summary) => Padding(
+                            padding: EdgeInsets.symmetric(vertical: context.h(4)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    summary.type ?? 'N/A',
+                                    style: TextStyle(fontSize: context.sp(12), color: Colors.grey.shade800),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Text('Allowed: ${summary.allowed ?? 0}',
+                                    style: TextStyle(fontSize: context.sp(11), color: Colors.grey.shade600)),
+                                Text('Used: ${summary.used ?? 0}',
+                                    style: TextStyle(fontSize: context.sp(11), color: Colors.grey.shade600)),
+                                Text('Remaining: ${summary.remaining ?? 0}',
+                                    style: TextStyle(fontSize: context.sp(11), fontWeight: FontWeight.w600, color: const Color(0xFF2E7D32))),
+                              ],
+                            ),
+                          )),
+                    ],
+                    // ---------- User Info ----------
+                    if (sub.user != null) ...[
+                      const Divider(),
+                      Text(
+                        'User',
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5), color: Colors.black87),
+                      ),
+                      const SizedBox(height: 8),
+                      _HomeScreenDetailsRow(label: "NAME", value: sub.user?.name ?? ''),
+                      _HomeScreenDetailsRow(label: "PHONE", value: sub.user?.phone ?? ''),
+                      _HomeScreenDetailsRow(label: "EMAIL", value: sub.user?.email ?? ''),
+                    ],
+                    // ---------- Payments ----------
+                    if (sub.payments != null && sub.payments!.isNotEmpty) ...[
+                      const Divider(),
+                      Text(
+                        'Payments',
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5), color: Colors.black87),
+                      ),
+                      const SizedBox(height: 8),
+                      ...sub.payments!.asMap().entries.map((entry) {
+                        final idx = entry.key + 1;
+                        final p = entry.value;
+                        return _HomeScreenDetailsRow(
+                          label: "Payment #$idx",
+                          value: "${p.amount ?? ''} ${p.currency ?? ''} (${p.status ?? ''})",
+                        );
+                      }),
+                    ],
+                    // ---------- Service Records ----------
+                    if (sub.serviceRecords != null && sub.serviceRecords!.isNotEmpty) ...[
+                      const Divider(),
+                      Text(
+                        'Service Records',
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5), color: Colors.black87),
+                      ),
+                      const SizedBox(height: 8),
+                      ...sub.serviceRecords!.map((r) => _HomeScreenDetailsRow(
+                            label: r.serviceType ?? '',
+                            value: r.status ?? '',
+                          )),
+                    ],
                   ],
                 ),
               ),
