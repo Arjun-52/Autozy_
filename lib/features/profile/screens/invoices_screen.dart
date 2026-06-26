@@ -2,10 +2,50 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'dart:ui' show BlendMode, ColorFilter;
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../../core/utils/responsive.dart';
+import '../../../providers/payment_provider.dart';
+import '../../../data/models/payment_history_model.dart';
 
-class InvoicesScreen extends StatelessWidget {
+class InvoicesScreen extends StatefulWidget {
   const InvoicesScreen({super.key});
+
+  @override
+  State<InvoicesScreen> createState() => _InvoicesScreenState();
+}
+
+class _InvoicesScreenState extends State<InvoicesScreen> {
+  static const _months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PaymentProvider>().fetchHistory();
+    });
+  }
+
+  String _formatDate(DateTime? d) {
+    if (d == null) return '';
+    return "${d.day.toString().padLeft(2, '0')} ${_months[d.month - 1]} ${d.year}";
+  }
+
+  String _formatAmount(num v) {
+    final whole = v.round();
+    final str = whole.toString();
+    final buffer = StringBuffer();
+    for (int i = 0; i < str.length; i++) {
+      final fromEnd = str.length - i;
+      buffer.write(str[i]);
+      if (fromEnd > 1 && (fromEnd - 1) % 3 == 0 && fromEnd != str.length) {
+        buffer.write(',');
+      }
+    }
+    return '₹${buffer.toString()}';
+  }
 
   Widget buildSummaryCard(BuildContext context, String value, String label, Widget icon) {
     return Expanded(
@@ -40,11 +80,12 @@ class InvoicesScreen extends StatelessWidget {
   }
 
   Widget buildInvoiceCard(BuildContext context, {
-    required String plan,
-    required String vehicle,
+    required String title,
+    required String reference,
     required String date,
     required String price,
     required bool paid,
+    required String statusLabel,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -78,15 +119,13 @@ class InvoicesScreen extends StatelessWidget {
                   fit: BoxFit.contain,
                 ),
               ),
-
               const SizedBox(width: 10),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      plan,
+                      title,
                       style: TextStyle(
                         fontSize: context.sp(13.5),
                         fontWeight: FontWeight.w600,
@@ -94,7 +133,7 @@ class InvoicesScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 1),
                     Text(
-                      vehicle, 
+                      reference,
                       style: TextStyle(color: Colors.grey, fontSize: context.sp(11), fontWeight: FontWeight.w400),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -102,12 +141,8 @@ class InvoicesScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 3,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                 decoration: BoxDecoration(
                   color: paid
                       ? Colors.green.withOpacity(0.08)
@@ -128,7 +163,7 @@ class InvoicesScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      paid ? "Paid" : "Failed",
+                      statusLabel,
                       style: TextStyle(
                         color: paid ? Colors.green : Colors.red,
                         fontWeight: FontWeight.w500,
@@ -140,32 +175,22 @@ class InvoicesScreen extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 10),
-
           const Divider(height: 1),
-
           const SizedBox(height: 8),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                date, 
+                date,
                 style: TextStyle(color: Colors.grey, fontSize: context.sp(11.5), fontWeight: FontWeight.w400),
               ),
-              Row(
-                children: [
-                  Text(
-                    price,
-                    style: TextStyle(
-                      fontSize: context.sp(13.5),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  const Icon(Icons.chevron_right, size: 18),
-                ],
+              Text(
+                price,
+                style: TextStyle(
+                  fontSize: context.sp(13.5),
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
@@ -174,11 +199,95 @@ class InvoicesScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildBody(BuildContext context, PaymentProvider provider) {
+    if (provider.isHistoryLoading && provider.history.isEmpty) {
+      return const Center(child: CircularProgressIndicator(color: Colors.orange));
+    }
+
+    if (provider.historyError != null && provider.history.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.redAccent, size: 40),
+            const SizedBox(height: 12),
+            Text(provider.historyError!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.black54)),
+            const SizedBox(height: 12),
+            TextButton(onPressed: () => provider.fetchHistory(), child: const Text("Retry")),
+          ],
+        ),
+      );
+    }
+
+    final items = provider.history;
+
+    return Column(
+      children: [
+        /// TOP SUMMARY
+        Row(
+          children: [
+            buildSummaryCard(
+              context,
+              _formatAmount(provider.totalPaid),
+              "Total Paid",
+              SvgPicture.asset('assets/images/moneys.svg', height: 20, width: 20, fit: BoxFit.contain),
+            ),
+            const SizedBox(width: 12),
+            buildSummaryCard(
+              context,
+              items.length.toString(),
+              "Invoices",
+              SvgPicture.asset('assets/images/view_plans.svg', height: 20, width: 20, fit: BoxFit.contain),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Expanded(
+          child: items.isEmpty
+              ? const Center(
+                  child: Text(
+                    "No invoices yet.\nYour payments will appear here.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                )
+              : RefreshIndicator(
+                  onRefresh: () => provider.fetchHistory(),
+                  child: ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      final PaymentHistoryItem item = items[index];
+                      final ref = item.invoiceNumber != null && item.invoiceNumber!.isNotEmpty
+                          ? "Ref: ${item.invoiceNumber}"
+                          : "Ref: ${item.id.length >= 8 ? item.id.substring(0, 8).toUpperCase() : item.id}";
+                      final statusLabel = item.isPaid
+                          ? "Paid"
+                          : (item.status.isEmpty ? "Pending" : _titleCase(item.status));
+                      return buildInvoiceCard(
+                        context,
+                        title: item.title,
+                        reference: ref,
+                        date: _formatDate(item.createdAt),
+                        price: _formatAmount(item.amount),
+                        paid: item.isPaid,
+                        statusLabel: statusLabel,
+                      );
+                    },
+                  ),
+                ),
+        ),
+      ],
+    );
+  }
+
+  String _titleCase(String s) =>
+      s.isEmpty ? s : s[0].toUpperCase() + s.substring(1).toLowerCase();
+
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<PaymentProvider>();
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9FB),
-
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -192,76 +301,9 @@ class InvoicesScreen extends StatelessWidget {
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
-
       body: Padding(
         padding: EdgeInsets.all(context.w(16)),
-        child: Column(
-          children: [
-            /// TOP SUMMARY
-            Row(
-              children: [
-                buildSummaryCard(
-                  context,
-                  "₹3,959",
-                  "Total Paid",
-                  SvgPicture.asset(
-                    'assets/images/moneys.svg',
-                    height: 20,
-                    width: 20,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                buildSummaryCard(
-                  context,
-                  "5",
-                  "Invoices",
-                  SvgPicture.asset(
-                    'assets/images/view_plans.svg',
-                    height: 20,
-                    width: 20,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 16),
-
-            Expanded(
-              child: ListView(
-                children: [
-                  buildInvoiceCard(
-                    context,
-                    plan: "Premium Plan",
-                    vehicle: "TS 01 AB 1234 • BMW 3 Series",
-                    date: "08 Mar 2026",
-                    price: "₹1,499",
-                    paid: true,
-                  ),
-
-                  buildInvoiceCard(
-                    context,
-                    plan: "Standard Plan",
-                    vehicle: "KA 01 CD 4567 • Honda City",
-                    date: "24 Feb 2026",
-                    price: "₹799",
-                    paid: true,
-                  ),
-
-                  buildInvoiceCard(
-                    context,
-                    plan: "Basic Plan",
-                    vehicle: "TS 06 AB 0002 • Maruti Fronx",
-                    date: "02 Jan 2026",
-                    price: "₹399",
-                    paid: false,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        child: _buildBody(context, provider),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 3,

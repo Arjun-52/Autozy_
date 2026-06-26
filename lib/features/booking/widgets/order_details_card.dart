@@ -61,6 +61,14 @@ class OrderDetailsCard extends StatelessWidget {
     ];
     final slotLabel = slotParts.isEmpty ? 'Slot confirmed' : slotParts.join(', ');
 
+    // Real order number derived from the created subscription id.
+    final createdId = subscription.createdSubscription?.id;
+    final orderNumber = (createdId != null && createdId.length >= 8)
+        ? 'ORD-${createdId.substring(0, 8).toUpperCase()}'
+        : (createdId != null && createdId.isNotEmpty
+            ? 'ORD-${createdId.toUpperCase()}'
+            : '—');
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: context.w(16)),
       padding: EdgeInsets.all(context.w(16)),
@@ -92,7 +100,7 @@ class OrderDetailsCard extends StatelessWidget {
                 ),
                 SizedBox(height: context.h(4)),
                 Text(
-                  "ORD–2026001",
+                  orderNumber,
                   style: TextStyle(
                     fontSize: context.sp(15),
                     color: const Color(0xFF013E6D),

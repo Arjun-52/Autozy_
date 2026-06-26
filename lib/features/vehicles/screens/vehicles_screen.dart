@@ -285,40 +285,8 @@ class _VehicleScreenState extends State<VehicleScreen> {
 
                                             const SizedBox(width: 12),
 
-                                            /// STATUS
-                                            Container(
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 10,
-                                                vertical: 5,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xFFE8F8EF),
-                                                borderRadius: BorderRadius.circular(20),
-                                                border: Border.all(
-                                                  color: Colors.green.shade300,
-                                                ),
-                                              ),
-                                              child: const Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Icon(
-                                                    Icons.check_circle,
-                                                    color: Colors.green,
-                                                    size: 14,
-                                                  ),
-                                                  SizedBox(width: 4),
-                                                  Text(
-                                                    "Current",
-                                                    style: TextStyle(
-                                                      color: Colors.green,
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.w500,
-                                                      fontFamily: 'Poppins',
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
+                                            /// STATUS (driven by vehicle.status)
+                                            _vehicleStatusBadge(vehicle.status),
                                           ],
                                         ),
                                         const Padding(
@@ -437,4 +405,63 @@ class _VehicleScreenState extends State<VehicleScreen> {
       ),
     );
   }
+}
+
+/// Status pill for a vehicle card, driven by the vehicle's real approval status
+/// ('PENDING' | 'APPROVED' | 'REJECTED') instead of an unconditional "Current".
+Widget _vehicleStatusBadge(String status) {
+  final s = status.toUpperCase();
+  Color color;
+  Color bg;
+  IconData icon;
+  String label;
+  switch (s) {
+    case 'APPROVED':
+      color = Colors.green;
+      bg = const Color(0xFFE8F8EF);
+      icon = Icons.check_circle;
+      label = 'Active';
+      break;
+    case 'PENDING':
+      color = const Color(0xFFB8860B);
+      bg = const Color(0xFFFFF6E5);
+      icon = Icons.hourglass_top;
+      label = 'Pending';
+      break;
+    case 'REJECTED':
+      color = Colors.red;
+      bg = const Color(0xFFFFECEC);
+      icon = Icons.cancel;
+      label = 'Rejected';
+      break;
+    default:
+      color = Colors.grey;
+      bg = const Color(0xFFF0F0F0);
+      icon = Icons.info_outline;
+      label = s.isEmpty ? 'Unknown' : status;
+  }
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    decoration: BoxDecoration(
+      color: bg,
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: color.withOpacity(0.4)),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: color, size: 14),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: color,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            fontFamily: 'Poppins',
+          ),
+        ),
+      ],
+    ),
+  );
 }

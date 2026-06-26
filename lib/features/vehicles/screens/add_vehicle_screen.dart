@@ -52,17 +52,13 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   String? localError;
   bool _isLocating = false;
 
-  final Map<String, List<String>> carModels = {
-    "Hyundai": ["Creta", "i20", "Verna"],
-    "Honda": ["City", "Civic"],
-    "Toyota": ["Innova", "Fortuner"],
-  };
-
   @override
   void initState() {
     super.initState();
     final provider = context.read<VehicleProvider>();
-    
+    // Load brand list for the make dropdown.
+    provider.fetchBrands();
+
     numberController.text = provider.regNumber;
     latController.text = provider.latitude;
     lngController.text = provider.longitude;
@@ -324,10 +320,10 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     value: selectedMake,
-                    hint: const Text("Select Make"),
+                    hint: Text(vehicleProvider.brandsLoading ? "Loading makes…" : "Select Make"),
                     isExpanded: true,
                     icon: const Icon(Icons.keyboard_arrow_down),
-                    items: carModels.keys
+                    items: vehicleProvider.brands
                         .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                         .toList(),
                     onChanged: (value) {
@@ -338,6 +334,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       final provider = context.read<VehicleProvider>();
                       provider.setBrand(value);
                       provider.setModel(null);
+                      provider.clearModels();
+                      if (value != null) provider.fetchModels(value);
                     },
                   ),
                 ),
@@ -351,10 +349,12 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     value: selectedModel,
-                    hint: const Text("Select Model"),
+                    hint: Text(vehicleProvider.modelsLoading
+                        ? "Loading models…"
+                        : (selectedMake == null ? "Select a make first" : "Select Model")),
                     isExpanded: true,
                     icon: const Icon(Icons.keyboard_arrow_down),
-                    items: (carModels[selectedMake] ?? [])
+                    items: vehicleProvider.models
                         .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                         .toList(),
                     onChanged: (value) {

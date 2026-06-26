@@ -112,6 +112,39 @@ class VehicleRepository {
     }
   }
 
+  /// Fetches the list of vehicle brands from GET /api/v1/vehicle-data/brands.
+  Future<List<String>> getVehicleBrands() async {
+    try {
+      final data = await _apiService.get('/api/v1/vehicle-data/brands');
+      final List<dynamic> list = data['data'] ?? data['brands'] ?? [];
+      return list
+          .map((e) => e is String ? e : (e['name'] ?? e['brand'] ?? e.toString()).toString())
+          .where((e) => e.trim().isNotEmpty)
+          .toList();
+    } catch (e, st) {
+      AppLogger.error('Failed to fetch vehicle brands', tag: 'Vehicles', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  /// Fetches models for a brand from GET /api/v1/vehicle-data/models?brand=.
+  Future<List<String>> getVehicleModels(String brand) async {
+    try {
+      final data = await _apiService.get(
+        '/api/v1/vehicle-data/models',
+        queryParameters: {'brand': brand},
+      );
+      final List<dynamic> list = data['data'] ?? data['models'] ?? [];
+      return list
+          .map((e) => e is String ? e : (e['name'] ?? e['model'] ?? e.toString()).toString())
+          .where((e) => e.trim().isNotEmpty)
+          .toList();
+    } catch (e, st) {
+      AppLogger.error('Failed to fetch vehicle models for $brand', tag: 'Vehicles', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
   /// Uploads a vehicle image (multipart, field name `file`) to
   /// POST /api/v1/vehicles/:id/image and returns the updated vehicle.
   Future<Vehicle> uploadVehicleImage(String vehicleId, File imageFile) async {

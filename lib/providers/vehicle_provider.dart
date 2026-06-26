@@ -20,6 +20,12 @@ class VehicleProvider extends ChangeNotifier {
   String? _deleteStatus; // 'loading', 'success', 'error', null
   String? _imageUploadStatus; // 'loading', 'success', 'error', null
 
+  // Vehicle-data dropdowns (brands/models from /vehicle-data)
+  List<String> _brands = [];
+  List<String> _models = [];
+  bool _brandsLoading = false;
+  bool _modelsLoading = false;
+
   // Pagination state
   int _currentPage = 1;
   int _totalPages = 1;
@@ -133,6 +139,45 @@ class VehicleProvider extends ChangeNotifier {
   String? get deleteStatus => _deleteStatus;
   String? get patchStatus => _patchStatus;
   String? get imageUploadStatus => _imageUploadStatus;
+
+  List<String> get brands => _brands;
+  List<String> get models => _models;
+  bool get brandsLoading => _brandsLoading;
+  bool get modelsLoading => _modelsLoading;
+
+  /// Loads the brand list for the make dropdown.
+  Future<void> fetchBrands() async {
+    if (_brands.isNotEmpty || _brandsLoading) return;
+    _brandsLoading = true;
+    notifyListeners();
+    try {
+      _brands = await _vehicleRepository.getVehicleBrands();
+    } catch (e) {
+      AppLogger.error('Unable to load vehicle brands', tag: 'Vehicles', error: e);
+    } finally {
+      _brandsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Loads the model list for a brand (clears previous models first).
+  Future<void> fetchModels(String brand) async {
+    _modelsLoading = true;
+    _models = [];
+    notifyListeners();
+    try {
+      _models = await _vehicleRepository.getVehicleModels(brand);
+    } catch (e) {
+      AppLogger.error('Unable to load vehicle models', tag: 'Vehicles', error: e);
+    } finally {
+      _modelsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void clearModels() {
+    _models = [];
+  }
 
   Future<void> fetchVehicles({int page = 1, int limit = 20, bool reset = false}) async {
     if (reset) {

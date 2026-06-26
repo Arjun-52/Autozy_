@@ -34,12 +34,6 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
   String? selectedModel;
   String? selectedSize;
 
-  final Map<String, List<String>> carModels = {
-    "Hyundai": ["Creta", "i20", "Verna"],
-    "Honda": ["City", "Civic"],
-    "Toyota": ["Innova", "Fortuner"],
-  };
-
   bool _isLoading = false;
 
   String? _imageUrl;
@@ -64,6 +58,10 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
       selectedModel = vehicle.model;
       selectedSize = vehicle.sizeCategory;
       _imageUrl = vehicle.imageUrl;
+      // Load brand/model lists for the dropdowns (models for the current make).
+      final vp = context.read<VehicleProvider>();
+      vp.fetchBrands();
+      if (vehicle.brand.isNotEmpty) vp.fetchModels(vehicle.brand);
       latController.text = vehicle.parkingLocationLat?.toString() ?? '';
       lngController.text = vehicle.parkingLocationLng?.toString() ?? '';
       notesController.text = vehicle.parkingNotes ?? '';
@@ -265,16 +263,20 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: selectedMake,
-                        hint: const Text("Select Make"),
+                        hint: Text(vehicleProvider.brandsLoading ? "Loading makes…" : "Select Make"),
                         isExpanded: true,
-                        items: carModels.keys
-                            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                            .toList(),
+                        items: <String>{
+                          ...vehicleProvider.brands,
+                          if (selectedMake != null && selectedMake!.isNotEmpty) selectedMake!,
+                        }.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
                         onChanged: (value) {
                           setState(() {
                             selectedMake = value;
                             selectedModel = null;
                           });
+                          final vp = context.read<VehicleProvider>();
+                          vp.clearModels();
+                          if (value != null) vp.fetchModels(value);
                         },
                       ),
                     ),
@@ -287,11 +289,12 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: selectedModel,
-                        hint: const Text("Select Model"),
+                        hint: Text(vehicleProvider.modelsLoading ? "Loading models…" : "Select Model"),
                         isExpanded: true,
-                        items: (carModels[selectedMake] ?? [])
-                            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                            .toList(),
+                        items: <String>{
+                          ...vehicleProvider.models,
+                          if (selectedModel != null && selectedModel!.isNotEmpty) selectedModel!,
+                        }.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
                         onChanged: (value) {
                           setState(() => selectedModel = value);
                         },
