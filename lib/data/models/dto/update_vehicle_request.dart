@@ -4,6 +4,7 @@ class UpdateVehicleRequest {
   final double? parkingLocationLat;
   final double? parkingLocationLng;
   final String? parkingNotes;
+  final String? vehicleImage;
 
   UpdateVehicleRequest({
     this.brand,
@@ -11,6 +12,7 @@ class UpdateVehicleRequest {
     this.parkingLocationLat,
     this.parkingLocationLng,
     this.parkingNotes,
+    this.vehicleImage,
   });
 
   Map<String, dynamic> toJson() {
@@ -20,6 +22,7 @@ class UpdateVehicleRequest {
     if (parkingLocationLat != null) map['parkingLocationLat'] = parkingLocationLat;
     if (parkingLocationLng != null) map['parkingLocationLng'] = parkingLocationLng;
     if (parkingNotes != null) map['parkingNotes'] = parkingNotes;
+    // TODO: Backend support does not exist yet. Add 'vehicleImage' when backend is ready.
     return map;
   }
 }

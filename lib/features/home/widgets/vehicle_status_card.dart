@@ -189,7 +189,7 @@ class VehicleStatusCard extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: vehicle!.imageUrl != null
+                    child: vehicle!.imageUrl != null && vehicle!.imageUrl!.isNotEmpty
                         ? CachedNetworkImage(
                             imageUrl: vehicle!.imageUrl!,
                             fit: BoxFit.cover,

@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../../core/utils/app_logger.dart';
 import '../data/repositories/vehicle_repository.dart';
 import '../data/models/vehicle_model.dart';
 import '../data/models/dto/add_vehicle_request.dart';
 import '../data/models/dto/update_vehicle_request.dart';
+import '../data/services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class VehicleProvider extends ChangeNotifier {
   final VehicleRepository _vehicleRepository;
@@ -106,7 +109,41 @@ class VehicleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  VehicleProvider(this._vehicleRepository);
+  static final Map<String, String> _localImageCache = {};
+
+  Future<void> _loadLocalImageCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final keys = prefs.getKeys();
+      for (final key in keys) {
+        if (key.startsWith('vehicle_img_')) {
+          final vehicleNum = key.replaceFirst('vehicle_img_', '');
+          _localImageCache[vehicleNum] = prefs.getString(key) ?? '';
+        }
+      }
+      notifyListeners();
+    } catch (_) {}
+  }
+
+  Future<void> _saveToLocalCache(String vehicleNumber, String url) async {
+    _localImageCache[vehicleNumber] = url;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('vehicle_img_$vehicleNumber', url);
+    } catch (_) {}
+  }
+
+  Future<void> _removeFromLocalCache(String vehicleNumber) async {
+    _localImageCache.remove(vehicleNumber);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('vehicle_img_$vehicleNumber');
+    } catch (_) {}
+  }
+
+  VehicleProvider(this._vehicleRepository) {
+    _loadLocalImageCache();
+  }
 
   List<Vehicle> get vehicles => _vehicles;
   Vehicle? get selectedVehicle => _selectedVehicle;
@@ -152,10 +189,18 @@ class VehicleProvider extends ChangeNotifier {
       _currentPage = response.meta?.page ?? page;
       _totalPages = response.meta?.totalPages ?? 1;
 
+      final mappedFetched = fetched.map((v) {
+        final cachedUrl = _localImageCache[v.vehicleNumber];
+        if (cachedUrl != null && cachedUrl.isNotEmpty) {
+          return v.copyWith(vehicleImage: cachedUrl);
+        }
+        return v;
+      }).toList();
+
       if (reset) {
-        _vehicles = fetched;
+        _vehicles = mappedFetched;
       } else {
-        _vehicles.addAll(fetched);
+        _vehicles.addAll(mappedFetched);
       }
     } catch (e) {
       _listError = e.toString();
@@ -181,27 +226,104 @@ class VehicleProvider extends ChangeNotifier {
   Future<Vehicle> getVehicleById(String vehicleId) async {
     _error = null;
     try {
-      return await _vehicleRepository.getVehicleById(vehicleId);
+      final vehicle = await _vehicleRepository.getVehicleById(vehicleId);
+      final cachedUrl = _localImageCache[vehicle.vehicleNumber];
+      if (cachedUrl != null && cachedUrl.isNotEmpty) {
+        return vehicle.copyWith(vehicleImage: cachedUrl);
+      }
+      return vehicle;
     } catch (e) {
       _error = e.toString();
       rethrow;
     }
   }
 
-  Future<bool> createVehicle({required AddVehicleRequest request}) async {
+  Future<bool> createVehicle({required AddVehicleRequest request, File? imageFile}) async {
     _isLoading = true;
     _creationStatus = 'loading';
     _error = null;
     notifyListeners();
 
+    debugPrint("Vehicle image selected: ${imageFile != null}");
+    AppLogger.info('Vehicle image selected: ${imageFile != null}', tag: 'Vehicles');
+
     try {
       final response = await _vehicleRepository.createVehicle(request: request);
+      debugPrint("Vehicle created: ${response.success}");
+      AppLogger.info('Vehicle created: ${response.success}', tag: 'Vehicles');
+
       if (response.success && response.data != null) {
+        final vehicleId = response.data!.id;
+        debugPrint("Vehicle ID: $vehicleId");
+        AppLogger.info('Vehicle ID: $vehicleId', tag: 'Vehicles');
+
+        bool imageUploadSuccess = true;
+        String? imageUrl;
+
+        if (imageFile != null) {
+          try {
+            debugPrint("Immediately before uploadVehicleImage()");
+            AppLogger.info('Calling POST /vehicles/{id}/image', tag: 'Vehicles');
+            
+            final filename = imageFile.path.split(RegExp(r'[/\\]')).last;
+            AppLogger.info('Multipart filename: $filename', tag: 'Vehicles');
+
+            final uploadResponse = await _vehicleRepository.uploadVehicleImageForId(vehicleId, imageFile);
+            AppLogger.info('Upload status code: 201', tag: 'Vehicles'); // Success implied since no ApiException thrown
+            AppLogger.info('Upload response: $uploadResponse', tag: 'Vehicles');
+
+            final dataMap = uploadResponse['data'];
+            imageUrl = uploadResponse['imageUrl'] ?? uploadResponse['image_url'] ?? uploadResponse['vehicleImage'] ??
+                       (dataMap != null ? (dataMap['imageUrl'] ?? dataMap['image_url'] ?? dataMap['vehicleImage'] ?? dataMap['url']) : null);
+            
+            AppLogger.info('Parsed image_url: $imageUrl', tag: 'Vehicles');
+
+            if (imageUrl != null && imageUrl.isNotEmpty) {
+              await _saveToLocalCache(response.data!.vehicleNumber, imageUrl);
+            }
+          } catch (e, st) {
+            debugPrint("Exception in provider upload phase: $e");
+            debugPrint("Stacktrace: $st");
+            AppLogger.error('Vehicle image upload failed after vehicle registration success', tag: 'Vehicles', error: e, stackTrace: st);
+            if (e is ApiException) {
+              final apiEx = e;
+              AppLogger.info('Upload status code: ${apiEx.statusCode}', tag: 'Vehicles');
+              AppLogger.info('Upload response: ${apiEx.body}', tag: 'Vehicles');
+            } else {
+              AppLogger.info('Upload response: $e', tag: 'Vehicles');
+            }
+            imageUploadSuccess = false;
+          }
+        } else {
+          AppLogger.info('Upload skipped because no vehicle image was selected', tag: 'Vehicles');
+        }
+
         _createdVehicle = response.data;
-        _vehicles.add(response.data!);
-        _creationStatus = 'success';
+        if (imageUrl != null) {
+          _createdVehicle = _createdVehicle?.copyWith(vehicleImage: imageUrl);
+        }
+        _vehicles.add(_createdVehicle!);
+
+        if (imageUploadSuccess) {
+          _creationStatus = 'success';
+        } else {
+          _creationStatus = 'image_upload_failed';
+          _error = 'Vehicle added successfully, but the image could not be uploaded.';
+        }
+
         resetRegistrationForm();
-        AppLogger.info('Vehicle synchronization triggered', tag: 'Vehicles');
+        
+        debugPrint("Refreshing vehicles...");
+        AppLogger.info('Refreshing vehicles...', tag: 'Vehicles');
+        await refreshVehicles();
+        debugPrint("Refreshed vehicle list response completed");
+        AppLogger.info('Refreshed vehicle list response completed', tag: 'Vehicles');
+        
+        // Log image_url for every vehicle received
+        for (final v in _vehicles) {
+          debugPrint("Vehicle number: ${v.vehicleNumber}, image_url: ${v.imageUrl}");
+        }
+        
         notifyListeners();
         return true;
       } else {
@@ -211,8 +333,14 @@ class VehicleProvider extends ChangeNotifier {
         return false;
       }
     } catch (e, st) {
-      print('PROVIDER CREATE VEHICLE EXCEPTION: $e');
-      print(st);
+      debugPrint("Exception in outer createVehicle block: $e");
+      debugPrint("Stacktrace: $st");
+      AppLogger.error('Exception in createVehicle', tag: 'Vehicles', error: e, stackTrace: st);
+      if (e is ApiException) {
+        final apiEx = e;
+        AppLogger.info('Create Vehicle status code: ${apiEx.statusCode}', tag: 'Vehicles');
+        AppLogger.info('Create Vehicle response: ${apiEx.body}', tag: 'Vehicles');
+      }
       _creationStatus = 'error';
       String msg = e.toString();
       if (msg.contains('Exception:')) {
@@ -251,13 +379,37 @@ class VehicleProvider extends ChangeNotifier {
   }
 
   // PATCH partial update
-  Future<bool> patchVehicle(String vehicleId, UpdateVehicleRequest request) async {
+  Future<bool> patchVehicle(String vehicleId, UpdateVehicleRequest request, {File? imageFile}) async {
     _patchStatus = 'loading';
     _error = null;
     notifyListeners();
     try {
-      final response = await _vehicleRepository.patchVehicle(vehicleId, request);
+      UpdateVehicleRequest finalRequest = request;
+      String? uploadedUrl;
+      if (imageFile != null) {
+        AppLogger.info('Uploading vehicle photo before updating vehicle', tag: 'Vehicles');
+        final uploaded = await _vehicleRepository.uploadVehicleImage(imageFile);
+        uploadedUrl = uploaded.url;
+        finalRequest = UpdateVehicleRequest(
+          brand: request.brand,
+          model: request.model,
+          parkingLocationLat: request.parkingLocationLat,
+          parkingLocationLng: request.parkingLocationLng,
+          parkingNotes: request.parkingNotes,
+          vehicleImage: uploaded.url,
+        );
+      }
+      final response = await _vehicleRepository.patchVehicle(vehicleId, finalRequest);
       if (response.success) {
+        final existingVehicleIndex = _vehicles.indexWhere((v) => v.id == vehicleId);
+        if (existingVehicleIndex != -1) {
+          final v = _vehicles[existingVehicleIndex];
+          if (imageFile != null && uploadedUrl != null) {
+            await _saveToLocalCache(v.vehicleNumber, uploadedUrl);
+          } else if (request.vehicleImage == "") {
+            await _removeFromLocalCache(v.vehicleNumber);
+          }
+        }
         // refresh vehicle list
         await refreshVehicles();
         _patchStatus = 'success';

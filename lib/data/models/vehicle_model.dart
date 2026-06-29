@@ -16,12 +16,13 @@ class Vehicle {
   final String status; // 'PENDING', 'APPROVED', 'REJECTED'
   final DateTime createdAt;
   final String? rejectionReason;
+  final String? vehicleImage;
 
   // Legacy field compatibility
   String get name => '$brand $model';
   String get number => vehicleNumber;
   String get type => sizeCategory;
-  String? get imageUrl => null;
+  String? get imageUrl => vehicleImage;
   DateTime get updatedAt => createdAt;
 
   Vehicle({
@@ -42,6 +43,7 @@ class Vehicle {
     required this.status,
     required this.createdAt,
     this.rejectionReason,
+    this.vehicleImage,
   });
 
   factory Vehicle.fromJson(Map<String, dynamic> json) {
@@ -70,6 +72,7 @@ class Vehicle {
       status: json['status'] ?? 'PENDING',
       createdAt: DateTime.parse(json['createdAt'] ?? json['created_at'] ?? DateTime.now().toIso8601String()),
       rejectionReason: json['rejectionReason'] ?? json['rejection_reason'] ?? json['reason'] ?? json['remarks'] ?? json['notes'] ?? json['comments'],
+      vehicleImage: json['vehicleImage'] ?? json['vehicle_image'] ?? json['image_url'] ?? json['imageUrl'],
     );
   }
 
@@ -105,6 +108,8 @@ class Vehicle {
       'created_at': createdAt.toIso8601String(),
       'rejectionReason': rejectionReason,
       'rejection_reason': rejectionReason,
+      'vehicleImage': vehicleImage,
+      'vehicle_image': vehicleImage,
     };
   }
 
@@ -126,6 +131,7 @@ class Vehicle {
     String? status,
     DateTime? createdAt,
     String? rejectionReason,
+    String? vehicleImage,
   }) {
     return Vehicle(
       id: id ?? this.id,
@@ -145,6 +151,7 @@ class Vehicle {
       status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       rejectionReason: rejectionReason ?? this.rejectionReason,
+      vehicleImage: vehicleImage ?? this.vehicleImage,
     );
   }
 }

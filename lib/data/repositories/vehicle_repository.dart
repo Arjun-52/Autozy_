@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import '../../core/utils/app_logger.dart';
 import '../services/api_service.dart';
 import '../models/vehicle_model.dart';
@@ -7,10 +9,55 @@ import '../models/dto/delete_vehicle_response.dart';
 import '../models/dto/update_vehicle_request.dart';
 import '../models/dto/update_vehicle_response.dart';
 import '../models/dto/vehicle_list_response.dart';
+import '../models/dto/upload_image_response.dart';
+
 class VehicleRepository {
   final ApiService _apiService;
 
   VehicleRepository(this._apiService);
+
+  Future<UploadedImageModel> uploadVehicleImage(File imageFile) async {
+    try {
+      AppLogger.info('Vehicle image upload started: ${imageFile.path}', tag: 'Upload');
+      final data = await _apiService.postMultipart(
+        '/api/v1/upload/image',
+        filePath: imageFile.path,
+        fieldName: 'file',
+      );
+      final response = UploadImageResponse.fromJson(data);
+      if (response.success && response.data != null) {
+        AppLogger.info('Vehicle image upload completed successfully. Key: ${response.data!.key}', tag: 'Upload');
+        return response.data!;
+      } else {
+        AppLogger.error('Vehicle image upload failed: Invalid response', tag: 'Upload');
+        throw Exception('Failed to upload vehicle image: Invalid response');
+      }
+    } catch (e, st) {
+      AppLogger.error('API failure: Failed to upload vehicle image', tag: 'Upload', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> uploadVehicleImageForId(String vehicleId, File imageFile) async {
+    debugPrint("First line inside uploadVehicleImage()");
+    try {
+      AppLogger.info('Vehicle specific image upload started for ID: $vehicleId, path: ${imageFile.path}', tag: 'Upload');
+      debugPrint("Before the HTTP POST to /vehicles/{id}/image");
+      final data = await _apiService.postMultipart(
+        '/api/v1/vehicles/$vehicleId/image',
+        filePath: imageFile.path,
+        fieldName: 'file',
+      );
+      debugPrint("After the HTTP response");
+      AppLogger.info('Vehicle specific image upload response: $data', tag: 'Upload');
+      return data;
+    } catch (e, st) {
+      debugPrint("Exception in uploadVehicleImageForId: $e");
+      debugPrint("Stacktrace: $st");
+      AppLogger.error('API failure: Failed to upload vehicle image for ID: $vehicleId', tag: 'Upload', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
 
   Future<VehicleListResponse> getVehicles({int page = 1, int limit = 20}) async {
     try {

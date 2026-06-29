@@ -13,6 +13,7 @@ class AddVehicleRequest {
   final String city;
   final String state;
   final String pincode;
+  final String? vehicleImage;
 
   AddVehicleRequest({
     required this.vehicleNumber,
@@ -29,6 +30,7 @@ class AddVehicleRequest {
     required this.city,
     required this.state,
     required this.pincode,
+    this.vehicleImage,
   });
 
   Map<String, dynamic> toJson() {
@@ -47,6 +49,7 @@ class AddVehicleRequest {
       'city': city.trim(),
       'state': state.trim(),
       'pincode': pincode.trim(),
+      // TODO: Backend support does not exist yet. Add 'vehicleImage': vehicleImage when backend is ready.
     };
   }
 

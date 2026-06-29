@@ -8,6 +8,7 @@ import '../../../providers/area_provider.dart';
 import '../../../providers/addon_booking_provider.dart';
 import '../../../data/models/dto/book_addon_request_model.dart';
 import '../../../data/models/dto/nearby_areas_response.dart';
+import '../../../data/models/dto/addon_slots_response_model.dart';
 
 class BookAddonScreen extends StatefulWidget {
   const BookAddonScreen({super.key});
@@ -23,8 +24,7 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
   String? _selectedAddonServiceId;
   String? _selectedCityId;
   DateTime? _selectedDate;
-  TimeOfDay? _startTime;
-  TimeOfDay? _endTime;
+  AddonSlotModel? _selectedSlot;
 
   // Add-on Services static options matching backend ID format
   final List<Map<String, String>> _addonServices = [
@@ -53,6 +53,7 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<VehicleProvider>().fetchVehicles(page: 1, limit: 20, reset: true);
+      context.read<AddonBookingProvider>().clearSlots();
       
       // Auto-select city from AreaProvider if available
       final areaProvider = context.read<AreaProvider>();
@@ -64,13 +65,30 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
     });
   }
 
+  void _fetchAvailableSlots() {
+    if (_selectedAddonServiceId != null &&
+        _selectedCityId != null &&
+        _selectedDate != null) {
+      context.read<AddonBookingProvider>().fetchSlots(
+            addonServiceId: _selectedAddonServiceId!,
+            cityId: _selectedCityId!,
+            date: _formatDate(_selectedDate!),
+          );
+      setState(() {
+        _selectedSlot = null;
+      });
+    }
+  }
+
+
+
   Future<void> _pickDate() async {
-    final today = DateTime.now();
+    final tomorrow = DateTime.now().add(const Duration(days: 1));
     final picked = await showDatePicker(
       context: context,
-      initialDate: today,
-      firstDate: today,
-      lastDate: today.add(const Duration(days: 30)),
+      initialDate: tomorrow,
+      firstDate: tomorrow,
+      lastDate: tomorrow.add(const Duration(days: 30)),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
@@ -89,70 +107,12 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
       setState(() {
         _selectedDate = picked;
       });
-    }
-  }
-
-  Future<void> _pickStartTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: const TimeOfDay(hour: 9, minute: 0),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.brandYellow,
-              onPrimary: Colors.black,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null) {
-      setState(() {
-        _startTime = picked;
-        // Auto-set end time to 1 hour later if not set
-        if (_endTime == null) {
-          final nextHour = (picked.hour + 1) % 24;
-          _endTime = TimeOfDay(hour: nextHour, minute: picked.minute);
-        }
-      });
-    }
-  }
-
-  Future<void> _pickEndTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: _startTime != null
-          ? TimeOfDay(hour: (_startTime!.hour + 1) % 24, minute: _startTime!.minute)
-          : const TimeOfDay(hour: 10, minute: 0),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.brandYellow,
-              onPrimary: Colors.black,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (picked != null) {
-      setState(() {
-        _endTime = picked;
-      });
+      _fetchAvailableSlots();
     }
   }
 
   String _formatDate(DateTime date) {
     return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
-  }
-
-  String _formatTime(TimeOfDay time) {
-    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}:00";
   }
 
   Future<void> _submitBooking() async {
@@ -178,16 +138,8 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
       return;
     }
 
-    if (_startTime == null || _endTime == null) {
-      _showSnackBar("Please select start and end time slots");
-      return;
-    }
-
-    // Verify start time is before end time
-    final startMinutes = _startTime!.hour * 60 + _startTime!.minute;
-    final endMinutes = _endTime!.hour * 60 + _endTime!.minute;
-    if (endMinutes <= startMinutes) {
-      _showSnackBar("End time must be after start time");
+    if (_selectedSlot == null) {
+      _showSnackBar("Please select a time slot");
       return;
     }
 
@@ -195,8 +147,8 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
       vehicleId: _selectedVehicleId!,
       addonServiceId: _selectedAddonServiceId!,
       scheduledDate: _formatDate(_selectedDate!),
-      scheduledSlotStart: _formatTime(_startTime!),
-      scheduledSlotEnd: _formatTime(_endTime!),
+      scheduledSlotStart: _selectedSlot!.start,
+      scheduledSlotEnd: _selectedSlot!.end,
       cityId: _selectedCityId!,
     );
 
@@ -274,8 +226,7 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
                   "Time Slot",
                   "${lastBooking.scheduledSlotStart ?? 'N/A'} - ${lastBooking.scheduledSlotEnd ?? 'N/A'}",
                 ),
-                if (lastBooking.disputeWindowEnd != null)
-                  _buildDialogInfoRow("Dispute Window End", _formatDateTimeString(lastBooking.disputeWindowEnd!)),
+
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
@@ -451,6 +402,7 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
                     setState(() {
                       _selectedAddonServiceId = service['id'];
                     });
+                    _fetchAvailableSlots();
                   },
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 12),
@@ -528,106 +480,167 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
                   setState(() {
                     _selectedCityId = val;
                   });
+                  _fetchAvailableSlots();
                 },
               ),
             ),
             const SizedBox(height: 20),
 
-            // Date & Time Picker Row
-            _buildSectionHeader("Schedule Date & Time"),
+            // Date Picker Row
+            _buildSectionHeader("Schedule Date"),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(18),
               ),
-              child: Column(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Date selection row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  const Row(
                     children: [
-                      const Row(
-                        children: [
-                          Icon(Icons.calendar_month, color: Colors.black54),
-                          SizedBox(width: 8),
-                          Text(
-                            "Date",
-                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
-                          ),
-                        ],
-                      ),
-                      TextButton(
-                        onPressed: _pickDate,
-                        child: Text(
-                          _selectedDate == null
-                              ? "Choose Date"
-                              : "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}",
-                          style: const TextStyle(
-                            color: Color(0xffC68A00),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                      Icon(Icons.calendar_month, color: Colors.black54),
+                      SizedBox(width: 8),
+                      Text(
+                        "Date",
+                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
                       ),
                     ],
                   ),
-                  const Divider(),
-                  // Start time row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Row(
-                        children: [
-                          Icon(Icons.access_time, color: Colors.black54),
-                          SizedBox(width: 8),
-                          Text(
-                            "Start Time Slot",
-                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
-                          ),
-                        ],
+                  TextButton(
+                    onPressed: _pickDate,
+                    child: Text(
+                      _selectedDate == null
+                          ? "Choose Date"
+                          : "${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}",
+                      style: const TextStyle(
+                        color: Color(0xffC68A00),
+                        fontWeight: FontWeight.bold,
                       ),
-                      TextButton(
-                        onPressed: _pickStartTime,
-                        child: Text(
-                          _startTime == null ? "Select Start Time" : _startTime!.format(context),
-                          style: const TextStyle(
-                            color: Color(0xffC68A00),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Divider(),
-                  // End time row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Row(
-                        children: [
-                          Icon(Icons.access_time_filled, color: Colors.black54),
-                          SizedBox(width: 8),
-                          Text(
-                            "End Time Slot",
-                            style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
-                          ),
-                        ],
-                      ),
-                      TextButton(
-                        onPressed: _pickEndTime,
-                        child: Text(
-                          _endTime == null ? "Select End Time" : _endTime!.format(context),
-                          style: const TextStyle(
-                            color: Color(0xffC68A00),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 20),
+
+            // Time Slots Selection
+            if (_selectedDate != null &&
+                _selectedCityId != null &&
+                _selectedAddonServiceId != null) ...[
+              _buildSectionHeader("Available Time Slots"),
+              if (addonBookingProvider.isLoadingSlots)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(24.0),
+                    child: CircularProgressIndicator(color: AppColors.brandYellow),
+                  ),
+                )
+              else if (addonBookingProvider.slotsError != null)
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        "Failed to load slots: ${addonBookingProvider.slotsError}",
+                        style: const TextStyle(color: Colors.redAccent),
+                      ),
+                      const SizedBox(height: 8),
+                      ElevatedButton(
+                        onPressed: _fetchAvailableSlots,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.brandYellow,
+                          foregroundColor: Colors.black,
+                        ),
+                        child: const Text("Retry"),
+                      ),
+                    ],
+                  ),
+                )
+              else if (addonBookingProvider.slots.isEmpty)
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "No slots available for the selected date. Please choose a different date.",
+                      style: TextStyle(color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              else
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 2.8,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemCount: addonBookingProvider.slots.length,
+                  itemBuilder: (context, index) {
+                    final slot = addonBookingProvider.slots[index];
+                    final isAvailable = slot.status.toLowerCase() == 'available';
+                    final isSelected = _selectedSlot?.start == slot.start && _selectedSlot?.end == slot.end;
+
+                    return GestureDetector(
+                      onTap: isAvailable
+                          ? () {
+                              setState(() {
+                                _selectedSlot = slot;
+                              });
+                            }
+                          : null,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xffFFFDF0)
+                              : (isAvailable ? Colors.white : Colors.grey.shade100),
+                          border: Border.all(
+                            color: isSelected
+                                ? AppColors.brandYellow
+                                : (isAvailable ? Colors.grey.shade300 : Colors.grey.shade200),
+                            width: isSelected ? 1.5 : 1,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "${slot.start} - ${slot.end}",
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: isAvailable ? Colors.black87 : Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              slot.status,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: isAvailable ? Colors.green : Colors.red,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+            ],
             const SizedBox(height: 32),
 
             // Submit Button

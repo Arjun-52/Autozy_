@@ -123,48 +123,57 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                   ),
                 ),
-                if (vehicles.isEmpty)
-                  Padding(
-                    padding: EdgeInsets.all(context.w(20)),
-                    child: Text(
-                      'No vehicles yet. Add one to continue.',
-                      style: TextStyle(fontSize: context.sp(13), fontWeight: FontWeight.w400),
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (vehicles.isEmpty)
+                          Padding(
+                            padding: EdgeInsets.all(context.w(20)),
+                            child: Text(
+                              'No vehicles yet. Add one to continue.',
+                              style: TextStyle(fontSize: context.sp(13), fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                        ...vehicles.map((v) {
+                          final taken = _takenVehicleIds.contains(v.id);
+                          final isSelected = vehicleProvider.selectedVehicle?.id == v.id;
+                          return ListTile(
+                            enabled: !taken,
+                            leading: Icon(Icons.directions_car_outlined, size: context.w(20)),
+                            title: Text(
+                              '${v.brand} ${v.model}',
+                              style: TextStyle(fontSize: context.sp(14), fontWeight: FontWeight.w500),
+                            ),
+                            subtitle: Text(
+                              '${v.vehicleNumber} • ${v.sizeCategory}'
+                              '${taken ? ' • Already subscribed' : ''}',
+                              style: TextStyle(fontSize: context.sp(12), fontWeight: FontWeight.w400),
+                            ),
+                            trailing: isSelected
+                                ? Icon(Icons.check_circle, color: const Color(0xffF4C430), size: context.w(20))
+                                : null,
+                            onTap: taken
+                                ? null
+                                : () {
+                                    vehicleProvider.selectVehicle(v);
+                                    Navigator.of(sheetContext).pop();
+                                  },
+                          );
+                        }),
+                        const Divider(height: 8),
+                        ListTile(
+                          leading: Icon(Icons.add, color: const Color(0xffF4C430), size: context.w(20)),
+                          title: Text(
+                            'Add Vehicle',
+                            style: TextStyle(fontSize: context.sp(14), fontWeight: FontWeight.w500),
+                          ),
+                          onTap: () => Navigator.of(sheetContext).pop('add'),
+                        ),
+                      ],
                     ),
                   ),
-                ...vehicles.map((v) {
-                  final taken = _takenVehicleIds.contains(v.id);
-                  final isSelected = vehicleProvider.selectedVehicle?.id == v.id;
-                  return ListTile(
-                    enabled: !taken,
-                    leading: Icon(Icons.directions_car_outlined, size: context.w(20)),
-                    title: Text(
-                      '${v.brand} ${v.model}',
-                      style: TextStyle(fontSize: context.sp(14), fontWeight: FontWeight.w500),
-                    ),
-                    subtitle: Text(
-                      '${v.vehicleNumber} • ${v.sizeCategory}'
-                      '${taken ? ' • Already subscribed' : ''}',
-                      style: TextStyle(fontSize: context.sp(12), fontWeight: FontWeight.w400),
-                    ),
-                    trailing: isSelected
-                        ? Icon(Icons.check_circle, color: const Color(0xffF4C430), size: context.w(20))
-                        : null,
-                    onTap: taken
-                        ? null
-                        : () {
-                            vehicleProvider.selectVehicle(v);
-                            Navigator.of(sheetContext).pop();
-                          },
-                  );
-                }),
-                const Divider(height: 8),
-                ListTile(
-                  leading: Icon(Icons.add, color: const Color(0xffF4C430), size: context.w(20)),
-                  title: Text(
-                    'Add Vehicle',
-                    style: TextStyle(fontSize: context.sp(14), fontWeight: FontWeight.w500),
-                  ),
-                  onTap: () => Navigator.of(sheetContext).pop('add'),
                 ),
               ],
             ),

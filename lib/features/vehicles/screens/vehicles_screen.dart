@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/vehicle_provider.dart';
 
@@ -227,15 +228,40 @@ class _VehicleScreenState extends State<VehicleScreen> {
                                                 color: const Color(0xFFF6C431),
                                                 borderRadius: BorderRadius.circular(10),
                                               ),
-                                              child: Center(
-                                                child: SizedBox(
-                                                  height: 20,
-                                                  width: 20,
-                                                  child: SvgPicture.asset(
-                                                    'assets/images/car2.svg',
-                                                    fit: BoxFit.contain,
-                                                  ),
-                                                ),
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.circular(10),
+                                                child: vehicle.imageUrl != null && vehicle.imageUrl!.isNotEmpty
+                                                    ? CachedNetworkImage(
+                                                        imageUrl: vehicle.imageUrl!,
+                                                        fit: BoxFit.cover,
+                                                        placeholder: (context, url) => const Center(
+                                                          child: SizedBox(
+                                                            width: 16,
+                                                            height: 16,
+                                                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                                                          ),
+                                                        ),
+                                                        errorWidget: (context, url, error) => Center(
+                                                          child: SizedBox(
+                                                            height: 20,
+                                                            width: 20,
+                                                            child: SvgPicture.asset(
+                                                              'assets/images/car2.svg',
+                                                              fit: BoxFit.contain,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : Center(
+                                                        child: SizedBox(
+                                                          height: 20,
+                                                          width: 20,
+                                                          child: SvgPicture.asset(
+                                                            'assets/images/car2.svg',
+                                                            fit: BoxFit.contain,
+                                                          ),
+                                                        ),
+                                                      ),
                                               ),
                                             ),
  

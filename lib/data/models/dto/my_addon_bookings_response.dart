@@ -36,7 +36,9 @@ class AddonBookingModel {
       bookingDate: json['bookingDate']?.toString() ?? json['date']?.toString() ?? json['bookingDate']?.toString(),
       scheduledDate: json['scheduledDate']?.toString() ?? json['scheduledAt']?.toString() ?? json['date']?.toString(),
       status: json['status']?.toString() ?? json['bookingStatus']?.toString(),
-      amount: json['amount'] != null ? double.tryParse(json['amount'].toString()) : null,
+      amount: (json['price'] != null || json['amount'] != null)
+          ? double.tryParse((json['price'] ?? json['amount']).toString())
+          : null,
       paymentStatus: json['paymentStatus']?.toString() ?? json['payment']?.toString() ?? json['paymentStatus']?.toString(),
       vehicleDetails: json['vehicleDetails']?.toString() ?? json['vehicle']?.toString() ?? json['vehicleNumber']?.toString(),
       createdAt: json['createdAt']?.toString() ?? json['created']?.toString() ?? json['createdAt']?.toString(),

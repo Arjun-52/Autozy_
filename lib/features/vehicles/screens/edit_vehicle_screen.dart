@@ -1,10 +1,12 @@
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../data/models/dto/update_vehicle_request.dart';
 import '../../../providers/vehicle_provider.dart';
 import '../../../providers/auth_provider.dart';
-import '../../../data/models/vehicle_model.dart';
 
 class EditVehicleScreen extends StatefulWidget {
   final String vehicleId;
@@ -15,6 +17,10 @@ class EditVehicleScreen extends StatefulWidget {
 }
 
 class _EditVehicleScreenState extends State<EditVehicleScreen> {
+  File? _newVehicleImageFile;
+  String? _existingVehicleImageUrl;
+  bool _imageRemoved = false;
+
   final numberController = TextEditingController();
   final sizeController = TextEditingController();
   final latController = TextEditingController();
@@ -58,11 +64,68 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
       latController.text = vehicle.parkingLocationLat?.toString() ?? '';
       lngController.text = vehicle.parkingLocationLng?.toString() ?? '';
       notesController.text = vehicle.parkingNotes ?? '';
+      _existingVehicleImageUrl = vehicle.vehicleImage ?? vehicle.imageUrl;
     } catch (e) {
       AppLogger.error('Failed to load vehicle for edit', tag: 'Vehicles', error: e);
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: source,
+        imageQuality: 75,
+        maxWidth: 1080,
+        maxHeight: 1080,
+      );
+
+      if (pickedFile == null) return;
+
+      final file = File(pickedFile.path);
+      setState(() {
+        _newVehicleImageFile = file;
+        _imageRemoved = false;
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to pick image: $e"), backgroundColor: Colors.redAccent)
+        );
+      }
+    }
+  }
+
+  void _showImagePickerOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choose from Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Take a Photo'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -98,6 +161,151 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
+                  // Image Section
+                  if (_newVehicleImageFile != null)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: 180,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              image: DecorationImage(
+                                image: FileImage(_newVehicleImageFile!),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: 8,
+                            top: 8,
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: Colors.white.withOpacity(0.9),
+                                  radius: 18,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.edit, color: Colors.blue, size: 18),
+                                    onPressed: _showImagePickerOptions,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                CircleAvatar(
+                                  backgroundColor: Colors.white.withOpacity(0.9),
+                                  radius: 18,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.delete, color: Colors.red, size: 18),
+                                    onPressed: () {
+                                      setState(() {
+                                        _newVehicleImageFile = null;
+                                        _imageRemoved = true;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else if (_existingVehicleImageUrl != null && _existingVehicleImageUrl!.isNotEmpty && !_imageRemoved)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: CachedNetworkImage(
+                              imageUrl: _existingVehicleImageUrl!,
+                              width: double.infinity,
+                              height: 180,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(
+                                color: Colors.grey.shade100,
+                                child: const Center(child: CircularProgressIndicator()),
+                              ),
+                              errorWidget: (context, url, error) => Container(
+                                color: Colors.grey.shade100,
+                                child: const Icon(Icons.error),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: 8,
+                            top: 8,
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: Colors.white.withOpacity(0.9),
+                                  radius: 18,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.edit, color: Colors.blue, size: 18),
+                                    onPressed: _showImagePickerOptions,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                CircleAvatar(
+                                  backgroundColor: Colors.white.withOpacity(0.9),
+                                  radius: 18,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.delete, color: Colors.red, size: 18),
+                                    onPressed: () {
+                                      setState(() {
+                                        _imageRemoved = true;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else
+                    GestureDetector(
+                      onTap: _showImagePickerOptions,
+                      child: Container(
+                        width: double.infinity,
+                        height: 150,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.grey.shade300,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.camera_alt_outlined, size: 40, color: Colors.grey.shade600),
+                            const SizedBox(height: 8),
+                            Text(
+                              "Upload Vehicle Photo",
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade700,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "JPG, JPEG, PNG up to 5 MB",
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey.shade500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
                   // Vehicle Number (read‑only, cannot change)
                   buildField(
                     label: "Vehicle Number",
@@ -233,9 +441,14 @@ class _EditVehicleScreenState extends State<EditVehicleScreen> {
                                 parkingLocationLat: lat,
                                 parkingLocationLng: lng,
                                 parkingNotes: notesController.text.trim(),
+                                vehicleImage: _imageRemoved ? "" : null,
                               );
 
-                              final success = await vehicleProvider.patchVehicle(widget.vehicleId, request);
+                              final success = await vehicleProvider.patchVehicle(
+                                widget.vehicleId,
+                                request,
+                                imageFile: _newVehicleImageFile,
+                              );
                               if (success) {
                                 // Refresh user profile counts if needed
                                 authProvider.fetchUserProfile();

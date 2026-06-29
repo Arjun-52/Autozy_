@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +18,7 @@ class AddVehicleScreen extends StatefulWidget {
 }
 
 class _AddVehicleScreenState extends State<AddVehicleScreen> {
+  File? _vehicleImageFile;
   // Vehicle Detail Controllers
   final numberController = TextEditingController();
   String? selectedMake;
@@ -118,6 +121,60 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     stateFocus.dispose();
     pincodeFocus.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: source,
+        imageQuality: 75,
+        maxWidth: 1080,
+        maxHeight: 1080,
+      );
+
+      if (pickedFile == null) return;
+
+      final file = File(pickedFile.path);
+      setState(() {
+        _vehicleImageFile = file;
+        localError = null;
+      });
+    } catch (e) {
+      setState(() {
+        localError = "Failed to pick image: $e";
+      });
+    }
+  }
+
+  void _showImagePickerOptions() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choose from Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Take a Photo'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickImage(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   // Location Retrieval Logic
@@ -275,6 +332,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                         stateController.clear();
                         pincodeController.clear();
                         setState(() {
+                          _vehicleImageFile = null;
                           selectedMake = null;
                           selectedModel = null;
                           selectedSize = null;
@@ -298,6 +356,95 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.blueGrey),
               ),
               const SizedBox(height: 10),
+
+              if (_vehicleImageFile == null)
+                GestureDetector(
+                  onTap: _showImagePickerOptions,
+                  child: Container(
+                    width: double.infinity,
+                    height: 150,
+                    margin: const EdgeInsets.only(bottom: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.grey.shade300,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.camera_alt_outlined, size: 40, color: Colors.grey.shade600),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Upload Vehicle Photo",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "JPG, JPEG, PNG up to 5 MB",
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          image: DecorationImage(
+                            image: FileImage(_vehicleImageFile!),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        right: 8,
+                        top: 8,
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Colors.white.withOpacity(0.9),
+                              radius: 18,
+                              child: IconButton(
+                                icon: const Icon(Icons.edit, color: Colors.blue, size: 18),
+                                onPressed: _showImagePickerOptions,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            CircleAvatar(
+                              backgroundColor: Colors.white.withOpacity(0.9),
+                              radius: 18,
+                              child: IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.red, size: 18),
+                                onPressed: () {
+                                  setState(() {
+                                    _vehicleImageFile = null;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
 
               buildField(
                 label: "Vehicle Number",
@@ -754,19 +901,29 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                           final navigator = Navigator.of(context);
                           final scaffoldMessenger = ScaffoldMessenger.of(context);
 
-                          final success = await vehicleProv.createVehicle(request: request);
+                          debugPrint("Selected image: ${_vehicleImageFile?.path}");
+                          debugPrint("Before createVehicle()");
+                          final success = await vehicleProv.createVehicle(
+                            request: request,
+                            imageFile: _vehicleImageFile,
+                          );
+                          debugPrint("Immediately after createVehicle() returns");
 
                           if (success) {
                             setState(() => localError = null);
                             try {
+                              final isImageUploadFailed = vehicleProv.creationStatus == 'image_upload_failed';
                               scaffoldMessenger.showSnackBar(
-                                const SnackBar(
-                                  content: Text("Vehicle Added Successfully"),
-                                  backgroundColor: Colors.green,
+                                SnackBar(
+                                  content: Text(isImageUploadFailed
+                                      ? "Vehicle added successfully, but the image could not be uploaded."
+                                      : "Vehicle Added Successfully"),
+                                  backgroundColor: isImageUploadFailed ? Colors.orange : Colors.green,
                                 ),
                               );
                             } catch (_) {}
                             authProvider.fetchUserProfile();
+                            debugPrint("Before navigating back to the Home screen");
                             navigator.pop(true);
                           } else {
                             final errorMsg = vehicleProv.error ?? "Something went wrong";

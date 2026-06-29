@@ -4,6 +4,7 @@ import '../data/models/dto/my_addon_bookings_response.dart';
 import '../data/repositories/addon_repository.dart';
 import '../data/models/dto/book_addon_request_model.dart';
 import '../data/models/dto/book_addon_response_model.dart';
+import '../data/models/dto/addon_slots_response_model.dart';
 
 enum AddonBookingStatus { initial, loading, success, empty, error }
 
@@ -21,7 +22,50 @@ class AddonBookingProvider extends ChangeNotifier {
   // Booking action states
   bool _isBooking = false;
   String? _bookingError;
-  BookedAddonDataModel? _lastBookedAddon;
+  BookAddonResponseModel? _lastBookedAddon;
+
+  // Slots states
+  List<AddonSlotModel> _slots = [];
+  bool _isLoadingSlots = false;
+  String? _slotsError;
+
+  List<AddonSlotModel> get slots => _slots;
+  bool get isLoadingSlots => _isLoadingSlots;
+  String? get slotsError => _slotsError;
+
+  Future<void> fetchSlots({
+    required String addonServiceId,
+    required String cityId,
+    required String date,
+  }) async {
+    _isLoadingSlots = true;
+    _slotsError = null;
+    _slots = [];
+    notifyListeners();
+
+    try {
+      final response = await _repository.getAddonServiceSlots(
+        addonServiceId: addonServiceId,
+        cityId: cityId,
+        date: date,
+      );
+      _slots = response.slots;
+      _slotsError = null;
+    } catch (e) {
+      _slotsError = e.toString().replaceAll('Exception: ', '');
+      _slots = [];
+    } finally {
+      _isLoadingSlots = false;
+      notifyListeners();
+    }
+  }
+
+  void clearSlots() {
+    _slots = [];
+    _slotsError = null;
+    _isLoadingSlots = false;
+    notifyListeners();
+  }
 
   List<AddonBookingModel> get bookings => _bookings;
   AddonBookingPaginationModel? get meta => _meta;
@@ -31,7 +75,7 @@ class AddonBookingProvider extends ChangeNotifier {
 
   bool get isBooking => _isBooking;
   String? get bookingError => _bookingError;
-  BookedAddonDataModel? get lastBookedAddon => _lastBookedAddon;
+  BookAddonResponseModel? get lastBookedAddon => _lastBookedAddon;
 
   Future<void> fetchBookings({bool isRefresh = false}) async {
     if (_status == AddonBookingStatus.loading || _isPageLoading) return;
@@ -105,8 +149,8 @@ class AddonBookingProvider extends ChangeNotifier {
 
     try {
       final response = await _repository.bookAddonService(request);
-      if (response.success && response.data != null) {
-        _lastBookedAddon = response.data;
+      if (response.id != null) {
+        _lastBookedAddon = response;
         // Fetch fresh bookings so that the new booking is included in the list
         fetchBookings(isRefresh: true);
         return true;

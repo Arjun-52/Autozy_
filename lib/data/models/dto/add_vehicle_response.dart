@@ -12,9 +12,12 @@ class AddVehicleResponse {
   });
 
   factory AddVehicleResponse.fromJson(Map<String, dynamic> json) {
+    final hasVehicle = json['vehicle'] != null || json['data'] != null;
     return AddVehicleResponse(
-      success: json['success'] ?? false,
-      data: json['data'] != null ? Vehicle.fromJson(json['data']) : null,
+      success: json['success'] ?? hasVehicle,
+      data: json['data'] != null 
+          ? Vehicle.fromJson(json['data']) 
+          : (json['vehicle'] != null ? Vehicle.fromJson(json['vehicle']) : null),
       timestamp: json['timestamp'],
     );
   }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import '../../core/utils/app_logger.dart';
 
 import '../../core/network/api_config.dart';
@@ -227,9 +228,19 @@ class ApiService {
       headers.remove('Content-Type');
       request.headers.addAll(headers);
 
+      String filename = filePath.split(RegExp(r'[/\\]')).last;
+      if (!filename.toLowerCase().endsWith('.jpg') &&
+          !filename.toLowerCase().endsWith('.jpeg') &&
+          !filename.toLowerCase().endsWith('.png') &&
+          !filename.toLowerCase().endsWith('.webp')) {
+        filename = '$filename.jpg';
+      }
+
       final multipartFile = await http.MultipartFile.fromPath(
         fieldName,
         filePath,
+        filename: filename,
+        contentType: MediaType('image', 'jpeg'),
       );
       request.files.add(multipartFile);
 
@@ -252,9 +263,18 @@ class ApiService {
       request.headers.addAll(headers);
 
       for (final path in filePaths) {
+        String filename = path.split(RegExp(r'[/\\]')).last;
+        if (!filename.toLowerCase().endsWith('.jpg') &&
+            !filename.toLowerCase().endsWith('.jpeg') &&
+            !filename.toLowerCase().endsWith('.png') &&
+            !filename.toLowerCase().endsWith('.webp')) {
+          filename = '$filename.jpg';
+        }
         final multipartFile = await http.MultipartFile.fromPath(
           fieldName,
           path,
+          filename: filename,
+          contentType: MediaType('image', 'jpeg'),
         );
         request.files.add(multipartFile);
       }
