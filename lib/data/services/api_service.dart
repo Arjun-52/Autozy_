@@ -297,12 +297,19 @@ class ApiService {
         message = 'Error $statusCode: ${response.body}';
       }
 
-      throw Exception(message);
+      throw ApiException(
+        statusCode: statusCode,
+        body: response.body,
+        message: message,
+      );
     }
   }
 
   Exception _handleError(dynamic error) {
     AppLogger.error('Request failed', tag: _tag, error: error);
+    if (error is ApiException) {
+      return error;
+    }
     if (error is Exception) {
       if (error.toString().contains('timeout')) {
         return Exception(
@@ -320,4 +327,19 @@ class ApiService {
     }
     return Exception('An unexpected error occurred');
   }
+}
+
+class ApiException implements Exception {
+  final int statusCode;
+  final String body;
+  final String message;
+
+  ApiException({
+    required this.statusCode,
+    required this.body,
+    required this.message,
+  });
+
+  @override
+  String toString() => message;
 }

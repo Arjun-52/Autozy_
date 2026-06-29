@@ -199,198 +199,204 @@ class _VehicleScreenState extends State<VehicleScreen> {
                                   }
                                 },
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 6),
+                                  padding: const EdgeInsets.symmetric(vertical: 4),
                                   child: Container(
-                                    margin: const EdgeInsets.only(bottom: 12),
-                                  padding: const EdgeInsets.all(14),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.06),
-                                        blurRadius: 20,
-                                        offset: const Offset(0, 6),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      /// ICON
-                                      Container(
-                                        width: 55,
-                                        height: 55,
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFF6C431),
-                                          borderRadius: BorderRadius.circular(14),
+                                    margin: const EdgeInsets.only(bottom: 10),
+                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(14),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.04),
+                                          blurRadius: 15,
+                                          offset: const Offset(0, 4),
                                         ),
-                                        child: Center(
-                                          child: SizedBox(
-                                            height: 24,
-                                            width: 24,
-                                            child: SvgPicture.asset(
-                                              'assets/images/car2.svg',
-                                              fit: BoxFit.contain,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-
-                                      const SizedBox(width: 12),
-
-                                      /// TEXT
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
                                           children: [
-                                            Text(
-                                              vehicle.brand,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 16,
+                                            /// ICON
+                                            Container(
+                                              width: 44,
+                                              height: 44,
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFF6C431),
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              child: Center(
+                                                child: SizedBox(
+                                                  height: 20,
+                                                  width: 20,
+                                                  child: SvgPicture.asset(
+                                                    'assets/images/car2.svg',
+                                                    fit: BoxFit.contain,
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                            const SizedBox(height: 4),
-                                            Text.rich(
-                                              TextSpan(
+ 
+                                            const SizedBox(width: 10),
+
+                                            /// TEXT
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  TextSpan(
-                                                    text: "${vehicle.vehicleNumber} ",
-                                                    style: TextStyle(
-                                                      color: Colors.grey.shade600,
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                  const TextSpan(
-                                                    text: "• ",
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  TextSpan(
-                                                    text: vehicle.sizeCategory,
+                                                  Text(
+                                                    vehicle.brand,
                                                     style: const TextStyle(
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight: FontWeight.w600,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text.rich(
+                                                    TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: "${vehicle.vehicleNumber} ",
+                                                          style: TextStyle(
+                                                            color: Colors.grey.shade600,
+                                                            fontSize: 13,
+                                                          ),
+                                                        ),
+                                                        const TextSpan(
+                                                          text: "• ",
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        TextSpan(
+                                                          text: vehicle.sizeCategory,
+                                                          style: const TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                             ),
+
+                                            const SizedBox(width: 12),
+
+                                            /// STATUS (driven by vehicle.status)
+                                            _vehicleStatusBadge(vehicle.status),
                                           ],
                                         ),
-                                      ),
-
-                                      /// RIGHT SIDE
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.end,
-                                        children: [
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 10,
-                                              vertical: 5,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFFE8F8EF),
-                                              borderRadius: BorderRadius.circular(20),
-                                              border: Border.all(
-                                                color: Colors.green.shade300,
+                                        const Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 8),
+                                          child: Divider(
+                                            height: 1,
+                                            color: Color(0xFFEAEAEA),
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  context.push('/service-history/${vehicle.id}');
+                                                },
+                                                child: const Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.history,
+                                                      size: 16,
+                                                      color: Color(0xFFC68A00),
+                                                    ),
+                                                    SizedBox(width: 6),
+                                                    Text(
+                                                      "History",
+                                                      style: TextStyle(
+                                                        color: Color(0xFFC68A00),
+                                                        fontSize: 13,
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                            child: const Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.check_circle,
-                                                  color: Colors.green,
-                                                  size: 14,
+                                            Container(
+                                              height: 16,
+                                              width: 1,
+                                              color: Colors.grey.shade300,
+                                            ),
+                                            Expanded(
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  context.push('/service-calendar/${vehicle.id}');
+                                                },
+                                                child: const Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.calendar_month,
+                                                      size: 16,
+                                                      color: Color(0xFFC68A00),
+                                                    ),
+                                                    SizedBox(width: 6),
+                                                    Text(
+                                                      "Calendar",
+                                                      style: TextStyle(
+                                                        color: Color(0xFFC68A00),
+                                                        fontSize: 13,
+                                                        fontWeight: FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                                SizedBox(width: 4),
-                                                Text(
-                                                  "Current",
-                                                  style: TextStyle(
-                                                    color: Colors.green,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontFamily: 'Poppins',
+                                              ),
+                                            ),
+                                            Container(
+                                              height: 16,
+                                              width: 1,
+                                              color: Colors.grey.shade300,
+                                            ),
+                                            Expanded(
+                                              child: GestureDetector(
+                                                onTap: vehicleProvider.isLoading
+                                                    ? null
+                                                    : () => deleteVehicle(vehicle.id),
+                                                child: Opacity(
+                                                  opacity: vehicleProvider.isLoading ? 0.5 : 1.0,
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      SvgPicture.asset(
+                                                        'assets/images/bin.svg',
+                                                        height: 16,
+                                                        width: 16,
+                                                      ),
+                                                      const SizedBox(width: 6),
+                                                      Text(
+                                                        "Remove",
+                                                        style: TextStyle(
+                                                          color: Colors.red.shade400,
+                                                          fontSize: 13,
+                                                          fontWeight: FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
-                                              ],
+                                              ),
                                             ),
-                                          ),
-                                           const SizedBox(height: 10),
-                                           Row(
-                                             mainAxisSize: MainAxisSize.min,
-                                             children: [
-                                               GestureDetector(
-                                                 onTap: () {
-                                                   context.push('/service-history/${vehicle.id}');
-                                                 },
-                                                 child: const Row(
-                                                   children: [
-                                                     Icon(
-                                                       Icons.history,
-                                                       size: 16,
-                                                       color: Color(0xFFC68A00),
-                                                     ),
-                                                     SizedBox(width: 4),
-                                                     Text(
-                                                       "History",
-                                                       style: TextStyle(
-                                                         color: Color(0xFFC68A00),
-                                                         fontSize: 12,
-                                                         fontWeight: FontWeight.w600,
-                                                       ),
-                                                     ),
-                                                   ],
-                                                 ),
-                                               ),
-                                               const SizedBox(width: 14),
-                                               GestureDetector(
-                                                 onTap: () {
-                                                   context.push('/service-calendar/${vehicle.id}');
-                                                 },
-                                                 child: const Row(
-                                                   children: [
-                                                     Icon(
-                                                       Icons.calendar_month,
-                                                       size: 16,
-                                                       color: Color(0xFFC68A00),
-                                                     ),
-                                                     SizedBox(width: 4),
-                                                     Text(
-                                                       "Calendar",
-                                                       style: TextStyle(
-                                                         color: Color(0xFFC68A00),
-                                                         fontSize: 12,
-                                                         fontWeight: FontWeight.w600,
-                                                       ),
-                                                     ),
-                                                   ],
-                                                 ),
-                                               ),
-                                               const SizedBox(width: 14),
-                                               GestureDetector(
-                                                 onTap: vehicleProvider.isLoading
-                                                     ? null
-                                                     : () => deleteVehicle(vehicle.id),
-                                                 child: Opacity(
-                                                   opacity: vehicleProvider.isLoading ? 0.5 : 1.0,
-                                                   child: SvgPicture.asset(
-                                                     'assets/images/bin.svg',
-                                                     height: 20,
-                                                     width: 20,
-                                                   ),
-                                                 ),
-                                               ),
-                                             ],
-                                           ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
                           ),
               ),
             ],
@@ -399,4 +405,63 @@ class _VehicleScreenState extends State<VehicleScreen> {
       ),
     );
   }
+}
+
+/// Status pill for a vehicle card, driven by the vehicle's real approval status
+/// ('PENDING' | 'APPROVED' | 'REJECTED') instead of an unconditional "Current".
+Widget _vehicleStatusBadge(String status) {
+  final s = status.toUpperCase();
+  Color color;
+  Color bg;
+  IconData icon;
+  String label;
+  switch (s) {
+    case 'APPROVED':
+      color = Colors.green;
+      bg = const Color(0xFFE8F8EF);
+      icon = Icons.check_circle;
+      label = 'Active';
+      break;
+    case 'PENDING':
+      color = const Color(0xFFB8860B);
+      bg = const Color(0xFFFFF6E5);
+      icon = Icons.hourglass_top;
+      label = 'Pending';
+      break;
+    case 'REJECTED':
+      color = Colors.red;
+      bg = const Color(0xFFFFECEC);
+      icon = Icons.cancel;
+      label = 'Rejected';
+      break;
+    default:
+      color = Colors.grey;
+      bg = const Color(0xFFF0F0F0);
+      icon = Icons.info_outline;
+      label = s.isEmpty ? 'Unknown' : status;
+  }
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    decoration: BoxDecoration(
+      color: bg,
+      borderRadius: BorderRadius.circular(20),
+      border: Border.all(color: color.withOpacity(0.4)),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: color, size: 14),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: color,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            fontFamily: 'Poppins',
+          ),
+        ),
+      ],
+    ),
+  );
 }

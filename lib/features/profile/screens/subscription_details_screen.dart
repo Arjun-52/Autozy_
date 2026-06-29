@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../providers/subscription_provider.dart';
+import '../../../core/utils/responsive.dart';
 
 class SubscriptionDetailsScreen extends StatefulWidget {
   final String subscriptionId;
@@ -27,12 +28,25 @@ class _HomeScreenDetailsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: EdgeInsets.symmetric(vertical: context.h(5)),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 14, fontWeight: FontWeight.w500)),
-          Text(value, style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.w600)),
+          Text(
+            label,
+            style: TextStyle(color: Colors.grey.shade600, fontSize: context.sp(10.5), fontWeight: FontWeight.w500),
+          ),
+          SizedBox(width: context.w(16)),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(color: Colors.black, fontSize: context.sp(11), fontWeight: FontWeight.w600),
+              textAlign: TextAlign.end,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
         ],
       ),
     );
@@ -92,16 +106,16 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
     final sub = subProvider.subscriptionDetails;
 
     return Scaffold(
-      backgroundColor: const Color(0xffF5F5F5),
+      backgroundColor: const Color(0xFFF9F9FB),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
+        title: Text(
           "Subscription Details",
           style: TextStyle(
             color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
+            fontSize: context.sp(16),
+            fontWeight: FontWeight.w600,
           ),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
@@ -118,20 +132,30 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
         if (subProvider.detailsError != null) {
           return Center(
             child: Padding(
-              padding: const EdgeInsets.all(32),
+              padding: EdgeInsets.all(context.w(32)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline, size: 64, color: Colors.redAccent),
-                  const SizedBox(height: 16),
-                  const Text("Failed to load details", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                  const SizedBox(height: 8),
-                  Text(subProvider.detailsError!, textAlign: TextAlign.center, style: const TextStyle(color: Colors.grey)),
-                  const SizedBox(height: 24),
+                  Icon(Icons.error_outline, size: context.w(64), color: Colors.redAccent),
+                  SizedBox(height: context.h(16)),
+                  Text(
+                    "Failed to load details",
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(18)),
+                  ),
+                  SizedBox(height: context.h(8)),
+                  Text(
+                    subProvider.detailsError!,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey, fontSize: context.sp(13), fontWeight: FontWeight.w400),
+                  ),
+                  SizedBox(height: context.h(24)),
                   ElevatedButton(
                     onPressed: () => subProvider.fetchSubscriptionDetails(widget.subscriptionId),
-                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xffF4C430)),
-                    child: const Text("Retry", style: TextStyle(color: Colors.black)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xffF4C430),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: Text("Retry", style: TextStyle(color: Colors.black, fontSize: context.sp(13), fontWeight: FontWeight.w600)),
                   )
                 ],
               ),
@@ -140,24 +164,30 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
         }
 
         if (sub == null) {
-          return const Center(child: Text("Subscription not found"));
+          return Center(
+            child: Text(
+              "Subscription not found",
+              style: TextStyle(fontSize: context.sp(14), fontWeight: FontWeight.w500, color: Colors.grey),
+            ),
+          );
         }
 
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(context.w(16)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(context.w(16)),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFE9E9E9), width: 1),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      color: Colors.black.withOpacity(0.015),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     )
                   ],
                 ),
@@ -167,12 +197,14 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          sub.planPricing?.plan?.name ?? 'Subscription Plan',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                        Expanded(
+                          child: Text(
+                            sub.planPricing?.plan?.name ?? 'Subscription Plan',
+                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(14.5)),
+                          ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(3)),
                           decoration: BoxDecoration(
                             color: _getStatusBgColor(sub.status),
                             borderRadius: BorderRadius.circular(12),
@@ -180,77 +212,162 @@ class _SubscriptionDetailsScreenState extends State<SubscriptionDetailsScreen> {
                           ),
                           child: Text(
                             sub.status.toUpperCase(),
-                            style: TextStyle(color: _getStatusTextColor(sub.status), fontWeight: FontWeight.bold, fontSize: 11),
+                            style: TextStyle(color: _getStatusTextColor(sub.status), fontWeight: FontWeight.w600, fontSize: context.sp(9)),
                           ),
                         )
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: context.h(6)),
                     Text(
                       "₹${sub.planPricing?.price ?? 0} / month",
-                      style: const TextStyle(color: Color(0xffC68A00), fontWeight: FontWeight.w700, fontSize: 16),
+                      style: TextStyle(color: const Color(0xffC68A00), fontWeight: FontWeight.w600, fontSize: context.sp(13)),
                     ),
-                    const Divider(height: 32),
-                    _HomeScreenDetailsRow(label: "SUBSCRIPTION ID", value: sub.id),
-                    _HomeScreenDetailsRow(label: "VEHICLE", value: "${sub.vehicle?.brand ?? ''} ${sub.vehicle?.model ?? ''} (${sub.vehicle?.vehicleNumber ?? ''})"),
-                    _HomeScreenDetailsRow(label: "SLOT TYPE", value: sub.slotType?.toUpperCase() ?? 'MORNING'),
-                    _HomeScreenDetailsRow(label: "START DATE", value: _formatDate(sub.startDate)),
-                    _HomeScreenDetailsRow(label: "END DATE", value: _formatDate(sub.endDate)),
-                    _HomeScreenDetailsRow(label: "CITY", value: sub.city?.name ?? 'N/A'),
-                    _HomeScreenDetailsRow(label: "STATE", value: sub.city?.state ?? 'N/A'),
+                    Divider(height: context.h(24)),
+                    
+                    Text(
+                          'Vehicle Details',
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5), color: Colors.black87),
+                        ),
+                        const SizedBox(height: 8),
+                        _HomeScreenDetailsRow(label: "Vehicle", value: "${sub.vehicle?.brand ?? ''} ${sub.vehicle?.model ?? ''} (${sub.vehicle?.vehicleNumber ?? ''})"),
+                    _HomeScreenDetailsRow(label: "Slot", value: sub.slotType?.toUpperCase() ?? 'MORNING'),
+                    Text(
+                          'Subscription Period',
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5), color: Colors.black87),
+                        ),
+                        const SizedBox(height: 8),
+                        _HomeScreenDetailsRow(label: "Start", value: _formatDate(sub.startDate)),
+                    _HomeScreenDetailsRow(label: "End", value: _formatDate(sub.endDate)),
+                    _HomeScreenDetailsRow(label: "City", value: sub.city?.name ?? 'N/A'),
+                    _HomeScreenDetailsRow(label: "State", value: sub.city?.state ?? 'N/A'),
+                    // ---------- Services Summary ----------
+                    if (sub.servicesSummary != null && sub.servicesSummary!.isNotEmpty) ...[
+                      const Divider(),
+                      Text(
+                        'Services Summary',
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5), color: Colors.black87),
+                      ),
+                      const SizedBox(height: 8),
+                      ...sub.servicesSummary!.map((summary) => Padding(
+                            padding: EdgeInsets.symmetric(vertical: context.h(4)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    summary.type ?? 'N/A',
+                                    style: TextStyle(fontSize: context.sp(12), color: Colors.grey.shade800),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Text('Allowed: ${summary.allowed ?? 0}',
+                                    style: TextStyle(fontSize: context.sp(11), color: Colors.grey.shade600)),
+                                Text('Used: ${summary.used ?? 0}',
+                                    style: TextStyle(fontSize: context.sp(11), color: Colors.grey.shade600)),
+                                Text('Remaining: ${summary.remaining ?? 0}',
+                                    style: TextStyle(fontSize: context.sp(11), fontWeight: FontWeight.w600, color: const Color(0xFF2E7D32))),
+                              ],
+                            ),
+                          )),
+                    ],
+                    // ---------- User Info ----------
+                    if (sub.user != null) ...[
+                      const Divider(),
+                      Text(
+                        'User',
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5), color: Colors.black87),
+                      ),
+                      const SizedBox(height: 8),
+                      _HomeScreenDetailsRow(label: "NAME", value: sub.user?.name ?? ''),
+                      _HomeScreenDetailsRow(label: "PHONE", value: sub.user?.phone ?? ''),
+                      _HomeScreenDetailsRow(label: "EMAIL", value: sub.user?.email ?? ''),
+                    ],
+                    // ---------- Payments ----------
+                    if (sub.payments != null && sub.payments!.isNotEmpty) ...[
+                      const Divider(),
+                      Text(
+                        'Payments',
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5), color: Colors.black87),
+                      ),
+                      const SizedBox(height: 8),
+                      ...sub.payments!.asMap().entries.map((entry) {
+                        final idx = entry.key + 1;
+                        final p = entry.value;
+                        return _HomeScreenDetailsRow(
+                          label: "Payment #$idx",
+                          value: "${p.amount ?? ''} ${p.currency ?? ''} (${p.status ?? ''})",
+                        );
+                      }),
+                    ],
+                    // ---------- Service Records ----------
+                    if (sub.serviceRecords != null && sub.serviceRecords!.isNotEmpty) ...[
+                      const Divider(),
+                      Text(
+                        'Service Records',
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: context.sp(13.5), color: Colors.black87),
+                      ),
+                      const SizedBox(height: 8),
+                      ...sub.serviceRecords!.map((r) => _HomeScreenDetailsRow(
+                            label: r.serviceType ?? '',
+                            value: r.status ?? '',
+                          )),
+                    ],
                   ],
                 ),
               ),
               if (sub.status.toUpperCase() != 'PAUSED') ...[
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
-                    onPressed: subProvider.isPauseLoading
-                        ? null
-                        : () async {
-                            final success = await subProvider.pauseSubscription(sub.id);
-                            if (success && context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Subscription paused successfully"),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                            } else if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Failed to pause subscription. Please try again."),
-                                  backgroundColor: Colors.redAccent,
-                                ),
-                              );
-                            }
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFEF6C00),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                SizedBox(height: context.h(20)),
+                Center(
+                  child: SizedBox(
+                    width: context.w(220),
+                    height: context.h(40),
+                    child: ElevatedButton(
+                      onPressed: subProvider.isPauseLoading
+                          ? null
+                          : () async {
+                              final success = await subProvider.pauseSubscription(sub.id);
+                              if (success && context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Subscription paused successfully"),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              } else if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Failed to pause subscription. Please try again."),
+                                    backgroundColor: Colors.redAccent,
+                                  ),
+                                );
+                              }
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFEF6C00),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                      elevation: 0,
+                      child: subProvider.isPauseLoading
+                          ? const SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              "Pause Subscription",
+                              style: TextStyle(
+                                fontSize: context.sp(12.5),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                     ),
-                    child: subProvider.isPauseLoading
-                        ? const SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.5,
-                            ),
-                          )
-                        : const Text(
-                            "Pause Subscription",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                   ),
                 ),
               ],

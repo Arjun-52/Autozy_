@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../../core/utils/app_logger.dart';
 import '../data/repositories/vehicle_repository.dart';
@@ -17,6 +18,13 @@ class VehicleProvider extends ChangeNotifier {
   Vehicle? _createdVehicle;
   String? _creationStatus; // 'loading', 'success', 'error', null
   String? _deleteStatus; // 'loading', 'success', 'error', null
+  String? _imageUploadStatus; // 'loading', 'success', 'error', null
+
+  // Vehicle-data dropdowns (brands/models from /vehicle-data)
+  List<String> _brands = [];
+  List<String> _models = [];
+  bool _brandsLoading = false;
+  bool _modelsLoading = false;
 
   // Pagination state
   int _currentPage = 1;
@@ -24,6 +32,87 @@ class VehicleProvider extends ChangeNotifier {
   bool _isListLoading = false;
   bool _isPageLoading = false;
   String? _listError;
+
+  // Vehicle Registration form state variables
+  String _regNumber = "";
+  String? _brand;
+  String? _model;
+  String? _size;
+  String _latitude = "17.3850";
+  String _longitude = "78.4867";
+  String _parkingNotes = "";
+  String _flat = "";
+  String _building = "";
+  String _locality = "";
+  String _landmark = "";
+  String _city = "";
+  String _stateName = "";
+  String _pincode = "";
+
+  String get regNumber => _regNumber;
+  String? get brand => _brand;
+  String? get model => _model;
+  String? get size => _size;
+  String get latitude => _latitude;
+  String get longitude => _longitude;
+  String get parkingNotes => _parkingNotes;
+  String get flat => _flat;
+  String get building => _building;
+  String get locality => _locality;
+  String get landmark => _landmark;
+  String get city => _city;
+  String get stateName => _stateName;
+  String get pincode => _pincode;
+
+  void setRegNumber(String value) { _regNumber = value; }
+  void setBrand(String? value) { _brand = value; }
+  void setModel(String? value) { _model = value; }
+  void setSize(String? value) { _size = value; }
+  void setLatitude(String value) { _latitude = value; }
+  void setLongitude(String value) { _longitude = value; }
+  void setParkingNotes(String value) { _parkingNotes = value; }
+  void setFlat(String value) { _flat = value; }
+  void setBuilding(String value) { _building = value; }
+  void setLocality(String value) { _locality = value; }
+  void setLandmark(String value) { _landmark = value; }
+  void setCity(String value) { _city = value; }
+  void setStateName(String value) { _stateName = value; }
+  void setPincode(String value) { _pincode = value; }
+
+  bool isRegistrationFormDirty() {
+    return _regNumber.isNotEmpty ||
+        (_brand != null && _brand!.isNotEmpty) ||
+        (_model != null && _model!.isNotEmpty) ||
+        (_size != null && _size!.isNotEmpty) ||
+        _parkingNotes.isNotEmpty ||
+        (_latitude.isNotEmpty && _latitude != "17.3850") ||
+        (_longitude.isNotEmpty && _longitude != "78.4867") ||
+        _flat.isNotEmpty ||
+        _building.isNotEmpty ||
+        _locality.isNotEmpty ||
+        _landmark.isNotEmpty ||
+        _city.isNotEmpty ||
+        _stateName.isNotEmpty ||
+        _pincode.isNotEmpty;
+  }
+
+  void resetRegistrationForm() {
+    _regNumber = "";
+    _brand = null;
+    _model = null;
+    _size = null;
+    _latitude = "17.3850";
+    _longitude = "78.4867";
+    _parkingNotes = "";
+    _flat = "";
+    _building = "";
+    _locality = "";
+    _landmark = "";
+    _city = "";
+    _stateName = "";
+    _pincode = "";
+    notifyListeners();
+  }
 
   VehicleProvider(this._vehicleRepository);
 
@@ -49,10 +138,49 @@ class VehicleProvider extends ChangeNotifier {
   String? get creationStatus => _creationStatus;
   String? get deleteStatus => _deleteStatus;
   String? get patchStatus => _patchStatus;
+  String? get imageUploadStatus => _imageUploadStatus;
+
+  List<String> get brands => _brands;
+  List<String> get models => _models;
+  bool get brandsLoading => _brandsLoading;
+  bool get modelsLoading => _modelsLoading;
+
+  /// Loads the brand list for the make dropdown.
+  Future<void> fetchBrands() async {
+    if (_brands.isNotEmpty || _brandsLoading) return;
+    _brandsLoading = true;
+    notifyListeners();
+    try {
+      _brands = await _vehicleRepository.getVehicleBrands();
+    } catch (e) {
+      AppLogger.error('Unable to load vehicle brands', tag: 'Vehicles', error: e);
+    } finally {
+      _brandsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Loads the model list for a brand (clears previous models first).
+  Future<void> fetchModels(String brand) async {
+    _modelsLoading = true;
+    _models = [];
+    notifyListeners();
+    try {
+      _models = await _vehicleRepository.getVehicleModels(brand);
+    } catch (e) {
+      AppLogger.error('Unable to load vehicle models', tag: 'Vehicles', error: e);
+    } finally {
+      _modelsLoading = false;
+      notifyListeners();
+    }
+  }
+
+  void clearModels() {
+    _models = [];
+  }
 
   Future<void> fetchVehicles({int page = 1, int limit = 20, bool reset = false}) async {
     if (reset) {
-      _vehicles.clear();
       _currentPage = 1;
       _totalPages = 1;
     }
@@ -120,6 +248,7 @@ class VehicleProvider extends ChangeNotifier {
         _createdVehicle = response.data;
         _vehicles.add(response.data!);
         _creationStatus = 'success';
+        resetRegistrationForm();
         AppLogger.info('Vehicle synchronization triggered', tag: 'Vehicles');
         notifyListeners();
         return true;
@@ -191,6 +320,32 @@ class VehicleProvider extends ChangeNotifier {
     } catch (e) {
       _patchStatus = 'error';
       _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Uploads an image for a vehicle and updates it in local state.
+  Future<bool> uploadVehicleImage(String vehicleId, File imageFile) async {
+    _imageUploadStatus = 'loading';
+    _error = null;
+    notifyListeners();
+    try {
+      final updated = await _vehicleRepository.uploadVehicleImage(vehicleId, imageFile);
+      final index = _vehicles.indexWhere((v) => v.id == vehicleId);
+      if (index != -1) {
+        _vehicles[index] = updated;
+      }
+      if (_selectedVehicle?.id == vehicleId) {
+        _selectedVehicle = updated;
+      }
+      _imageUploadStatus = 'success';
+      AppLogger.info('Vehicle image uploaded: $vehicleId', tag: 'Vehicles');
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _imageUploadStatus = 'error';
+      _error = e.toString().replaceAll('Exception: ', '');
       notifyListeners();
       return false;
     }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../core/utils/responsive.dart';
 
 import '../../data/services/api_service.dart';
 
@@ -34,14 +35,14 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/new-logo.png', width: 120),
+            Image.asset('assets/images/new-logo.png', width: context.w(120)),
 
-            const SizedBox(height: 12),
+            SizedBox(height: context.h(12)),
 
-            const Text(
+            Text(
               "Customer",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: context.sp(18),
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),

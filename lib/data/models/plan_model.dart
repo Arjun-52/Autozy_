@@ -62,18 +62,31 @@ class PlanFeatures {
   final int? internal;
   final int? waterWash;
   final int? washesPerMonth;
+  final List<String> included;
+  final List<String> excluded;
 
   PlanFeatures({
     this.internal,
     this.waterWash,
     this.washesPerMonth,
+    this.included = const [],
+    this.excluded = const [],
   });
+
+  static List<String> _parseList(dynamic raw) {
+    if (raw is List) {
+      return raw.map((e) => e.toString()).where((e) => e.trim().isNotEmpty).toList();
+    }
+    return const [];
+  }
 
   factory PlanFeatures.fromJson(Map<String, dynamic> json) {
     return PlanFeatures(
       internal: json['internal'] as int? ?? json['internal_cleaning'] as int?,
       waterWash: json['waterWash'] as int? ?? json['water_wash'] as int? ?? json['waterWashCount'] as int?,
       washesPerMonth: json['washes_per_month'] as int? ?? json['washesPerMonth'] as int?,
+      included: _parseList(json['included']),
+      excluded: _parseList(json['excluded']),
     );
   }
 
@@ -82,6 +95,8 @@ class PlanFeatures {
       'internal': internal,
       'waterWash': waterWash,
       'washesPerMonth': washesPerMonth,
+      'included': included,
+      'excluded': excluded,
     };
   }
 }

@@ -12,10 +12,10 @@ class AddVehicleButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: const Color(0xFFFDF6E3), // light background
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: const Color(0xFFF6C431), // yellow border
             width: 1.5,
@@ -24,14 +24,14 @@ class AddVehicleButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            Icon(Icons.add, color: Color(0xFFF6C431)),
-            SizedBox(width: 8),
+            Icon(Icons.add, color: Color(0xFFF6C431), size: 20),
+            SizedBox(width: 6),
             Text(
               "Add Vehicle",
               style: TextStyle(
                 color: Color(0xFFF6C431),
                 fontWeight: FontWeight.w600,
-                fontSize: 16,
+                fontSize: 15,
               ),
             ),
           ],

@@ -256,27 +256,30 @@ class _PlansScreenState extends State<PlansScreen> {
 
           /// CONTINUE BUTTON
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 12, bottom: 24),
             width: double.infinity,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xffF4C430),
-                padding: const EdgeInsets.symmetric(vertical: 18),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+            child: SizedBox(
+              height: 48,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xffF4C430),
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-              ),
-              onPressed: selectedPlan != null
-                  ? () {
-                      context.pushNamed('bookSlot');
-                    }
-                  : null,
-              child: const Text(
-                "Continue to Slot Selection",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
+                onPressed: selectedPlan != null
+                    ? () {
+                        context.pushNamed('bookSlot');
+                      }
+                    : null,
+                child: const Text(
+                  "Continue to Slot Selection",
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),

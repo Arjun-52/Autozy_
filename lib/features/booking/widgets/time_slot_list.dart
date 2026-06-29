@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/utils/responsive.dart';
 
 class TimeSlotList extends StatelessWidget {
   final List<Map<String, String>> times;
@@ -22,13 +23,14 @@ class TimeSlotList extends StatelessWidget {
         return GestureDetector(
           onTap: () => onTimeSelected(index),
           child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            padding: const EdgeInsets.all(16),
+            margin: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(5)),
+            padding: EdgeInsets.all(context.w(10)),
             decoration: BoxDecoration(
               color: selected ? const Color(0xFFFFFBF0) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: selected ? Colors.orange : Colors.grey.shade300,
+                color: selected ? const Color(0xFFFFCB2F) : const Color(0xFFE9E9E9),
+                width: 1,
               ),
             ),
             child: Row(
@@ -39,17 +41,17 @@ class TimeSlotList extends StatelessWidget {
                   children: [
                     Text(
                       times[index]["title"]!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.grey,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        fontSize: context.sp(11),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: context.h(2)),
                     Text(
                       times[index]["time"]!,
-                      style: const TextStyle(
-                        fontSize: 14,
+                      style: TextStyle(
+                        fontSize: context.sp(12.5),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -57,14 +59,14 @@ class TimeSlotList extends StatelessWidget {
                 ),
                 if (selected)
                   Container(
-                    height: 24,
-                    width: 24,
+                    height: context.w(18),
+                    width: context.w(18),
                     decoration: const BoxDecoration(
-                      color: Color(0xFFFFC107),
+                      color: Color(0xFFFFCB2F),
                       shape: BoxShape.circle,
                     ),
-                    child: const Center(
-                      child: Icon(Icons.check, color: Colors.black, size: 16),
+                    child: Center(
+                      child: Icon(Icons.check, color: Colors.black, size: context.w(12)),
                     ),
                   ),
               ],

@@ -185,10 +185,7 @@ class _InspectionPhotosGridState extends State<InspectionPhotosGrid> {
             ),
             itemCount: photos.length,
             itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () => _capturePhoto(index),
-                child: InspectionPhotoItem(photo: photos[index]),
-              );
+              return InspectionPhotoItem(photo: photos[index]);
             },
           ),
         ],

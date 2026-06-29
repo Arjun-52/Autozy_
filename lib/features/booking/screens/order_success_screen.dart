@@ -3,6 +3,7 @@ import 'package:autozy/features/booking/widgets/success_button.dart';
 import 'package:autozy/features/booking/widgets/success_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/utils/responsive.dart';
 
 class OrderSuccessScreen extends StatelessWidget {
   const OrderSuccessScreen({super.key});
@@ -10,39 +11,39 @@ class OrderSuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF6F6F6),
+      backgroundColor: const Color(0xFFF9F9FB),
 
       body: SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 30),
+            SizedBox(height: context.h(30)),
 
-            SuccessIcon(),
+            const SuccessIcon(),
 
-            const SizedBox(height: 20),
+            SizedBox(height: context.h(20)),
 
-            const Text(
+            Text(
               "Slot Booked!",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+              style: TextStyle(fontSize: context.sp(22), fontWeight: FontWeight.w600, color: Colors.black),
             ),
 
-            const SizedBox(height: 10),
+            SizedBox(height: context.h(10)),
 
-            const Text(
+            Text(
               "Your plan and slot has been booked\nsuccessfully",
               textAlign: TextAlign.center,
 
               style: TextStyle(
-                color: Colors.grey,
-                fontSize: 14,
+                color: Colors.grey.shade600,
+                fontSize: context.sp(13),
                 height: 1.4,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w400,
               ),
             ),
 
-            const SizedBox(height: 30),
+            SizedBox(height: context.h(24)),
 
-            OrderDetailsCard(),
+            const OrderDetailsCard(),
 
             const Spacer(),
             SuccessButton(
@@ -53,7 +54,7 @@ class OrderSuccessScreen extends StatelessWidget {
               },
             ),
 
-            const SizedBox(height: 12),
+            SizedBox(height: context.h(12)),
 
             SuccessButton(
               text: "Go to Home",
@@ -63,7 +64,7 @@ class OrderSuccessScreen extends StatelessWidget {
               },
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: context.h(20)),
           ],
         ),
       ),

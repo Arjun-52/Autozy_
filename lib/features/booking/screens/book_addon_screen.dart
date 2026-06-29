@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/constants/colors.dart';
 import '../../../core/services/navigation_service.dart';
 import '../../../providers/vehicle_provider.dart';
@@ -26,42 +27,44 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
 
-  // Add-on Services static options matching backend ID format
-  final List<Map<String, String>> _addonServices = [
-    {
-      'id': 'a29699e8-8830-42ab-822f-239da02eab42',
-      'name': 'Deep Interior Cleaning',
-      'description': 'Thorough cleaning of seats, mats, and dashboard.',
-      'price': '₹1,499'
-    },
-    {
-      'id': '8d5845d5-1f22-4e08-ad5b-318c3f3abe01',
-      'name': 'Machine Wax Polish',
-      'description': 'Premium wax coating for extra shine.',
-      'price': '₹999'
-    },
-    {
-      'id': '7e325e1b-be73-4335-8b74-dc7d81f17109',
-      'name': 'Engine Bay Cleaning',
-      'description': 'Safe cleaning of engine compartment.',
-      'price': '₹999'
-    },
-  ];
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<VehicleProvider>().fetchVehicles(page: 1, limit: 20, reset: true);
-      
+
       // Auto-select city from AreaProvider if available
       final areaProvider = context.read<AreaProvider>();
       if (areaProvider.selectedArea?.cityId != null) {
         setState(() {
           _selectedCityId = areaProvider.selectedArea!.cityId;
         });
+        _fetchServicesIfReady();
       }
     });
+  }
+
+  /// Loads the live add-on services catalog once both a vehicle (for its size)
+  /// and a city are selected. Clears the current selection since pricing and
+  /// availability are city/size-specific.
+  void _fetchServicesIfReady() {
+    final cityId = _selectedCityId;
+    final vehicleId = _selectedVehicleId;
+    if (cityId == null || vehicleId == null) return;
+
+    final vehicleProvider = context.read<VehicleProvider>();
+    final matches = vehicleProvider.vehicles.where((v) => v.id == vehicleId);
+    if (matches.isEmpty) return;
+    final size = matches.first.sizeCategory;
+    if (size.isEmpty) return;
+
+    setState(() {
+      _selectedAddonServiceId = null;
+    });
+    context.read<AddonBookingProvider>().fetchServices(
+          cityId: cityId,
+          vehicleSize: size,
+        );
   }
 
   Future<void> _pickDate() async {
@@ -211,13 +214,22 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
   }
 
   void _showSnackBar(String message) {
-    final messenger = NavigationService.scaffoldMessengerKey.currentState;
-    messenger?.showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.redAccent,
-      ),
-    );
+    if (!mounted) return;
+    try {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    } catch (_) {
+      NavigationService.scaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
   }
 
   void _showSuccessDialog() {
@@ -357,6 +369,7 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
   Widget build(BuildContext context) {
     final vehicleProvider = context.watch<VehicleProvider>();
     final areaProvider = context.watch<AreaProvider>();
+    final addonProvider = context.watch<AddonBookingProvider>();
     final addonBookingProvider = context.watch<AddonBookingProvider>();
 
     // Generate city list based on areas loaded, ensuring unique city IDs
@@ -423,6 +436,7 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
                     setState(() {
                       _selectedVehicleId = val;
                     });
+                    _fetchServicesIfReady();
                   },
                 ),
               ),
@@ -430,71 +444,7 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
 
             // Addon Service Selection
             _buildSectionHeader("Select Add-on Service"),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _addonServices.length,
-              itemBuilder: (context, index) {
-                final service = _addonServices[index];
-                final isSelected = _selectedAddonServiceId == service['id'];
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedAddonServiceId = service['id'];
-                    });
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xffFFFDF0) : Colors.white,
-                      border: Border.all(
-                        color: isSelected ? AppColors.brandYellow : Colors.transparent,
-                        width: 1.5,
-                      ),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                service['name']!,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                service['description']!,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          service['price']!,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xffC68A00),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+            _buildAddonServiceList(addonProvider),
             const SizedBox(height: 12),
 
             // City Selection
@@ -519,6 +469,7 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
                   setState(() {
                     _selectedCityId = val;
                   });
+                  _fetchServicesIfReady();
                 },
               ),
             ),
@@ -651,6 +602,151 @@ class _BookAddonScreenState extends State<BookAddonScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildAddonServiceList(AddonBookingProvider addonProvider) {
+    // Prompt to pick vehicle + city first (both needed to price services).
+    if (_selectedVehicleId == null || _selectedCityId == null) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          "Select a vehicle and city to see available add-on services.",
+          style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+        ),
+      );
+    }
+
+    if (addonProvider.isServicesLoading) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 24),
+        child: Center(child: CircularProgressIndicator(color: AppColors.brandYellow)),
+      );
+    }
+
+    if (addonProvider.servicesError != null) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFFFECEC),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          addonProvider.servicesError!,
+          style: const TextStyle(fontSize: 13, color: Colors.red),
+        ),
+      );
+    }
+
+    final services = addonProvider.services;
+    if (services.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          "No add-on services available for this vehicle in the selected city.",
+          style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+        ),
+      );
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: services.length,
+      itemBuilder: (context, index) {
+        final service = services[index];
+        final isSelected = _selectedAddonServiceId == service.id;
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              _selectedAddonServiceId = service.id;
+            });
+          },
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isSelected ? const Color(0xffFFFDF0) : Colors.white,
+              border: Border.all(
+                color: isSelected ? AppColors.brandYellow : Colors.transparent,
+                width: 1.5,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (service.imageUrl != null && service.imageUrl!.isNotEmpty) ...[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: CachedNetworkImage(
+                      imageUrl: service.imageUrl!,
+                      width: 52,
+                      height: 52,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        width: 52,
+                        height: 52,
+                        color: const Color(0xFFF2F2F2),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        width: 52,
+                        height: 52,
+                        color: const Color(0xFFF2F2F2),
+                        child: Icon(Icons.local_car_wash, color: Colors.grey.shade400),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        service.name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        service.description,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  service.priceLabel,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xffC68A00),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

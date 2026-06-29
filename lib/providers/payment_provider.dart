@@ -3,6 +3,7 @@ import '../data/repositories/payment_repository.dart';
 import '../data/models/dto/create_order_request.dart';
 import '../data/models/dto/create_order_response.dart';
 import '../data/models/dto/verify_payment_request.dart';
+import '../data/models/payment_history_model.dart';
 
 /// Owns the network state for the Razorpay payment flow: creating the order on
 /// the backend and verifying the payment afterwards. The Razorpay SDK instance
@@ -22,6 +23,33 @@ class PaymentProvider extends ChangeNotifier {
   bool get isBusy => _isCreatingOrder || _isVerifying;
   String? get error => _error;
   CreateOrderResponse? get lastOrder => _lastOrder;
+
+  // Payment history (invoices) state
+  List<PaymentHistoryItem> _history = [];
+  bool _isHistoryLoading = false;
+  String? _historyError;
+
+  List<PaymentHistoryItem> get history => _history;
+  bool get isHistoryLoading => _isHistoryLoading;
+  String? get historyError => _historyError;
+
+  /// Total of all completed payments.
+  num get totalPaid =>
+      _history.where((p) => p.isPaid).fold<num>(0, (sum, p) => sum + p.amount);
+
+  Future<void> fetchHistory() async {
+    _isHistoryLoading = true;
+    _historyError = null;
+    notifyListeners();
+    try {
+      _history = await _paymentRepository.getPaymentHistory();
+    } catch (e) {
+      _historyError = e.toString().replaceAll('Exception: ', '');
+    } finally {
+      _isHistoryLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<CreateOrderResponse?> createOrder({
     required String subscriptionId,

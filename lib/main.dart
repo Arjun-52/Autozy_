@@ -19,6 +19,8 @@ import 'data/repositories/inspection_repository.dart';
 import 'data/repositories/area_repository.dart';
 import 'data/repositories/subscription_repository.dart';
 import 'data/repositories/notification_repository.dart';
+import 'data/repositories/promotion_repository.dart';
+import 'data/repositories/user_address_repository.dart';
 import 'data/repositories/payment_repository.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -39,6 +41,8 @@ import 'data/repositories/ticket_repository.dart';
 import 'providers/ticket_provider.dart';
 import 'providers/ticket_details_provider.dart';
 import 'providers/notification_provider.dart';
+import 'providers/promotion_provider.dart';
+import 'providers/user_address_provider.dart';
 import 'providers/home_provider.dart';
 import 'providers/payment_provider.dart';
 
@@ -197,6 +201,14 @@ class _AutozyAppState extends State<AutozyApp> {
           create: (context) => NotificationRepository(context.read<ApiService>()),
         ),
 
+        Provider<PromotionRepository>(
+          create: (context) => PromotionRepository(context.read<ApiService>()),
+        ),
+
+        Provider<UserAddressRepository>(
+          create: (context) => UserAddressRepository(context.read<ApiService>()),
+        ),
+
         Provider<PaymentRepository>(
           create: (context) => PaymentRepository(context.read<ApiService>()),
         ),
@@ -278,6 +290,16 @@ class _AutozyAppState extends State<AutozyApp> {
         ChangeNotifierProvider<NotificationProvider>(
           create: (context) =>
               NotificationProvider(context.read<NotificationRepository>()),
+        ),
+
+        ChangeNotifierProvider<PromotionProvider>(
+          create: (context) =>
+              PromotionProvider(context.read<PromotionRepository>()),
+        ),
+
+        ChangeNotifierProvider<UserAddressProvider>(
+          create: (context) =>
+              UserAddressProvider(context.read<UserAddressRepository>()),
         ),
 
         ChangeNotifierProvider<PaymentProvider>(

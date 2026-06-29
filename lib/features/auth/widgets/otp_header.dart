@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/text_styles.dart';
+import '../../../core/utils/responsive.dart';
 
 class OtpHeader extends StatelessWidget {
   const OtpHeader({super.key});
@@ -7,19 +7,27 @@ class OtpHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back),
+        GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(vertical: 8.0),
+            child: Icon(
+              Icons.arrow_back_ios_new,
+              size: 18,
+              color: Colors.black87,
+            ),
+          ),
         ),
-
-        const SizedBox(width: 4),
-
+        SizedBox(width: context.w(16)),
         Text(
           "OTP Verification",
-          style: AppTextStyles.title.copyWith(
-            fontSize: 18,
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: context.sp(20),
             fontWeight: FontWeight.w600,
+            color: Colors.black,
           ),
         ),
       ],

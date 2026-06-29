@@ -1,45 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/promotion_provider.dart';
 
-class SpecialOffersSection extends StatelessWidget {
+class SpecialOffersSection extends StatefulWidget {
   const SpecialOffersSection({super.key});
 
   @override
+  State<SpecialOffersSection> createState() => _SpecialOffersSectionState();
+}
+
+class _SpecialOffersSectionState extends State<SpecialOffersSection> {
+  // Rotating palette so backend promotions keep the polished gradient look.
+  static const List<List<Color>> _gradients = [
+    [Color(0xFF2E3192), Color(0xFF1BFFFF)],
+    [Color(0xFFF2994A), Color(0xFFF2C94C)],
+    [Color(0xFF11998E), Color(0xFF38EF7D)],
+  ];
+  static const List<IconData> _icons = [
+    Icons.card_giftcard,
+    Icons.clean_hands,
+    Icons.umbrella,
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PromotionProvider>().fetchPromotions();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final offers = [
-      _OfferData(
-        title: "Refer & Earn",
-        subtitle: "Get a free eco-wash for every friend you refer",
-        badge: "Free Wash",
-        icon: Icons.card_giftcard,
-        gradient: const LinearGradient(
-          colors: [Color(0xFF2E3192), Color(0xFF1BFFFF)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      _OfferData(
-        title: "Deep Cleaning Special",
-        subtitle: "30% off professional interior disinfection",
-        badge: "30% OFF",
-        icon: Icons.clean_hands,
-        gradient: const LinearGradient(
-          colors: [Color(0xFFF2994A), Color(0xFFF2C94C)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      _OfferData(
-        title: "Monsoon Shield",
-        subtitle: "Get ceramic coating at lowest prices this season",
-        badge: "Best Seller",
-        icon: Icons.umbrella,
-        gradient: const LinearGradient(
-          colors: [Color(0xFF11998E), Color(0xFF38EF7D)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-    ];
+    final provider = context.watch<PromotionProvider>();
+    final offers = provider.promotions;
+
+    // Hide the section entirely when there are no active promotions
+    // (rather than showing mock data).
+    if (offers.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,14 +60,23 @@ class SpecialOffersSection extends StatelessWidget {
             separatorBuilder: (context, index) => const SizedBox(width: 14),
             itemBuilder: (context, index) {
               final offer = offers[index];
+              final gradient = LinearGradient(
+                colors: _gradients[index % _gradients.length],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              );
+              final icon = _icons[index % _icons.length];
+              final badge = (offer.discountCode != null && offer.discountCode!.isNotEmpty)
+                  ? offer.discountCode!
+                  : "Offer";
               return Container(
                 width: 310,
                 decoration: BoxDecoration(
-                  gradient: offer.gradient,
+                  gradient: gradient,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: offer.gradient.colors.first.withOpacity(0.3),
+                      color: gradient.colors.first.withOpacity(0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -95,7 +102,7 @@ class SpecialOffersSection extends StatelessWidget {
                       right: 15,
                       bottom: -15,
                       child: Icon(
-                        offer.icon,
+                        icon,
                         size: 110,
                         color: Colors.white.withOpacity(0.15),
                       ),
@@ -115,7 +122,7 @@ class SpecialOffersSection extends StatelessWidget {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
-                              offer.badge,
+                              badge,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
@@ -134,7 +141,7 @@ class SpecialOffersSection extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            offer.subtitle,
+                            offer.description ?? "",
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -154,20 +161,4 @@ class SpecialOffersSection extends StatelessWidget {
       ],
     );
   }
-}
-
-class _OfferData {
-  final String title;
-  final String subtitle;
-  final String badge;
-  final IconData icon;
-  final Gradient gradient;
-
-  _OfferData({
-    required this.title,
-    required this.subtitle,
-    required this.badge,
-    required this.icon,
-    required this.gradient,
-  });
 }

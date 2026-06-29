@@ -10,6 +10,8 @@ import '../../features/home/screens/home_screen.dart';
 import '../../features/vehicles/screens/vehicles_screen.dart';
 import '../../features/plans/screens/plans_screen.dart';
 
+import '../../core/utils/responsive.dart';
+
 class MainScreen extends StatefulWidget {
   final int initialIndex;
   final bool showPlanActiveCard;
@@ -61,6 +63,9 @@ class _MainScreenState extends State<MainScreen> {
         onTap: onTabTapped,
         selectedItemColor: const Color(0xffC68A00),
         unselectedItemColor: const Color(0xFF8E8E93),
+        selectedFontSize: context.sp(11),
+        unselectedFontSize: context.sp(11),
+        iconSize: 20,
         type: BottomNavigationBarType.fixed,
         items: [
           const BottomNavigationBarItem(
@@ -73,8 +78,8 @@ class _MainScreenState extends State<MainScreen> {
                 final tint = IconTheme.of(context).color ?? const Color(0xFF8E8E93);
                 return SvgPicture.asset(
                   'assets/images/car2.svg',
-                  height: 24,
-                  width: 24,
+                  height: 20,
+                  width: 20,
                   colorFilter: ColorFilter.mode(tint, BlendMode.srcIn),
                 );
               },
@@ -83,7 +88,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.access_time),
-            label: "Add-ons",
+            label: "Plans",
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/utils/app_logger.dart';
+import '../data/models/addon_service_model.dart';
 import '../data/models/dto/my_addon_bookings_response.dart';
 import '../data/repositories/addon_repository.dart';
 import '../data/models/dto/book_addon_request_model.dart';
@@ -32,6 +33,37 @@ class AddonBookingProvider extends ChangeNotifier {
   bool get isBooking => _isBooking;
   String? get bookingError => _bookingError;
   BookedAddonDataModel? get lastBookedAddon => _lastBookedAddon;
+
+  // Services catalog state (live GET /addons/services)
+  List<AddonServiceModel> _services = [];
+  bool _isServicesLoading = false;
+  String? _servicesError;
+
+  List<AddonServiceModel> get services => _services;
+  bool get isServicesLoading => _isServicesLoading;
+  String? get servicesError => _servicesError;
+
+  /// Loads the live add-on services catalog for a city + vehicle size.
+  Future<void> fetchServices({
+    required String cityId,
+    required String vehicleSize,
+  }) async {
+    _isServicesLoading = true;
+    _servicesError = null;
+    notifyListeners();
+    try {
+      _services = await _repository.getAddonServices(
+        cityId: cityId,
+        vehicleSize: vehicleSize,
+      );
+    } catch (e) {
+      _servicesError = e.toString().replaceAll('Exception: ', '');
+      _services = [];
+    } finally {
+      _isServicesLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<void> fetchBookings({bool isRefresh = false}) async {
     if (_status == AddonBookingStatus.loading || _isPageLoading) return;

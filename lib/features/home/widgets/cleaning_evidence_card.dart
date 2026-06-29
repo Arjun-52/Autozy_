@@ -70,7 +70,14 @@ class CleaningEvidenceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<dynamic> photos = todayService?.photos ?? [];
+    // Prefer the explicit before/after image fields the backend now returns;
+    // fall back to the legacy `photos` array (photos[0]=before, photos[1]=after).
+    final String? beforeImage = todayService?.beforeImage;
+    final String? afterImage = todayService?.afterImage;
+    final List<dynamic> photos = (beforeImage != null && beforeImage.isNotEmpty &&
+            afterImage != null && afterImage.isNotEmpty)
+        ? [beforeImage, afterImage]
+        : (todayService?.photos ?? []);
     final String? completedAt = todayService?.completedAt;
     final bool hasPhotos = photos.length >= 2;
 

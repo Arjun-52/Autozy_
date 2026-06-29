@@ -3,11 +3,31 @@ import '../services/api_service.dart';
 import '../models/dto/create_order_request.dart';
 import '../models/dto/create_order_response.dart';
 import '../models/dto/verify_payment_request.dart';
+import '../models/payment_history_model.dart';
 
 class PaymentRepository {
   final ApiService _apiService;
 
   PaymentRepository(this._apiService);
+
+  /// Fetches the user's payment history from GET /api/v1/payments/history.
+  Future<List<PaymentHistoryItem>> getPaymentHistory({int page = 1, int limit = 50}) async {
+    try {
+      AppLogger.info('Fetching payment history (page: $page)', tag: 'Payments');
+      final data = await _apiService.get(
+        '/api/v1/payments/history',
+        queryParameters: {'page': page.toString(), 'limit': limit.toString()},
+      );
+      final node = data['data'] ?? data;
+      final List<dynamic> list = node is Map ? (node['items'] ?? node['data'] ?? []) : (node as List? ?? []);
+      return list
+          .map((e) => PaymentHistoryItem.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, st) {
+      AppLogger.error('Failed to fetch payment history', tag: 'Payments', error: e, stackTrace: st);
+      rethrow;
+    }
+  }
 
   /// Creates a Razorpay order on the backend for the given subscription/addon.
   Future<CreateOrderResponse> createOrder(CreateOrderRequest request) async {
